@@ -80,3 +80,4 @@ Removing the code dealing with vectors is quite a strange solution.
 The two functions, `drawBlocksLine` in game-draw.sml and `updateBlocks` ins game-update.sml, are both pure and I can't think of why they would be connected with the key callback/a segfault.
 
 The C counterpart of this repository has both of those functions in place (unmodified) which leads me to guEss the error isn't in these functions themselves.
+# dot-to-dot
