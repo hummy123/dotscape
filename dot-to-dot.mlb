@@ -10,6 +10,13 @@ in
   ffi/glfw-key-input.sml
 end
 
+functional-core/app-type.sml
 imperative-shell/constants.sml
+
+ann
+  "allowVectorExps true"
+in
+  imperative-shell/app-draw.sml
+end
 
 imperative-shell/shell.sml
