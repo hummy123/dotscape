@@ -7,10 +7,12 @@ ann
 in
   ffi/gles3-import.sml
   ffi/glfw-import.sml
-  ffi/glfw-key-input.sml
+  ffi/glfw-input.sml
 end
 
 functional-core/app-type.sml
+functional-core/msg.sml
+functional-core/app-update.sml
 
 ann
   "allowVectorExps true"
@@ -19,4 +21,5 @@ in
 end
 imperative-shell/app-draw.sml
 
+imperative-shell/input-callbacks.sml
 imperative-shell/shell.sml

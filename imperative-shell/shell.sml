@@ -2,29 +2,16 @@ structure Shell =
 struct
   open CML
 
-  datatype msg = KEY of int * int * int * int
-
-  fun keyCallback mailbox (key, scancode, action, mode) =
-    ( print "hello\n"
-    ; Mailbox.send (mailbox, (KEY (key, scancode, action, mode)))
-    )
-
   fun callbackListener mailbox =
     let
+      open Msg
       val _ =
         case Mailbox.recv mailbox of
-          KEY (key, scancode, action, mode) =>
+          MOUSE_MOVE {x, y} =>
             print (String.concat
-              [ "key: "
-              , Int.toString key
-              , " scancode: "
-              , Int.toString scancode
-              , " action: "
-              , Int.toString action
-              , " mode: "
-              , Int.toString mode
-              , "\n"
-              ])
+              ["x pos: ", Int.toString x, ", y pos: ", Int.toString y, "\n"])
+        | MOUSE_LEFT_CLICK => print "clicked mouse\n"
+        | MOUSE_LEFT_RELEASE => print "released mouse\n"
     in
       callbackListener mailbox
     end
@@ -62,9 +49,14 @@ struct
       (* Set callback sender *)
       val _ = CML.spawn (fn () =>
         let
-          val kbCallback = keyCallback inputMailbox
-          val _ = Key.export kbCallback
-          val _ = Key.setCallback window
+          val mouseMoveCallback = InputCallbacks.mouseMoveCallback inputMailbox
+          val _ = Input.exportMouseMoveCallback mouseMoveCallback
+          val _ = Input.setMouseMoveCallback window
+
+          val mouseClickCallback =
+            InputCallbacks.mouseClickCallback inputMailbox
+          val _ = Input.exportMouseClickCallback mouseClickCallback
+          val _ = Input.setMouseClickCallback window
         in
           ()
         end)
