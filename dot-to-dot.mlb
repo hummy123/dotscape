@@ -11,12 +11,12 @@ in
 end
 
 functional-core/app-type.sml
-imperative-shell/constants.sml
 
 ann
   "allowVectorExps true"
 in
-  imperative-shell/app-draw.sml
+  imperative-shell/constants.sml
 end
+imperative-shell/app-draw.sml
 
 imperative-shell/shell.sml

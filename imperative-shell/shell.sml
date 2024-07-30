@@ -5,39 +5,42 @@ struct
   datatype msg = KEY of int * int * int * int
 
   fun keyCallback mailbox (key, scancode, action, mode) =
-    (print "hello\n";
-    Mailbox.send  (mailbox, (KEY (key, scancode, action, mode))))
+    ( print "hello\n"
+    ; Mailbox.send (mailbox, (KEY (key, scancode, action, mode)))
+    )
 
   fun callbackListener mailbox =
-  let
-    val _ =
-      case Mailbox.recv mailbox of
-         KEY (key, scancode, action, mode) =>
-           print (String.concat
-             [ "key: "
-             , Int.toString key
-             , " scancode: "
-             , Int.toString scancode
-             , " action: "
-             , Int.toString action
-             , " mode: "
-             , Int.toString mode
-             , "\n"
-             ])
-  in
-    callbackListener mailbox
-  end
+    let
+      val _ =
+        case Mailbox.recv mailbox of
+          KEY (key, scancode, action, mode) =>
+            print (String.concat
+              [ "key: "
+              , Int.toString key
+              , " scancode: "
+              , Int.toString scancode
+              , " action: "
+              , Int.toString action
+              , " mode: "
+              , Int.toString mode
+              , "\n"
+              ])
+    in
+      callbackListener mailbox
+    end
 
-  fun loop (window) =
+  fun loop (window, graphDrawObject) =
     if not (Glfw.windowShouldClose window) then
       let
-        val _ = Gles3.clearColor (0.1, 0.1, 0.1, 0.1)
+        val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
         val _ = Gles3.clear ()
+
+        val _ = AppDraw.drawGraphLines graphDrawObject
 
         val _ = Glfw.pollEvents ()
         val _ = Glfw.swapBuffers window
       in
-        loop (window)
+        loop (window, graphDrawObject)
       end
     else
       Glfw.terminate ()
@@ -53,6 +56,8 @@ struct
       val _ = Glfw.makeContextCurrent window
       val _ = Gles3.loadGlad ()
 
+      val graphDrawObject = AppDraw.initGraphLines ()
+
       val inputMailbox = Mailbox.mailbox ()
       (* Set callback sender *)
       val _ = CML.spawn (fn () =>
@@ -66,7 +71,7 @@ struct
       (* Set callback listener *)
       val _ = CML.spawn (fn () => callbackListener inputMailbox)
     in
-      loop (window)
+      loop (window, graphDrawObject)
     end
 end
 

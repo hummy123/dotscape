@@ -35,7 +35,7 @@ struct
       | [] => acc
   in
     fun getTrianglesVector (app: app_type) =
-      let val lst = helpGetTrianglseVector (#triangles app, [])
+      let val lst = helpGetTrianglesVector (#triangles app, [])
       in Vector.concat lst
       end
   end
