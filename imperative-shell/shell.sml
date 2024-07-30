@@ -4,7 +4,7 @@ struct
 
   fun callbackListener mailbox =
     let
-      open Msg
+      open InputMessage
       val _ =
         case Mailbox.recv mailbox of
           MOUSE_MOVE {x, y} =>

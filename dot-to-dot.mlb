@@ -10,8 +10,9 @@ in
   ffi/glfw-input.sml
 end
 
+message-types/input-msg.sml
+
 functional-core/app-type.sml
-functional-core/msg.sml
 functional-core/app-update.sml
 
 ann

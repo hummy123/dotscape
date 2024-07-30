@@ -1,4 +1,4 @@
-signature MSG =
+signature INPUT_MESSAGE =
 sig
   datatype t =
     MOUSE_MOVE of {x: int, y: int}
@@ -6,7 +6,7 @@ sig
   | MOUSE_LEFT_RELEASE
 end
 
-structure Msg :> MSG =
+structure InputMessage :> INPUT_MESSAGE =
 struct
   datatype t =
     MOUSE_MOVE of {x: int, y: int}

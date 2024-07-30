@@ -1,7 +1,7 @@
 structure InputCallbacks =
 struct
   open CML
-  open Msg
+  open InputMessage
 
   fun mouseMoveCallback mailbox (x, y) =
     Mailbox.send (mailbox, (MOUSE_MOVE {x = x, y = y}))
