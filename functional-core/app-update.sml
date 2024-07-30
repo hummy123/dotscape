@@ -23,7 +23,7 @@ struct
     ]
 
   local
-    fun getVerticalClickPos (idx, horizontalPos, mouseX, mouseY) =
+    fun getVerticalClickPos (idx, horizontalPos, mouseX, mouseY, r, g, b) =
       if idx = Vector.length clickPoints then
         #[]
       else
@@ -31,27 +31,27 @@ struct
           val curVerticalPos = Vector.sub (clickPoints, idx)
         in
           if mouseY < curVerticalPos - 10 orelse mouseY > curVerticalPos + 10 then
-            getVerticalClickPos (idx + 1, horizontalPos, mouseX, mouseY)
+            getVerticalClickPos
+              (idx + 1, horizontalPos, mouseX, mouseY, r, g, b)
           else
             let
-              val left = Real32.fromInt ((horizontalPos - 10) div 500)
-              val right = Real32.fromInt ((horizontalPos + 10) div 500)
-              val bottom = Real32.fromInt ((curVerticalPos - 10) div 500)
-              val top = Real32.fromInt ((curVerticalPos + 10) div 500)
+              val left = Real32.fromInt (horizontalPos - 10) / 500.0
+              val right = Real32.fromInt (horizontalPos + 10) / 500.0
+              val bottom = Real32.fromInt (curVerticalPos - 10) / 500.0
+              val top = Real32.fromInt (curVerticalPos + 10) / 500.0
             in
-              val highlightSquare = #[
-                left, bottom, (* lower left *)
-                right, bottom, (* lower right *)
-                left, top, (* upper left *)
+             #[ left, bottom, r, g, b,
+                right, bottom, r, g, b,
+                left, top, r, g, b,
 
-                left, top, (* upper left *)
-                right, bottom, (* lower right *)
-                right, top (* upper right *)
+                left, top, r, g, b,
+                right, bottom, r, g, b,
+                right, top, r, g, b
               ]
             end
         end
 
-    fun getHorizontalClickPos (idx, mouseX, mouseY) =
+    fun getHorizontalClickPos (idx, mouseX, mouseY, r, g, b) =
       if idx = Vector.length clickPoints then
         #[]
       else
@@ -59,9 +59,9 @@ struct
           val curPos = Vector.sub (clickPoints, idx)
         in
           if mouseX < curPos - 10 orelse mouseX > curPos + 10 then
-            getHorizontalClickPos (idx + 1, mouseX, mouseY)
+            getHorizontalClickPos (idx + 1, mouseX, mouseY, r, g, b)
           else
-            getVerticalClickPos (0, curPos, mouseX, mouseY)
+            getVerticalClickPos (0, curPos, mouseX, mouseY, r, g, b)
         end
   in
     (*
@@ -70,6 +70,7 @@ struct
      * If a square wasn't found at the clicked position, 
      * an empty vector is returned.
      *)
-    fun getClickPos (mouseX, mouseY) = getHorizontalClickPos (0, mouseX, mouseY)
+    fun getClickPos (mouseX, mouseY, r, g, b) =
+      getHorizontalClickPos (0, mouseX, mouseY, r, g, b)
   end
 end

@@ -13,7 +13,11 @@ end
 message-types/input-msg.sml
 
 functional-core/app-type.sml
-functional-core/app-update.sml
+ann
+  "allowVectorExps true"
+in
+  functional-core/app-update.sml
+end
 
 ann
   "allowVectorExps true"
