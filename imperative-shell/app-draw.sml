@@ -1,5 +1,40 @@
 structure AppDraw = 
 struct
+  type draw_object =
+    { vertexBuffer: Word32.word
+    , vertexShader: Word32.word
+    , fragmentBuffer: Word32.word
+    , fragmentBuffer: Word32.word
+    , fragmentShader: Word32.word
+    , program: Word32.word
+    }
+
+  fun initDrawObject (vertexShaderString, fragmentShaderString) : draw_object =
+    let
+      val vertexBuffer = Gles3.createBuffer ()
+      val vertexShader = Gles3.createShader (Gles3.VERTEX_SHADER ())
+      val _ = Gles3.shaderSource (vertexShader, vertexShaderString)
+      val _ = Gles3.compileShader vertexShader
+
+      val fragmentBuffer = Gles3.createBuffer ()
+      val fragmentShader = Gles3.createShader (Gles3.FRAGMENT_SHADER ())
+      val _ = Gles3.shaderSource
+        (fragmentShader, fragmentShaderString)
+      val _ = Gles3.compileShader fragmentShader
+
+      val program = Gles3.createProgram ()
+      val _ = Gles3.attachShader (program, vertexShader)
+      val _ = Gles3.attachShader (program, fragmentShader)
+      val _ = Gles3.linkProgram program
+    in
+      { vertexBuffer = vertexBuffer
+      , vertexShader = vertexShader
+      , fragmentBuffer = fragmentBuffer
+      , fragmentShader = fragmentShader
+      , program = program
+      }
+    end
+
   val graphLines = 
     #[
       (* x = ~0.95 *)
