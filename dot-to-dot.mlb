@@ -17,13 +17,8 @@ functional-core/app-type.sml
 ann
   "allowVectorExps true"
 in
-  functional-core/app-update.sml
-end
-
-ann
-  "allowVectorExps true"
-in
   imperative-shell/constants.sml
+  functional-core/app-update.sml
   imperative-shell/app-draw.sml
 end
 

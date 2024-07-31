@@ -1,5 +1,8 @@
 structure Constants =
 struct
+  val windowWidth = 900
+  val windowHeight = 900
+
   val graphVertexShaderString =
     "#version 300 es\n\
     \layout (location = 0) in vec2 apos;\n\

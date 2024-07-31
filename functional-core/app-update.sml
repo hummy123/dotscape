@@ -26,7 +26,8 @@ struct
     end
 
   local
-    val clickPoints = genClickPoints (500, 500)
+    val clickPoints = 
+      genClickPoints (Constants.windowWidth, Constants.windowHeight)
 
     fun getVerticalClickPos (idx, horizontalPos, mouseX, mouseY, r, g, b) =
       if idx = Vector.length clickPoints then
@@ -40,12 +41,14 @@ struct
               (idx + 1, horizontalPos, mouseX, mouseY, r, g, b)
           else
             let
-              val hpos = horizontalPos - 250.0
-              val vpos = ~(curVerticalPos - 250.0)
-              val left = (hpos - 5.0) / 250.0
-              val right = (hpos + 5.0) / 250.0
-              val bottom = (vpos - 5.0) / 250.0
-              val top = (vpos + 5.0) / 250.0
+              val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
+              val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+              val hpos = horizontalPos - halfWidth
+              val vpos = ~(curVerticalPos - halfHeight)
+              val left = (hpos - 5.0) / halfWidth
+              val right = (hpos + 5.0) / halfWidth
+              val bottom = (vpos - 5.0) / halfHeight
+              val top = (vpos + 5.0) / halfHeight
             in
               #[ left, bottom, r, g, b
                , right, bottom, r, g, b
