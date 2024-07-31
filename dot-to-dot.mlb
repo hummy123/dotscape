@@ -27,9 +27,5 @@ in
 end
 
 imperative-shell/input-callbacks.sml
-
-ann
-  "allowVectorExps true"
-in
-  imperative-shell/shell.sml
-end
+imperative-shell/event-loop.sml
+imperative-shell/shell.sml

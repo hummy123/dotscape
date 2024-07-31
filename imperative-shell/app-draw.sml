@@ -93,7 +93,7 @@ struct
       ()
     end
 
-  fun drawButton (buttonDrawObject: draw_object, vec) =
+  fun drawButton (buttonDrawObject: draw_object, buttonDrawLength) =
     let
       val {vertexBuffer, program, ...} = buttonDrawObject
       val _ = Gles3.bindBuffer vertexBuffer
@@ -102,7 +102,7 @@ struct
       val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
       val _ = Gles3.enableVertexAttribArray 1
       val _ = Gles3.useProgram program
-      val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, Vector.length vec div 5)
+      val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, buttonDrawLength)
     in
       ()
     end
