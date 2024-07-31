@@ -21,7 +21,7 @@ struct
 
       val _ = CML.spawn (fn () => InputCallbacks.registerCallbacks (window, inputMailbox))
       val _ = CML.spawn (fn () => EventLoop.update (inputMailbox, drawMailbox))
-      val _ = CML.spawn (fn () => EventLoop.draw (window, graphDrawObject, buttonDrawObject, 0))
+      val _ = CML.spawn (fn () => EventLoop.draw (drawMailbox, window, graphDrawObject, buttonDrawObject, 0))
     in
       ()
     end

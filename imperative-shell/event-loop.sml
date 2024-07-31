@@ -17,7 +17,7 @@ struct
       loop (inputMailbox, drawMailbox, 0, 0, AppType.initial)
   end
 
-  fun draw (window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
+  fun draw (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
     if not (Glfw.windowShouldClose window) then
       let
         val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
@@ -29,7 +29,7 @@ struct
         val _ = Glfw.pollEvents ()
         val _ = Glfw.swapBuffers window
       in
-        draw (window, graphDrawObject, buttonDrawObject, buttonDrawLength)
+        draw (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength)
       end
     else
       Glfw.terminate ()
