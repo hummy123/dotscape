@@ -3,18 +3,19 @@ struct
   open CML
   open InputMessage
 
-  fun update inputMailbox =
+  local
+  fun loop (inputMailbox, drawMailbox, mouseX, mouseY, model) =
     let
-      val _ =
-        case Mailbox.recv inputMailbox of
-          MOUSE_MOVE {x, y} =>
-            print (String.concat
-              ["x pos: ", Int.toString x, ", y pos: ", Int.toString y, "\n"])
-        | MOUSE_LEFT_CLICK => print "clicked mouse\n"
-        | MOUSE_LEFT_RELEASE => print "released mouse\n"
+      val inputMsg = Mailbox.recv inputMailbox
+      val (model, drawMsg, mouseX, mouseY) = AppUpdate.update (model, mouseX, mouseY, inputMsg)
+      val _ = Mailbox.send (drawMailbox, drawMsg)
     in
-      update inputMailbox
+      loop (inputMailbox, drawMailbox, mouseX, mouseY, model)
     end
+  in
+    fun update (inputMailbox, drawMailbox) =
+      loop (inputMailbox, drawMailbox, 0, 0, AppType.initial)
+  end
 
   fun draw (window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
     if not (Glfw.windowShouldClose window) then

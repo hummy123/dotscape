@@ -17,24 +17,13 @@ struct
       val buttonDrawObject = AppDraw.initButton ()
 
       val inputMailbox = Mailbox.mailbox ()
-      (* Set callback sender *)
-      val _ = CML.spawn (fn () =>
-        let
-          val mouseMoveCallback = InputCallbacks.mouseMoveCallback inputMailbox
-          val _ = Input.exportMouseMoveCallback mouseMoveCallback
-          val _ = Input.setMouseMoveCallback window
+      val drawMailbox = Mailbox.mailbox ()
 
-          val mouseClickCallback =
-            InputCallbacks.mouseClickCallback inputMailbox
-          val _ = Input.exportMouseClickCallback mouseClickCallback
-          val _ = Input.setMouseClickCallback window
-        in
-          ()
-        end)
-      (* Set callback listener *)
-      val _ = CML.spawn (fn () => EventLoop.update inputMailbox)
+      val _ = CML.spawn (fn () => InputCallbacks.registerCallbacks (window, inputMailbox))
+      val _ = CML.spawn (fn () => EventLoop.update (inputMailbox, drawMailbox))
+      val _ = CML.spawn (fn () => EventLoop.draw (window, graphDrawObject, buttonDrawObject, 0))
     in
-      EventLoop.draw (window, graphDrawObject, buttonDrawObject, 0)
+      ()
     end
 end
 

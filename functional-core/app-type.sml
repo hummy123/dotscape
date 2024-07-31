@@ -1,4 +1,26 @@
-structure AppType =
+signature APP_TYPE =
+sig
+  datatype triangle_stage =
+    FIRST of {x1: Real32.real, y1: Real32.real}
+  | NO_TRIANGLE
+  | SECOND of
+      {x1: Real32.real, x2: Real32.real, y1: Real32.real, y2: Real32.real}
+
+  type triangle =
+    { x1: Real32.real
+    , x2: Real32.real
+    , x3: Real32.real
+    , y1: Real32.real
+    , y2: Real32.real
+    , y3: Real32.real
+    }
+
+  type app_type = {triangleStage: triangle_stage, triangles: triangle list}
+
+  val initial: app_type
+end
+
+structure AppType :> APP_TYPE =
 struct
   type triangle =
     { x1: Real32.real
@@ -25,18 +47,5 @@ struct
 
   type app_type = {triangles: triangle list, triangleStage: triangle_stage}
 
-  local
-    fun helpGetTrianglesVector (lst, acc) =
-      case lst of
-        {x1, y1, x2, y2, x3, y3} :: tl =>
-          let val vec = Vector.fromList [x1, y1, x2, y2, x3, y3]
-          in helpGetTrianglesVector (tl, vec :: acc)
-          end
-      | [] => acc
-  in
-    fun getTrianglesVector (app: app_type) =
-      let val lst = helpGetTrianglesVector (#triangles app, [])
-      in Vector.concat lst
-      end
-  end
+  val initial = {triangles = [], triangleStage = NO_TRIANGLE}
 end

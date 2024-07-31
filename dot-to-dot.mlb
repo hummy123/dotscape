@@ -11,6 +11,7 @@ in
 end
 
 message-types/input-msg.sml
+message-types/draw-msg.sml
 
 functional-core/app-type.sml
 ann
