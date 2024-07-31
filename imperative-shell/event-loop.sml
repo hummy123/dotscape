@@ -19,7 +19,14 @@ struct
   end
 
   fun draw
-    (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
+    ( drawMailbox
+    , window
+    , graphDrawObject
+    , buttonDrawObject
+    , buttonDrawLength
+    , triangleDrawObject
+    , triangleDrawLength
+    ) =
     if not (Glfw.windowShouldClose window) then
       case Mailbox.recvPoll drawMailbox of
         NONE =>
@@ -28,6 +35,7 @@ struct
             val _ = Gles3.clear ()
 
             val _ = AppDraw.drawGraphLines graphDrawObject
+            val _ = AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
 
             val _ = Glfw.pollEvents ()
@@ -39,6 +47,8 @@ struct
               , graphDrawObject
               , buttonDrawObject
               , buttonDrawLength
+              , triangleDrawObject
+              , triangleDrawLength
               )
           end
       | SOME drawMsg =>
@@ -54,6 +64,24 @@ struct
                    , graphDrawObject
                    , buttonDrawObject
                    , buttonDrawLength
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   )
+               end
+           | DRAW_TRIANGLES_AND_RESET_BUTTONS triangleVec =>
+               let
+                 val _ = AppDraw.uploadTrianglesVector (triangleDrawObject, triangleVec)
+                 val triangleDrawLength = Vector.length triangleVec div 2
+                 (* have to reset buttons too *)
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , buttonDrawObject
+                   , 0
+                   , triangleDrawObject
+                   , triangleDrawLength
                    )
                end
            | NO_DRAW =>
@@ -63,6 +91,8 @@ struct
                  , graphDrawObject
                  , buttonDrawObject
                  , buttonDrawLength
+                 , triangleDrawObject
+                 , triangleDrawLength
                  ))
     else
       Glfw.terminate ()

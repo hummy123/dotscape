@@ -106,4 +106,45 @@ struct
     in
       ()
     end
+
+  fun initTriangles () =
+    let
+      val triangleDrawObject = initDrawObject
+        (Constants.graphVertexShaderString, Constants.graphFragmentShaderString)
+      val {vertexBuffer, program, ...} = triangleDrawObject
+
+      val _ = Gles3.bindBuffer vertexBuffer
+      val _ =
+        Gles3.bufferData
+          ( #[]
+          , 0
+          , Gles3.STATIC_DRAW ()
+          )
+      val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
+      val _ = Gles3.enableVertexAttribArray 0
+    in
+      triangleDrawObject
+    end
+
+  fun uploadTrianglesVector (triangleDrawObject: draw_object, vec) =
+    let
+      val {vertexBuffer, ...} = triangleDrawObject
+      val _ = Gles3.bindBuffer vertexBuffer
+      val _ = Gles3.bufferData (vec, Vector.length vec, Gles3.STATIC_DRAW ())
+    in
+      ()
+    end
+
+  fun drawTriangles (triangleDrawObject: draw_object, triangleDrawLength) =
+    let
+      val {vertexBuffer, program, ...} = triangleDrawObject
+      val _ = Gles3.bindBuffer vertexBuffer
+      val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
+      val _ = Gles3.enableVertexAttribArray 0
+      val _ = Gles3.useProgram program
+      val _ = Gles3.drawArrays
+        (Gles3.TRIANGLES (), 0, triangleDrawLength)
+    in
+      ()
+    end
 end
