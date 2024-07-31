@@ -58,8 +58,8 @@ void deleteShader(unsigned int shader) {
   glDeleteShader(shader);
 }
 
-void vertexAttribPointer(int location, int numVecComponents) {
-  glVertexAttribPointer(location, numVecComponents, GL_FLOAT, GL_FALSE, numVecComponents * sizeof(float), (void*) 0);
+void vertexAttribPointer(int location, int numVecComponents, int stride, int offset) {
+  glVertexAttribPointer(location, numVecComponents, GL_FLOAT, GL_FALSE, stride * sizeof(float), (void*)offset);
 }
 
 void enableVertexAttribArray(int location) {

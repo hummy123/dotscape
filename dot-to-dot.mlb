@@ -23,8 +23,13 @@ ann
   "allowVectorExps true"
 in
   imperative-shell/constants.sml
+  imperative-shell/app-draw.sml
 end
-imperative-shell/app-draw.sml
 
 imperative-shell/input-callbacks.sml
-imperative-shell/shell.sml
+
+ann
+  "allowVectorExps true"
+in
+  imperative-shell/shell.sml
+end

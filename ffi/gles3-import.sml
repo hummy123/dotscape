@@ -36,7 +36,7 @@ struct
   val shaderSource = _import "shaderSource" public : shader * string -> unit;
 
   val vertexAttribPointer =
-    _import "vertexAttribPointer" public : int * int -> unit;
+    _import "vertexAttribPointer" public : int * int * int * int -> unit;
   val enableVertexAttribArray =
     _import "enableVertexAttribArray" public : int -> unit;
 

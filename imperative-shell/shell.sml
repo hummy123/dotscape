@@ -16,18 +16,19 @@ struct
       callbackListener mailbox
     end
 
-  fun loop (window, graphDrawObject) =
+  fun loop (window, graphDrawObject, buttonDrawObject) =
     if not (Glfw.windowShouldClose window) then
       let
         val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
         val _ = Gles3.clear ()
 
         val _ = AppDraw.drawGraphLines graphDrawObject
+        val _ = AppDraw.drawButton (buttonDrawObject, #[])
 
         val _ = Glfw.pollEvents ()
         val _ = Glfw.swapBuffers window
       in
-        loop (window, graphDrawObject)
+        loop (window, graphDrawObject, buttonDrawObject)
       end
     else
       Glfw.terminate ()
@@ -44,6 +45,7 @@ struct
       val _ = Gles3.loadGlad ()
 
       val graphDrawObject = AppDraw.initGraphLines ()
+      val buttonDrawObject = AppDraw.initButton ()
 
       val inputMailbox = Mailbox.mailbox ()
       (* Set callback sender *)
@@ -63,7 +65,7 @@ struct
       (* Set callback listener *)
       val _ = CML.spawn (fn () => callbackListener inputMailbox)
     in
-      loop (window, graphDrawObject)
+      loop (window, graphDrawObject, buttonDrawObject)
     end
 end
 
