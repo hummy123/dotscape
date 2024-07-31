@@ -86,16 +86,16 @@ struct
         MOUSE_MOVE {x = mouseX, y = mouseY} =>
           let
             val _ = print "mouse moved\n"
-            val drawMsg =
-            DRAW_BUTTON (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
+            val drawMsg = 
+              DRAW_BUTTON (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
           in
             (model, drawMsg, mouseX, mouseY)
           end
       | MOUSE_LEFT_RELEASE =>
           let
             val _ = print "mouse released\n"
-            val drawMsg = DRAW_BUTTON
-          (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
+            val drawMsg = 
+              DRAW_BUTTON (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
           in
             (model, drawMsg, mouseX, mouseY)
           end

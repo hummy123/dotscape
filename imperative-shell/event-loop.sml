@@ -4,20 +4,22 @@ struct
   open InputMessage
 
   local
-  fun loop (inputMailbox, drawMailbox, mouseX, mouseY, model) =
-    let
-      val inputMsg = Mailbox.recv inputMailbox
-      val (model, drawMsg, mouseX, mouseY) = AppUpdate.update (model, mouseX, mouseY, inputMsg)
-      val _ = Mailbox.send (drawMailbox, drawMsg)
-    in
-      loop (inputMailbox, drawMailbox, mouseX, mouseY, model)
-    end
+    fun loop (inputMailbox, drawMailbox, mouseX, mouseY, model) =
+      let
+        val inputMsg = Mailbox.recv inputMailbox
+        val (model, drawMsg, mouseX, mouseY) =
+          AppUpdate.update (model, mouseX, mouseY, inputMsg)
+        val _ = Mailbox.send (drawMailbox, drawMsg)
+      in
+        loop (inputMailbox, drawMailbox, mouseX, mouseY, model)
+      end
   in
     fun update (inputMailbox, drawMailbox) =
       loop (inputMailbox, drawMailbox, 0, 0, AppType.initial)
   end
 
-  fun draw (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
+  fun draw
+    (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
     if not (Glfw.windowShouldClose window) then
       let
         val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
@@ -29,7 +31,13 @@ struct
         val _ = Glfw.pollEvents ()
         val _ = Glfw.swapBuffers window
       in
-        draw (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength)
+        draw
+          ( drawMailbox
+          , window
+          , graphDrawObject
+          , buttonDrawObject
+          , buttonDrawLength
+          )
       end
     else
       Glfw.terminate ()

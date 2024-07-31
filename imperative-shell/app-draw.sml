@@ -106,5 +106,4 @@ struct
     in
       ()
     end
-
 end

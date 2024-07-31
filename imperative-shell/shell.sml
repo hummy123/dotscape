@@ -19,9 +19,12 @@ struct
       val inputMailbox = Mailbox.mailbox ()
       val drawMailbox = Mailbox.mailbox ()
 
-      val _ = CML.spawn (fn () => InputCallbacks.registerCallbacks (window, inputMailbox))
+      val _ = CML.spawn (fn () =>
+        InputCallbacks.registerCallbacks (window, inputMailbox))
       val _ = CML.spawn (fn () => EventLoop.update (inputMailbox, drawMailbox))
-      val _ = CML.spawn (fn () => EventLoop.draw (drawMailbox, window, graphDrawObject, buttonDrawObject, 0))
+      val _ = CML.spawn (fn () =>
+        EventLoop.draw
+          (drawMailbox, window, graphDrawObject, buttonDrawObject, 0))
     in
       ()
     end

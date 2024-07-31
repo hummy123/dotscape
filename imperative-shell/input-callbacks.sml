@@ -16,16 +16,15 @@ struct
       ()
 
   fun registerCallbacks (window, inputMailbox) =
-        let
-          val mouseMoveCallback = mouseMoveCallback inputMailbox
-          val _ = Input.exportMouseMoveCallback mouseMoveCallback
-          val _ = Input.setMouseMoveCallback window
+    let
+      val mouseMoveCallback = mouseMoveCallback inputMailbox
+      val _ = Input.exportMouseMoveCallback mouseMoveCallback
+      val _ = Input.setMouseMoveCallback window
 
-          val mouseClickCallback =
-            mouseClickCallback inputMailbox
-          val _ = Input.exportMouseClickCallback mouseClickCallback
-          val _ = Input.setMouseClickCallback window
-        in
-          ()
-        end
+      val mouseClickCallback = mouseClickCallback inputMailbox
+      val _ = Input.exportMouseClickCallback mouseClickCallback
+      val _ = Input.setMouseClickCallback window
+    in
+      ()
+    end
 end
