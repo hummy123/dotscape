@@ -55,7 +55,15 @@ struct
                    , buttonDrawObject
                    , buttonDrawLength
                    )
-               end)
+               end
+           | NO_DRAW =>
+               draw
+                 ( drawMailbox
+                 , window
+                 , graphDrawObject
+                 , buttonDrawObject
+                 , buttonDrawLength
+                 ))
     else
       Glfw.terminate ()
 end
