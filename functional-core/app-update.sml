@@ -17,14 +17,16 @@ struct
       end
   end
 
+  fun genClickPoints (windowWidth, windowHeight) =
+    let
+      val w = Real32.fromInt windowWidth / 40.0
+      val h = Real32.fromInt windowHeight / 40.0
+    in
+      Vector.tabulate (41, fn idx => Real32.fromInt idx * w)
+    end
+
   local
-    val clickPoints =
-     #[ 25,  50,  75,  100
-      , 125, 150, 175, 200
-      , 225, 250, 275, 300
-      , 325, 350, 375, 400
-      , 425, 450, 475
-      ]
+    val clickPoints = genClickPoints (500, 500)
 
     fun getVerticalClickPos (idx, horizontalPos, mouseX, mouseY, r, g, b) =
       if idx = Vector.length clickPoints then
@@ -33,15 +35,17 @@ struct
         let
           val curVerticalPos = Vector.sub (clickPoints, idx)
         in
-          if mouseY < curVerticalPos - 10 orelse mouseY > curVerticalPos + 10 then
+          if mouseY < curVerticalPos - 7.0 orelse mouseY > curVerticalPos + 7.0 then
             getVerticalClickPos
               (idx + 1, horizontalPos, mouseX, mouseY, r, g, b)
           else
             let
-              val left = Real32.fromInt (horizontalPos - 10) / 500.0
-              val right = Real32.fromInt (horizontalPos + 10) / 500.0
-              val bottom = Real32.fromInt (curVerticalPos - 10) / 500.0
-              val top = Real32.fromInt (curVerticalPos + 10) / 500.0
+              val hpos = horizontalPos - 250.0
+              val vpos = ~(curVerticalPos - 250.0)
+              val left = (hpos - 5.0) / 250.0
+              val right = (hpos + 5.0) / 250.0
+              val bottom = (vpos - 5.0) / 250.0
+              val top = (vpos + 5.0) / 250.0
             in
               #[ left, bottom, r, g, b
                , right, bottom, r, g, b
@@ -61,7 +65,7 @@ struct
         let
           val curPos = Vector.sub (clickPoints, idx)
         in
-          if mouseX < curPos - 10 orelse mouseX > curPos + 10 then
+          if mouseX < curPos - 7.0 orelse mouseX > curPos + 7.0 then
             getHorizontalClickPos (idx + 1, mouseX, mouseY, r, g, b)
           else
             getVerticalClickPos (0, curPos, mouseX, mouseY, r, g, b)
@@ -74,7 +78,8 @@ struct
      * an empty vector is returned.
      *)
     fun getClickPos (mouseX, mouseY, r, g, b) =
-      getHorizontalClickPos (0, mouseX, mouseY, r, g, b)
+      getHorizontalClickPos
+        (0, Real32.fromInt mouseX, Real32.fromInt mouseY, r, g, b)
   end
 
   fun update (model, mouseX, mouseY, inputMsg) =
@@ -86,23 +91,23 @@ struct
         MOUSE_MOVE {x = mouseX, y = mouseY} =>
           let
             val _ = print "mouse moved\n"
-            val drawMsg = 
-              DRAW_BUTTON (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
+            val drawMsg = DRAW_BUTTON (getClickPos
+              (mouseX, mouseY, 1.0, 0.0, 0.0))
           in
             (model, drawMsg, mouseX, mouseY)
           end
       | MOUSE_LEFT_RELEASE =>
           let
             val _ = print "mouse released\n"
-            val drawMsg = 
-              DRAW_BUTTON (getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0))
+            val drawMsg = DRAW_BUTTON (getClickPos
+              (mouseX, mouseY, 1.0, 0.0, 0.0))
           in
             (model, drawMsg, mouseX, mouseY)
           end
       | MUSE_LEFT_CLICK =>
           let
             val _ = print "mouse clicked\n"
-            val buttonVec = getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0)
+            val buttonVec = getClickPos (mouseX, mouseY, 0.0, 0.0, 1.0)
             val drawMsg = DRAW_BUTTON buttonVec
           in
             (model, drawMsg, mouseX, mouseY)

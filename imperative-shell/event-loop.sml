@@ -1,7 +1,7 @@
 structure EventLoop =
 struct
   open CML
-  open InputMessage
+  open DrawMessage
 
   local
     fun loop (inputMailbox, drawMailbox, mouseX, mouseY, model) =
@@ -21,24 +21,41 @@ struct
   fun draw
     (drawMailbox, window, graphDrawObject, buttonDrawObject, buttonDrawLength) =
     if not (Glfw.windowShouldClose window) then
-      let
-        val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
-        val _ = Gles3.clear ()
+      case Mailbox.recvPoll drawMailbox of
+        NONE =>
+          let
+            val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
+            val _ = Gles3.clear ()
 
-        val _ = AppDraw.drawGraphLines graphDrawObject
-        val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
+            val _ = AppDraw.drawGraphLines graphDrawObject
+            val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
 
-        val _ = Glfw.pollEvents ()
-        val _ = Glfw.swapBuffers window
-      in
-        draw
-          ( drawMailbox
-          , window
-          , graphDrawObject
-          , buttonDrawObject
-          , buttonDrawLength
-          )
-      end
+            val _ = Glfw.pollEvents ()
+            val _ = Glfw.swapBuffers window
+          in
+            draw
+              ( drawMailbox
+              , window
+              , graphDrawObject
+              , buttonDrawObject
+              , buttonDrawLength
+              )
+          end
+      | SOME drawMsg =>
+          (case drawMsg of
+             DRAW_BUTTON vec =>
+               let
+                 val _ = AppDraw.uploadButtonVector (buttonDrawObject, vec)
+                 val buttonDrawLength = Vector.length vec div 5
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , buttonDrawObject
+                   , buttonDrawLength
+                   )
+               end)
     else
       Glfw.terminate ()
 end
