@@ -72,7 +72,7 @@ struct
                let
                  val _ = AppDraw.uploadTrianglesVector (triangleDrawObject, triangleVec)
                  val triangleDrawLength = Vector.length triangleVec div 2
-                 (* have to reset buttons too *)
+                 (* buttons are reset by setting buttonDrawLength to 0 *)
                in
                  draw
                    ( drawMailbox

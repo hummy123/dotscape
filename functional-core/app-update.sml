@@ -142,8 +142,7 @@ struct
   fun getTriangleStageVector (model: app_type, drawVec) =
     case #triangleStage model of
       NO_TRIANGLE => drawVec
-    | FIRST {x1, y1} =>
-        getFirstTriangleStageVector (x1, y1, drawVec)
+    | FIRST {x1, y1} => getFirstTriangleStageVector (x1, y1, drawVec)
     | SECOND {x1, y1, x2, y2} =>
         getSecondTriangleStageVector (x1, y1, x2, y2, drawVec)
 
@@ -189,7 +188,7 @@ struct
                    end
                | FIRST {x1, y1} =>
                    let
-                     val drawVec = 
+                     val drawVec =
                        getFirstTriangleStageVector (x1, y1, buttonVec)
                      val drawMsg = DRAW_BUTTON drawVec
 
@@ -202,9 +201,8 @@ struct
                    end
                | SECOND {x1, y1, x2, y2} =>
                    let
-                     val model =
-                       AppType.addTriangleAndResetStage 
-                         (model, x1, y1, x2, y2, hpos, vpos)
+                     val model = AppType.addTriangleAndResetStage
+                       (model, x1, y1, x2, y2, hpos, vpos)
 
                      val drawVec = getTrianglesVector model
                      val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
