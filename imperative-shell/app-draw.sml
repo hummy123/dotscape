@@ -65,16 +65,6 @@ struct
       ()
     end
 
-  val buttonVec =
-   #[ 0.5, 0.5, 1.0, 0.0, 0.0
-    , 0.5, ~0.5, 1.0, 0.0, 0.0
-    , ~0.5, 0.5, 1.0, 0.0, 0.0
-
-    , 0.5, ~0.5, 0.0, 0.0, 1.0
-    , ~0.5, ~0.5, 0.0, 0.0, 1.0
-    , ~0.5, 0.5, 0.0, 0.0, 1.0
-    ]
-
   fun initButton () =
     let
       val buttonDrawObject = initDrawObject
@@ -84,9 +74,7 @@ struct
       val {vertexBuffer, program, ...} = buttonDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
-      val _ =
-        Gles3.bufferData
-          (buttonVec, Vector.length buttonVec, Gles3.STATIC_DRAW ())
+      val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
       val _ = Gles3.vertexAttribPointer (0, 2, 5, 0)
       val _ = Gles3.enableVertexAttribArray 0
 
@@ -114,8 +102,7 @@ struct
       val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
       val _ = Gles3.enableVertexAttribArray 1
       val _ = Gles3.useProgram program
-      val _ = Gles3.drawArrays
-        (Gles3.TRIANGLES (), 0, Vector.length buttonVec div 5)
+      val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, Vector.length vec div 5)
     in
       ()
     end
