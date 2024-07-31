@@ -1,8 +1,8 @@
 signature APP_TYPE =
 sig
   datatype triangle_stage =
-    FIRST of {x1: Real32.real, y1: Real32.real}
-  | NO_TRIANGLE
+    NO_TRIANGLE
+  | FIRST of {x1: Real32.real, y1: Real32.real}
   | SECOND of
       {x1: Real32.real, x2: Real32.real, y1: Real32.real, y2: Real32.real}
 
