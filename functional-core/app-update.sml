@@ -6,7 +6,7 @@ struct
     fun helpGetTrianglesVector (lst, acc) =
       case lst of
         {x1, y1, x2, y2, x3, y3} :: tl =>
-          let val vec = Vector.fromList [x1, y1, x2, y2, x3, y3]
+          let val vec = #[x1, y1, x2, y2, x3, y3]
           in helpGetTrianglesVector (tl, vec :: acc)
           end
       | [] => acc
