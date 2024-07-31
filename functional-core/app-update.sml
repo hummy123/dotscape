@@ -93,53 +93,59 @@ struct
         (0, Real32.fromInt mouseX, Real32.fromInt mouseY, r, g, b)
   end
 
+  fun getFirstTriangleStageVector (x1, y1, drawVec) =
+    let
+      val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
+      val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+
+      val x1px = x1 * halfWidth
+      val left = (x1px - 5.0) / halfWidth
+      val right = (x1px + 5.0) / halfWidth
+
+      val y1px = y1 * halfHeight
+      val top = (y1px + 5.0) / halfHeight
+      val bottom = (y1px - 5.0) / halfHeight
+
+      val firstVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+    in
+      Vector.concat [firstVec, drawVec]
+    end
+
+  fun getSecondTriangleStageVector (x1, y1, x2, y2, drawVec) =
+    let
+      val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
+      val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+
+      val x1px = x1 * halfWidth
+      val left = (x1px - 5.0) / halfWidth
+      val right = (x1px + 5.0) / halfWidth
+
+      val y1px = y1 * halfHeight
+      val top = (y1px + 5.0) / halfHeight
+      val bottom = (y1px - 5.0) / halfHeight
+
+      val firstVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+
+      val x2px = x2 * halfWidth
+      val left = (x2px - 5.0) / halfWidth
+      val right = (x2px + 5.0) / halfWidth
+
+      val y2px = y2 * halfHeight
+      val top = (y2px + 5.0) / halfHeight
+      val bottom = (y2px - 5.0) / halfHeight
+
+      val secVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+    in
+      Vector.concat [firstVec, secVec, drawVec]
+    end
+
   fun getTriangleStageVector (model: app_type, drawVec) =
     case #triangleStage model of
       NO_TRIANGLE => drawVec
     | FIRST {x1, y1} =>
-        let
-          val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
-          val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
-
-          val x1px = x1 * halfWidth
-          val left = (x1px - 5.0) / halfWidth
-          val right = (x1px + 5.0) / halfWidth
-
-          val y1px = y1 * halfHeight
-          val top = (y1px + 5.0) / halfHeight
-          val bottom = (y1px - 5.0) / halfHeight
-
-          val firstVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
-        in
-          Vector.concat [firstVec, drawVec]
-        end
+        getFirstTriangleStageVector (x1, y1, drawVec)
     | SECOND {x1, y1, x2, y2} =>
-        let
-          val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
-          val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
-
-          val x1px = x1 * halfWidth
-          val left = (x1px - 5.0) / halfWidth
-          val right = (x1px + 5.0) / halfWidth
-
-          val y1px = y1 * halfHeight
-          val top = (y1px + 5.0) / halfHeight
-          val bottom = (y1px - 5.0) / halfHeight
-
-          val firstVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
-
-          val x2px = x2 * halfWidth
-          val left = (x2px - 5.0) / halfWidth
-          val right = (x2px + 5.0) / halfWidth
-
-          val y2px = y2 * halfHeight
-          val top = (y2px + 5.0) / halfHeight
-          val bottom = (y2px - 5.0) / halfHeight
-
-          val secVec = ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
-        in
-          Vector.concat [firstVec, secVec, drawVec]
-        end
+        getSecondTriangleStageVector (x1, y1, x2, y2, drawVec)
 
   fun update (model, mouseX, mouseY, inputMsg) =
     let
@@ -183,7 +189,7 @@ struct
                    end
                | FIRST {x1, y1} =>
                    let
-                     val drawVec = getTriangleStageVector (model, buttonVec)
+                     val drawVec = getFirstTriangleStageVector (x1, y1, buttonVec)
                      val drawMsg = DRAW_BUTTON drawVec
 
                      val newTriangleStage = SECOND
@@ -195,7 +201,8 @@ struct
                    end
                | SECOND {x1, y1, x2, y2} =>
                    let
-                     val drawVec = getTriangleStageVector (model, buttonVec)
+                     val drawVec = 
+                       getSecondTriangleStageVector (x1, y1, x2, y2, buttonVec)
                      val drawMsg = DRAW_BUTTON drawVec
 
                      val newTriangleStage = NO_TRIANGLE
