@@ -18,6 +18,8 @@ sig
   type app_type = {triangleStage: triangle_stage, triangles: triangle list}
 
   val initial: app_type
+
+  val withTriangleStage: app_type * triangle_stage -> app_type
 end
 
 structure AppType :> APP_TYPE =
@@ -48,4 +50,10 @@ struct
   type app_type = {triangles: triangle list, triangleStage: triangle_stage}
 
   val initial = {triangles = [], triangleStage = NO_TRIANGLE}
+
+  fun withTriangleStage (app: app_type, newTriangleStage: triangle_stage) :
+    app_type =
+    let val {triangles, triangleStage = _} = app
+    in {triangles = triangles, triangleStage = newTriangleStage}
+    end
 end

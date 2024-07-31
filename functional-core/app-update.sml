@@ -36,7 +36,7 @@ struct
         Vector.tabulate (41, fn idx => Real32.fromInt idx * w)
       end
 
-    val clickPoints = 
+    val clickPoints =
       genClickPoints (Constants.windowWidth, Constants.windowHeight)
 
     fun getVerticalClickPos (idx, horizontalPos, mouseX, mouseY, r, g, b) =
@@ -113,7 +113,7 @@ struct
         in
           Vector.concat [firstVec, drawVec]
         end
-    | SECOND {x1, y1, x2, y2} => 
+    | SECOND {x1, y1, x2, y2} =>
         let
           val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
           val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
@@ -150,6 +150,7 @@ struct
         MOUSE_MOVE {x = mouseX, y = mouseY} =>
           let
             val (drawVec, _, _) = getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0)
+            val drawVec = getTriangleStageVector (model, drawVec)
             val drawMsg = DRAW_BUTTON drawVec
           in
             (model, drawMsg, mouseX, mouseY)
@@ -157,21 +158,52 @@ struct
       | MOUSE_LEFT_RELEASE =>
           let
             val (drawVec, _, _) = getClickPos (mouseX, mouseY, 1.0, 0.0, 0.0)
+            val drawVec = getTriangleStageVector (model, drawVec)
             val drawMsg = DRAW_BUTTON drawVec
           in
             (model, drawMsg, mouseX, mouseY)
           end
       | MUSE_LEFT_CLICK =>
           let
-            val (buttonVec, hpos, vpos) = 
-              getClickPos (mouseX, mouseY, 0.0, 0.0, 1.0)
+            val (buttonVec, hpos, vpos) = getClickPos
+              (mouseX, mouseY, 0.0, 0.0, 1.0)
           in
             if Vector.length buttonVec > 0 then
-              let
-                val drawMsg = DRAW_BUTTON buttonVec
-              in
-                (model, drawMsg, mouseX, mouseY)
-              end
+              (case #triangleStage model of
+                 NO_TRIANGLE =>
+                   let
+                     val drawVec = getTriangleStageVector (model, buttonVec)
+                     val drawMsg = DRAW_BUTTON drawVec
+
+                     val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
+                     val model =
+                       AppType.withTriangleStage (model, newTriangleStage)
+                   in
+                     (model, drawMsg, mouseX, mouseY)
+                   end
+               | FIRST {x1, y1} =>
+                   let
+                     val drawVec = getTriangleStageVector (model, buttonVec)
+                     val drawMsg = DRAW_BUTTON drawVec
+
+                     val newTriangleStage = SECOND
+                       {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
+                     val model =
+                       AppType.withTriangleStage (model, newTriangleStage)
+                   in
+                     (model, drawMsg, mouseX, mouseY)
+                   end
+               | SECOND {x1, y1, x2, y2} =>
+                   let
+                     val drawVec = getTriangleStageVector (model, buttonVec)
+                     val drawMsg = DRAW_BUTTON drawVec
+
+                     val newTriangleStage = NO_TRIANGLE
+                     val model =
+                       AppType.withTriangleStage (model, newTriangleStage)
+                   in
+                     (model, drawMsg, mouseX, mouseY)
+                   end)
             else
               (model, NO_DRAW, mouseX, mouseY)
           end
