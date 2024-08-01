@@ -11,8 +11,12 @@ struct
 
   val exportMouseClickCallback =
     _export "mltonMouseClickCallback" public : (int * int -> unit) -> unit;
-
   val setMouseClickCallback = _import "setMouseClickCallback" public reentrant : window -> unit;
+
+  val exportFramebufferSizeCallback =
+    _export "mltonFramebufferSizeCallback" public : (int * int -> unit) -> unit;
+  val setFramebufferSizeCallback = 
+    _import "setFramebufferSizeCallback" public reentrant : window -> unit;
 
   (* Constants for mouse input. *)
   val (MOUSE_PRESSED, _) =

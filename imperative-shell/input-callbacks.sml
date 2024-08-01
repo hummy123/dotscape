@@ -15,6 +15,11 @@ struct
     else
       ()
 
+  fun framebufferSizeCallback mailbox (width, height) =
+    let val _ = Gles3.viewport (width, height)
+    in Mailbox.send (mailbox, RESIZE_WINDOW {width = width, height = height})
+    end
+
   fun registerCallbacks (window, inputMailbox) =
     let
       val mouseMoveCallback = mouseMoveCallback inputMailbox
@@ -24,6 +29,10 @@ struct
       val mouseClickCallback = mouseClickCallback inputMailbox
       val _ = Input.exportMouseClickCallback mouseClickCallback
       val _ = Input.setMouseClickCallback window
+
+      val resizeCallback = framebufferSizeCallback inputMailbox
+      val _ = Input.exportFramebufferSizeCallback resizeCallback
+      val _ = Input.setFramebufferSizeCallback window
     in
       ()
     end

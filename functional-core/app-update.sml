@@ -161,7 +161,7 @@ struct
           in
             (model, drawMsg, mouseX, mouseY)
           end
-      | MUSE_LEFT_CLICK =>
+      | MOUSE_LEFT_CLICK =>
           let
             val (buttonVec, hpos, vpos) = getClickPos
               (#clickPoints model, mouseX, mouseY, 0.0, 0.0, 1.0)
@@ -204,6 +204,12 @@ struct
                    end)
             else
               (model, NO_DRAW, mouseX, mouseY)
+          end
+      | RESIZE_WINDOW {width, height} => 
+          let
+            val _ = print "resized window \n"
+          in
+            (model, NO_DRAW, mouseX, mouseY)
           end
     end
 end

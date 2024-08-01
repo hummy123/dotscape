@@ -10,16 +10,21 @@ void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos) {
   mltonMouseMoveCallback((float)xpos, (float)ypos);
 }
 
-void mouseClickCallback(GLFWwindow *window, int button, int action, int mods) {
-  mltonMouseClickCallback(button, action);
-}
-
-// Call this from MLton to register key callback with GLFW.
+// Call this from MLton to register callback with GLFW.
 void setMouseMoveCallback(GLFWwindow *window) {
   glfwSetCursorPosCallback(window, mouseMoveCallback);
 }
 
+void mouseClickCallback(GLFWwindow *window, int button, int action, int mods) {
+  mltonMouseClickCallback(button, action);
+}
 void setMouseClickCallback(GLFWwindow *window) {
   glfwSetMouseButtonCallback(window, mouseClickCallback);
 }
 
+void framebufferSizeCallback(GLFWwindow *window, int width, int height) {
+  mltonFramebufferSizeCallback(width, height);
+}
+void setFramebufferSizeCallback(GLFWwindow *window, int width, int height) {
+  glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+}

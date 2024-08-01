@@ -4,6 +4,7 @@ sig
     MOUSE_MOVE of {x: Real32.real, y: Real32.real}
   | MOUSE_LEFT_CLICK
   | MOUSE_LEFT_RELEASE
+  | RESIZE_WINDOW of {width: int, height: int}
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -12,4 +13,5 @@ struct
     MOUSE_MOVE of {x: Real32.real, y: Real32.real}
   | MOUSE_LEFT_CLICK
   | MOUSE_LEFT_RELEASE
+  | RESIZE_WINDOW of {width: int, height: int}
 end
