@@ -1,5 +1,5 @@
-#ifndef __DOT_TO_DOT_ML_H__
-#define __DOT_TO_DOT_ML_H__
+#ifndef __DOTSCAPE_ML_H__
+#define __DOTSCAPE_ML_H__
 
 /* Copyright (C) 2004-2007 Henry Cejtin, Matthew Fluet, Suresh
  *    Jagannathan, and Stephen Weeks.
@@ -132,23 +132,23 @@ typedef Pointer Objptr;
 
 #endif /* _MLTON_EXPORT_H_ */
 
-#if !defined(PART_OF_DOT_TO_DOT) && \
-    !defined(STATIC_LINK_DOT_TO_DOT) && \
-    !defined(DYNAMIC_LINK_DOT_TO_DOT)
-#define PART_OF_DOT_TO_DOT
+#if !defined(PART_OF_DOTSCAPE) && \
+    !defined(STATIC_LINK_DOTSCAPE) && \
+    !defined(DYNAMIC_LINK_DOTSCAPE)
+#define PART_OF_DOTSCAPE
 #endif
 
-#if defined(PART_OF_DOT_TO_DOT)
+#if defined(PART_OF_DOTSCAPE)
 #define MLLIB_PRIVATE(x) PRIVATE x
 #define MLLIB_PUBLIC(x) PUBLIC x
-#elif defined(STATIC_LINK_DOT_TO_DOT)
+#elif defined(STATIC_LINK_DOTSCAPE)
 #define MLLIB_PRIVATE(x)
 #define MLLIB_PUBLIC(x) PUBLIC x
-#elif defined(DYNAMIC_LINK_DOT_TO_DOT)
+#elif defined(DYNAMIC_LINK_DOTSCAPE)
 #define MLLIB_PRIVATE(x)
 #define MLLIB_PUBLIC(x) EXTERNAL x
 #else
-#error Must specify linkage for dot_to_dot
+#error Must specify linkage for dotscape
 #define MLLIB_PRIVATE(x)
 #define MLLIB_PUBLIC(x)
 #endif
@@ -167,4 +167,4 @@ MLLIB_PUBLIC(void mltonMouseClickCallback (Int32 x0, Int32 x1);)
 }
 #endif
 
-#endif /* __DOT_TO_DOT_ML_H__ */
+#endif /* __DOTSCAPE_ML_H__ */
