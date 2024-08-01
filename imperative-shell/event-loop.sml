@@ -15,7 +15,13 @@ struct
       end
   in
     fun update (inputMailbox, drawMailbox) =
-      loop (inputMailbox, drawMailbox, 0.0, 0.0, AppType.initial)
+      loop
+        ( inputMailbox
+        , drawMailbox
+        , 0.0
+        , 0.0
+        , AppType.getInitial (Constants.windowWidth, Constants.windowHeight)
+        )
   end
 
   fun draw
@@ -35,7 +41,8 @@ struct
             val _ = Gles3.clear ()
 
             val _ = AppDraw.drawGraphLines graphDrawObject
-            val _ = AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
+            val _ =
+              AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
 
             val _ = Glfw.pollEvents ()
@@ -70,9 +77,11 @@ struct
                end
            | DRAW_TRIANGLES_AND_RESET_BUTTONS triangleVec =>
                let
-                 val _ = AppDraw.uploadTrianglesVector (triangleDrawObject, triangleVec)
+                 val _ =
+                   AppDraw.uploadTrianglesVector
+                     (triangleDrawObject, triangleVec)
                  val triangleDrawLength = Vector.length triangleVec div 2
-                 (* buttons are reset by setting buttonDrawLength to 0 *)
+               (* buttons are reset by setting buttonDrawLength to 0 *)
                in
                  draw
                    ( drawMailbox

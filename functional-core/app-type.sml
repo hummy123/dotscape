@@ -15,21 +15,27 @@ sig
     , y3: Real32.real
     }
 
-  type app_type = {triangleStage: triangle_stage, triangles: triangle list}
+  type app_type =
+    { triangles: triangle list
+    , triangleStage: triangle_stage
+    , clickPoints: Real32.real vector
+    }
 
-  val initial: app_type
+  val getInitial: int * int -> app_type
+
+  val genClickPoints: int * int -> Real32.real vector
 
   val withTriangleStage: app_type * triangle_stage -> app_type
 
-  val addTriangleAndResetStage : 
-    app_type *
-    Real32.real *
-    Real32.real *
-    Real32.real *
-    Real32.real *
-    Real32.real *
-    Real32.real ->
+  val addTriangleAndResetStage:
     app_type
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    -> app_type
 end
 
 structure AppType :> APP_TYPE =
@@ -57,24 +63,48 @@ struct
   | SECOND of
       {x1: Real32.real, y1: Real32.real, x2: Real32.real, y2: Real32.real}
 
-  type app_type = {triangles: triangle list, triangleStage: triangle_stage}
+  type app_type =
+    { triangles: triangle list
+    , triangleStage: triangle_stage
+    , clickPoints: Real32.real vector
+    }
 
-  val initial = {triangles = [], triangleStage = NO_TRIANGLE}
+  fun genClickPoints (windowWidth, windowHeight) =
+    let
+      val w = Real32.fromInt windowWidth / 40.0
+      val h = Real32.fromInt windowHeight / 40.0
+    in
+      Vector.tabulate (41, fn idx => Real32.fromInt idx * w)
+    end
+
+  fun getInitial (windowWidth, windowHeight) =
+    { triangles = []
+    , triangleStage = NO_TRIANGLE
+    , clickPoints = genClickPoints (windowWidth, windowHeight)
+    }
 
   fun withTriangleStage (app: app_type, newTriangleStage: triangle_stage) :
     app_type =
-    let val {triangles, triangleStage = _} = app
-    in {triangles = triangles, triangleStage = newTriangleStage}
+    let
+      val {triangles, triangleStage = _, clickPoints = clickPoints} = app
+    in
+      { triangles = triangles
+      , triangleStage = newTriangleStage
+      , clickPoints = clickPoints
+      }
     end
 
   fun addTriangleAndResetStage (app: app_type, x1, y1, x2, y2, x3, y3) :
     app_type =
     let
-      val {triangles, triangleStage = _} = app
+      val {triangles, triangleStage = _, clickPoints = clickPoints} = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
       val newTriangles = newTriangle :: triangles
     in
-      {triangles = newTriangles, triangleStage = NO_TRIANGLE}
+      { triangles = newTriangles
+      , triangleStage = NO_TRIANGLE
+      , clickPoints = clickPoints
+      }
     end
 end
