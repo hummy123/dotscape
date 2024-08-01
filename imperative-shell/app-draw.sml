@@ -94,18 +94,21 @@ struct
     end
 
   fun drawButton (buttonDrawObject: draw_object, buttonDrawLength) =
-    let
-      val {vertexBuffer, program, ...} = buttonDrawObject
-      val _ = Gles3.bindBuffer vertexBuffer
-      val _ = Gles3.vertexAttribPointer (0, 2, 5, 0)
-      val _ = Gles3.enableVertexAttribArray 0
-      val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
-      val _ = Gles3.enableVertexAttribArray 1
-      val _ = Gles3.useProgram program
-      val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, buttonDrawLength)
-    in
+    if buttonDrawLength > 0 then
+      let
+        val {vertexBuffer, program, ...} = buttonDrawObject
+        val _ = Gles3.bindBuffer vertexBuffer
+        val _ = Gles3.vertexAttribPointer (0, 2, 5, 0)
+        val _ = Gles3.enableVertexAttribArray 0
+        val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
+        val _ = Gles3.enableVertexAttribArray 1
+        val _ = Gles3.useProgram program
+        val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, buttonDrawLength)
+      in
+        ()
+      end
+    else
       ()
-    end
 
   fun initTriangles () =
     let
@@ -114,12 +117,7 @@ struct
       val {vertexBuffer, program, ...} = triangleDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
-      val _ =
-        Gles3.bufferData
-          ( #[]
-          , 0
-          , Gles3.STATIC_DRAW ()
-          )
+      val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
       val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
       val _ = Gles3.enableVertexAttribArray 0
     in
@@ -136,15 +134,17 @@ struct
     end
 
   fun drawTriangles (triangleDrawObject: draw_object, triangleDrawLength) =
-    let
-      val {vertexBuffer, program, ...} = triangleDrawObject
-      val _ = Gles3.bindBuffer vertexBuffer
-      val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
-      val _ = Gles3.enableVertexAttribArray 0
-      val _ = Gles3.useProgram program
-      val _ = Gles3.drawArrays
-        (Gles3.TRIANGLES (), 0, triangleDrawLength)
-    in
+    if triangleDrawLength > 0 then
+      let
+        val {vertexBuffer, program, ...} = triangleDrawObject
+        val _ = Gles3.bindBuffer vertexBuffer
+        val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
+        val _ = Gles3.enableVertexAttribArray 0
+        val _ = Gles3.useProgram program
+        val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, triangleDrawLength)
+      in
+        ()
+      end
+    else
       ()
-    end
 end

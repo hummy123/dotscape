@@ -137,79 +137,81 @@ struct
     | SECOND {x1, y1, x2, y2} =>
         getSecondTriangleStageVector (x1, y1, x2, y2, drawVec)
 
-  fun update (model, mouseX, mouseY, inputMsg) =
-    let
-      open DrawMessage
-      open InputMessage
-    in
+  local
+    open DrawMessage
+    open InputMessage
+
+    fun mouseMoveOrRelease (model, mouseX, mouseY) =
+      let
+        val (drawVec, _, _) = getClickPos
+          (#clickPoints model, mouseX, mouseY, 1.0, 0.0, 0.0)
+        val drawVec = getTriangleStageVector (model, drawVec)
+        val drawMsg = DRAW_BUTTON drawVec
+      in
+        (model, drawMsg, mouseX, mouseY)
+      end
+
+    fun mouseLeftClick (model, mouseX, mouseY) =
+      let
+        val (buttonVec, hpos, vpos) = getClickPos
+          (#clickPoints model, mouseX, mouseY, 0.0, 0.0, 1.0)
+      in
+        if Vector.length buttonVec > 0 then
+          case #triangleStage model of
+            NO_TRIANGLE =>
+              let
+                val drawVec = getTriangleStageVector (model, buttonVec)
+                val drawMsg = DRAW_BUTTON drawVec
+
+                val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
+                val model = AppType.withTriangleStage (model, newTriangleStage)
+              in
+                (model, drawMsg, mouseX, mouseY)
+              end
+          | FIRST {x1, y1} =>
+              let
+                val drawVec = getFirstTriangleStageVector (x1, y1, buttonVec)
+                val drawMsg = DRAW_BUTTON drawVec
+
+                val newTriangleStage = SECOND
+                  {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
+                val model = AppType.withTriangleStage (model, newTriangleStage)
+              in
+                (model, drawMsg, mouseX, mouseY)
+              end
+          | SECOND {x1, y1, x2, y2} =>
+              let
+                val model = AppType.addTriangleAndResetStage
+                  (model, x1, y1, x2, y2, hpos, vpos)
+
+                val drawVec = getTrianglesVector model
+                val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
+              in
+                (model, drawMsg, mouseX, mouseY)
+              end
+        else
+          (model, NO_DRAW, mouseX, mouseY)
+      end
+
+    fun resizeWindow (model, mouseX, mouseY, width, height) =
+      let
+        val low = Int.min (width, height)
+        val high = Int.min (width, height)
+
+        val difference = high - low
+        val offset = difference div 2
+        val _ = print "resized window \n"
+      in
+        (model, NO_DRAW, mouseX, mouseY)
+      end
+  in
+    fun update (model, mouseX, mouseY, inputMsg) =
       case inputMsg of
         MOUSE_MOVE {x = mouseX, y = mouseY} =>
-          let
-            val (drawVec, _, _) = getClickPos
-              (#clickPoints model, mouseX, mouseY, 1.0, 0.0, 0.0)
-            val drawVec = getTriangleStageVector (model, drawVec)
-            val drawMsg = DRAW_BUTTON drawVec
-          in
-            (model, drawMsg, mouseX, mouseY)
-          end
-      | MOUSE_LEFT_RELEASE =>
-          let
-            val (drawVec, _, _) = getClickPos
-              (#clickPoints model, mouseX, mouseY, 1.0, 0.0, 0.0)
-            val drawVec = getTriangleStageVector (model, drawVec)
-            val drawMsg = DRAW_BUTTON drawVec
-          in
-            (model, drawMsg, mouseX, mouseY)
-          end
-      | MOUSE_LEFT_CLICK =>
-          let
-            val (buttonVec, hpos, vpos) = getClickPos
-              (#clickPoints model, mouseX, mouseY, 0.0, 0.0, 1.0)
-          in
-            if Vector.length buttonVec > 0 then
-              (case #triangleStage model of
-                 NO_TRIANGLE =>
-                   let
-                     val drawVec = getTriangleStageVector (model, buttonVec)
-                     val drawMsg = DRAW_BUTTON drawVec
-
-                     val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-                     val model =
-                       AppType.withTriangleStage (model, newTriangleStage)
-                   in
-                     (model, drawMsg, mouseX, mouseY)
-                   end
-               | FIRST {x1, y1} =>
-                   let
-                     val drawVec =
-                       getFirstTriangleStageVector (x1, y1, buttonVec)
-                     val drawMsg = DRAW_BUTTON drawVec
-
-                     val newTriangleStage = SECOND
-                       {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-                     val model =
-                       AppType.withTriangleStage (model, newTriangleStage)
-                   in
-                     (model, drawMsg, mouseX, mouseY)
-                   end
-               | SECOND {x1, y1, x2, y2} =>
-                   let
-                     val model = AppType.addTriangleAndResetStage
-                       (model, x1, y1, x2, y2, hpos, vpos)
-
-                     val drawVec = getTrianglesVector model
-                     val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
-                   in
-                     (model, drawMsg, mouseX, mouseY)
-                   end)
-            else
-              (model, NO_DRAW, mouseX, mouseY)
-          end
-      | RESIZE_WINDOW {width, height} => 
-          let
-            val _ = print "resized window \n"
-          in
-            (model, NO_DRAW, mouseX, mouseY)
-          end
-    end
+          mouseMoveOrRelease (model, mouseX, mouseY)
+      | MOUSE_LEFT_RELEASE => mouseMoveOrRelease (model, mouseX, mouseY)
+      | MOUSE_LEFT_CLICK => mouseLeftClick (model, mouseX, mouseY)
+      | RESIZE_WINDOW {width, height} =>
+          resizeWindow (model, mouseX, mouseY, width, height)
+  end
 end
