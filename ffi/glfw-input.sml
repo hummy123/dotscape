@@ -4,7 +4,7 @@ struct
 
   (* Export function to C. *)
   val exportMouseMoveCallback =
-    _export "mltonMouseMoveCallback" public : (int * int -> unit) -> unit;
+    _export "mltonMouseMoveCallback" public : (Real32.real * Real32.real -> unit) -> unit;
 
   (* Import function to set callback for GLFW. *)
   val setMouseMoveCallback = _import "setMouseMoveCallback" public reentrant : window -> unit;

@@ -157,7 +157,7 @@ typedef Pointer Objptr;
 extern "C" {
 #endif
 
-MLLIB_PUBLIC(void mltonMouseMoveCallback (Int32 x0, Int32 x1);)
+MLLIB_PUBLIC(void mltonMouseMoveCallback (Real32 x0, Real32 x1);)
 MLLIB_PUBLIC(void mltonMouseClickCallback (Int32 x0, Int32 x1);)
 
 #undef MLLIB_PRIVATE

@@ -15,7 +15,7 @@ struct
       end
   in
     fun update (inputMailbox, drawMailbox) =
-      loop (inputMailbox, drawMailbox, 0, 0, AppType.initial)
+      loop (inputMailbox, drawMailbox, 0.0, 0.0, AppType.initial)
   end
 
   fun draw

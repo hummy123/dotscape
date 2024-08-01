@@ -90,7 +90,7 @@ struct
      *)
     fun getClickPos (mouseX, mouseY, r, g, b) =
       getHorizontalClickPos
-        (0, Real32.fromInt mouseX, Real32.fromInt mouseY, r, g, b)
+        (0, mouseX, mouseY, r, g, b)
   end
 
   fun getFirstTriangleStageVector (x1, y1, drawVec) =

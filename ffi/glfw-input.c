@@ -7,7 +7,7 @@ int LEFT_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_1;
 
 // Calls function exported from SML 
 void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos) {
-  mltonMouseMoveCallback((int)xpos, (int)ypos);
+  mltonMouseMoveCallback((float)xpos, (float)ypos);
 }
 
 void mouseClickCallback(GLFWwindow *window, int button, int action, int mods) {
