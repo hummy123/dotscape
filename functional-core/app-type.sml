@@ -18,7 +18,10 @@ sig
   type app_type =
     { triangles: triangle list
     , triangleStage: triangle_stage
-    , clickPoints: Real32.real vector
+    , windowWidth: int
+    , windowHeight: int
+    , xClickPoints: Real32.real vector
+    , yClickPoints: Real32.real vector
     }
 
   val getInitial: int * int -> app_type
@@ -36,6 +39,8 @@ sig
     * Real32.real
     * Real32.real
     -> app_type
+
+  val withWindowResize: app_type * int * int -> app_type
 end
 
 structure AppType :> APP_TYPE =
@@ -66,45 +71,148 @@ struct
   type app_type =
     { triangles: triangle list
     , triangleStage: triangle_stage
-    , clickPoints: Real32.real vector
+    , windowWidth: int
+    , windowHeight: int
+    , xClickPoints: Real32.real vector
+    , yClickPoints: Real32.real vector
     }
 
-  fun genClickPoints (windowWidth, windowHeight) =
+  fun genClickPoints (start, finish) =
     let
-      val w = Real32.fromInt windowWidth / 40.0
-      val h = Real32.fromInt windowHeight / 40.0
+      val difference = finish - start
+      val increment = Real32.fromInt difference / 40.0
+      val start = Real32.fromInt start
     in
-      Vector.tabulate (41, fn idx => Real32.fromInt idx * w)
+      Vector.tabulate (41, fn idx => (Real32.fromInt idx * increment) + start)
     end
 
-  fun getInitial (windowWidth, windowHeight) =
-    { triangles = []
-    , triangleStage = NO_TRIANGLE
-    , clickPoints = genClickPoints (windowWidth, windowHeight)
-    }
-
-  fun withTriangleStage (app: app_type, newTriangleStage: triangle_stage) :
-    app_type =
-    let
-      val {triangles, triangleStage = _, clickPoints = clickPoints} = app
-    in
-      { triangles = triangles
-      , triangleStage = newTriangleStage
-      , clickPoints = clickPoints
+  local
+    fun make (windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) =
+      { triangles = []
+      , triangleStage = NO_TRIANGLE
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , xClickPoints = genClickPoints (wStart, wFinish)
+      , yClickPoints = genClickPoints (hStart, hFinish)
       }
-    end
+  in
+    fun getInitial (windowWidth, windowHeight) =
+      if windowWidth = windowHeight then
+        make (windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)
+      else if windowWidth > windowHeight then
+        let
+          val difference = windowWidth - windowHeight
+          val wStart = difference div 2
+          val wFinish = wStart + windowHeight
+        in
+          make (windowWidth, windowHeight, 0, wFinish, 0, windowHeight)
+        end
+      else
+        let
+          val difference = windowHeight - windowWidth
+          val hStart = difference div 2
+          val hFinish = hStart + windowHeight
+        in
+          make (windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
+        end
+
+    fun withTriangleStage (app: app_type, newTriangleStage: triangle_stage) :
+      app_type =
+      let
+        val
+          { triangleStage = _
+          , triangles
+          , xClickPoints
+          , yClickPoints
+          , windowWidth
+          , windowHeight
+          } = app
+      in
+        { triangleStage = newTriangleStage
+        , triangles = triangles
+        , xClickPoints = xClickPoints
+        , yClickPoints = yClickPoints
+        , windowWidth = windowWidth
+        , windowHeight = windowHeight
+        }
+      end
+  end
 
   fun addTriangleAndResetStage (app: app_type, x1, y1, x2, y2, x3, y3) :
     app_type =
     let
-      val {triangles, triangleStage = _, clickPoints = clickPoints} = app
+      val
+        { triangles
+        , triangleStage = _
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
       val newTriangles = newTriangle :: triangles
     in
-      { triangles = newTriangles
-      , triangleStage = NO_TRIANGLE
-      , clickPoints = clickPoints
+      { triangleStage = NO_TRIANGLE
+      , triangles = newTriangles
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
       }
     end
+
+  local
+    fun make
+      ( app: app_type
+      , windowWidth
+      , windowHeight
+      , wStart
+      , wFinish
+      , hStart
+      , hFinish
+      ) : app_type =
+      let
+        val
+          { xClickPoints = _
+          , yClickPoints = _
+          , triangles
+          , triangleStage
+          , windowWidth
+          , windowHeight
+          } = app
+
+        val xClickPoints = genClickPoints (wStart, wFinish)
+        val yClickPoints = genClickPoints (hStart, hFinish)
+      in
+        { xClickPoints = xClickPoints
+        , yClickPoints = yClickPoints
+        , triangles = triangles
+        , triangleStage = triangleStage
+        , windowWidth = windowWidth
+        , windowHeight = windowHeight
+        }
+      end
+  in
+    fun withWindowResize (app: app_type, windowWidth, windowHeight) =
+      if windowWidth = windowHeight then
+        make (app, windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)
+      else if windowWidth > windowHeight then
+        let
+          val difference = windowWidth - windowHeight
+          val wStart = difference div 2
+          val wFinish = wStart + windowHeight
+        in
+          make
+            (app, windowWidth, windowHeight, wStart, wFinish, 0, windowHeight)
+        end
+      else
+        let
+          val difference = windowHeight - windowWidth
+          val hStart = difference div 2
+          val hFinish = hStart + windowHeight
+        in
+          make (app, windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
+        end
+  end
 end

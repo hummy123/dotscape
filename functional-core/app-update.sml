@@ -29,20 +29,22 @@ struct
 
   local
     fun getVerticalClickPos
-      (clickPoints, idx, horizontalPos, mouseX, mouseY, r, g, b) =
-      if idx = Vector.length clickPoints then
+      (yClickPoints, idx, horizontalPos, mouseX, mouseY, r, g, b, windowWidth,
+      windowHeight) =
+      if idx = Vector.length yClickPoints then
         (#[], 0.0, 0.0)
       else
         let
-          val curVerticalPos = Vector.sub (clickPoints, idx)
+          val curVerticalPos = Vector.sub (yClickPoints, idx)
         in
           if mouseY < curVerticalPos - 7.0 orelse mouseY > curVerticalPos + 7.0 then
             getVerticalClickPos
-              (clickPoints, idx + 1, horizontalPos, mouseX, mouseY, r, g, b)
+              (yClickPoints, idx + 1, horizontalPos, mouseX, mouseY, r, g, b,
+              windowWidth, windowHeight)
           else
             let
-              val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
-              val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+              val halfWidth = Real32.fromInt (windowWidth div 2)
+              val halfHeight = Real32.fromInt (windowHeight div 2)
               val hpos = horizontalPos - halfWidth
               val vpos = ~(curVerticalPos - halfHeight)
               val left = (hpos - 5.0) / halfWidth
@@ -59,19 +61,22 @@ struct
             end
         end
 
-    fun getHorizontalClickPos (clickPoints, idx, mouseX, mouseY, r, g, b) =
-      if idx = Vector.length clickPoints then
+    fun getHorizontalClickPos (xClickPoints, yClickPoints, idx, mouseX, mouseY,
+      r, g, b, windowWidth, windowHeight) =
+      if idx = Vector.length xClickPoints then
         (#[], 0.0, 0.0)
       else
         let
-          val curPos = Vector.sub (clickPoints, idx)
+          val curPos = Vector.sub (xClickPoints, idx)
         in
           if mouseX < curPos - 7.0 orelse mouseX > curPos + 7.0 then
             getHorizontalClickPos
-              (clickPoints, idx + 1, mouseX, mouseY, r, g, b)
+              (xClickPoints, yClickPoints, idx + 1, mouseX, mouseY, r, g, b,
+              windowWidth, windowHeight)
           else
             getVerticalClickPos
-              (clickPoints, 0, curPos, mouseX, mouseY, r, g, b)
+              (yClickPoints, 0, curPos, mouseX, mouseY, r, g, b, windowWidth,
+              windowHeight)
         end
   in
     (*
@@ -80,14 +85,18 @@ struct
      * If a square wasn't found at the clicked position, 
      * an empty vector is returned.
      *)
-    fun getClickPos (clickPoints, mouseX, mouseY, r, g, b) =
-      getHorizontalClickPos (clickPoints, 0, mouseX, mouseY, r, g, b)
+    fun getClickPos (mouseX, mouseY, r, g, b, model: app_type) =
+      getHorizontalClickPos (#xClickPoints model, #yClickPoints model, 0,
+      mouseX, mouseY, r, g, b, #windowWidth model, #windowHeight model)
   end
 
-  fun getFirstTriangleStageVector (x1, y1, drawVec) =
+  fun getFirstTriangleStageVector (x1, y1, drawVec, model) =
     let
-      val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
-      val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+      val windowWidth = #windowWidth model
+      val windowHeight = #windowHeight model
+
+      val halfWidth = Real32.fromInt (windowWidth div 2)
+      val halfHeight = Real32.fromInt (windowHeight div 2)
 
       val x1px = x1 * halfWidth
       val left = (x1px - 5.0) / halfWidth
@@ -102,10 +111,13 @@ struct
       Vector.concat [firstVec, drawVec]
     end
 
-  fun getSecondTriangleStageVector (x1, y1, x2, y2, drawVec) =
+  fun getSecondTriangleStageVector (x1, y1, x2, y2, drawVec, model) =
     let
-      val halfWidth = Real32.fromInt (Constants.windowWidth div 2)
-      val halfHeight = Real32.fromInt (Constants.windowHeight div 2)
+      val windowWidth = #windowWidth model
+      val windowHeight = #windowHeight model
+
+      val halfWidth = Real32.fromInt (windowWidth div 2)
+      val halfHeight = Real32.fromInt (windowHeight div 2)
 
       val x1px = x1 * halfWidth
       val left = (x1px - 5.0) / halfWidth
@@ -133,28 +145,30 @@ struct
   fun getTriangleStageVector (model: app_type, drawVec) =
     case #triangleStage model of
       NO_TRIANGLE => drawVec
-    | FIRST {x1, y1} => getFirstTriangleStageVector (x1, y1, drawVec)
+    | FIRST {x1, y1} => getFirstTriangleStageVector (x1, y1, drawVec, model)
     | SECOND {x1, y1, x2, y2} =>
-        getSecondTriangleStageVector (x1, y1, x2, y2, drawVec)
+        getSecondTriangleStageVector (x1, y1, x2, y2, drawVec, model)
 
   local
     open DrawMessage
     open InputMessage
 
-    fun mouseMoveOrRelease (model, mouseX, mouseY) =
+    fun mouseMoveOrRelease (model: app_type, mouseX, mouseY) =
       let
+        val {xClickPoints, yClickPoints, ...} = model 
         val (drawVec, _, _) = getClickPos
-          (#clickPoints model, mouseX, mouseY, 1.0, 0.0, 0.0)
+          (mouseX, mouseY, 1.0, 0.0, 0.0, model)
         val drawVec = getTriangleStageVector (model, drawVec)
         val drawMsg = DRAW_BUTTON drawVec
       in
         (model, drawMsg, mouseX, mouseY)
       end
 
-    fun mouseLeftClick (model, mouseX, mouseY) =
+    fun mouseLeftClick (model: app_type, mouseX, mouseY) =
       let
+        val {xClickPoints, yClickPoints, ...} = model 
         val (buttonVec, hpos, vpos) = getClickPos
-          (#clickPoints model, mouseX, mouseY, 0.0, 0.0, 1.0)
+          (mouseX, mouseY, 0.0, 0.0, 1.0, model)
       in
         if Vector.length buttonVec > 0 then
           case #triangleStage model of
@@ -170,7 +184,8 @@ struct
               end
           | FIRST {x1, y1} =>
               let
-                val drawVec = getFirstTriangleStageVector (x1, y1, buttonVec)
+                val drawVec = getFirstTriangleStageVector (x1, y1, buttonVec,
+                model)
                 val drawMsg = DRAW_BUTTON drawVec
 
                 val newTriangleStage = SECOND
@@ -195,22 +210,28 @@ struct
 
     fun resizeWindow (model, mouseX, mouseY, width, height) =
       let
-        val low = Int.min (width, height)
-        val high = Int.min (width, height)
-
-        val difference = high - low
-        val offset = difference div 2
-        val _ = print "resized window \n"
+        val msg = String.concat [
+        "resized window. ",
+        "width = ",
+        Int.toString width,
+        " height = ",
+        Int.toString height,
+        "\n"
+                    ]
+        val _ = print msg
+        val model = AppType.withWindowResize (model, width, height)
       in
         (model, NO_DRAW, mouseX, mouseY)
       end
   in
-    fun update (model, mouseX, mouseY, inputMsg) =
+    fun update (model: app_type, mouseX, mouseY, inputMsg) =
       case inputMsg of
         MOUSE_MOVE {x = mouseX, y = mouseY} =>
           mouseMoveOrRelease (model, mouseX, mouseY)
-      | MOUSE_LEFT_RELEASE => mouseMoveOrRelease (model, mouseX, mouseY)
-      | MOUSE_LEFT_CLICK => mouseLeftClick (model, mouseX, mouseY)
+      | MOUSE_LEFT_RELEASE => 
+          mouseMoveOrRelease (model, mouseX, mouseY)
+      | MOUSE_LEFT_CLICK => 
+          mouseLeftClick (model, mouseX, mouseY)
       | RESIZE_WINDOW {width, height} =>
           resizeWindow (model, mouseX, mouseY, width, height)
   end
