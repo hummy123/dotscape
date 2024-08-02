@@ -178,8 +178,8 @@ struct
           , yClickPoints = _
           , triangles
           , triangleStage
-          , windowWidth
-          , windowHeight
+          , windowWidth = _
+          , windowHeight = _
           } = app
 
         val xClickPoints = genClickPoints (wStart, wFinish)
