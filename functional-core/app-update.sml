@@ -152,11 +152,29 @@ struct
       val halfWidth = Real32.fromInt (windowWidth div 2)
       val halfHeight = Real32.fromInt (windowHeight div 2)
 
-      val x1px = x1 * halfWidth
+      val x1px = 
+        if windowWidth > windowHeight then
+          let
+            val difference = windowWidth - windowHeight
+            val offset = Real32.fromInt (difference div 2)
+          in
+            x1 * (halfWidth - offset)
+          end
+        else 
+          x1 * halfWidth
       val left = (x1px - 5.0) / halfWidth
       val right = (x1px + 5.0) / halfWidth
 
-      val y1px = y1 * halfHeight
+      val y1px = 
+        if windowHeight > windowWidth then
+          let
+            val difference = windowHeight - windowWidth
+            val offset = Real32.fromInt (difference div 2)
+          in
+            y1 * (halfHeight - offset)
+          end
+        else
+          y1 * halfHeight
       val top = (y1px + 5.0) / halfHeight
       val bottom = (y1px - 5.0) / halfHeight
 
