@@ -235,11 +235,9 @@ struct
 
           val halfWidth = Real32.fromInt (windowWidth div 2)
           val start = offset - (windowWidth div 2)
-          val _ = print ("start = " ^ Int.toString start ^ "\n")
           val start = Real32.fromInt start / halfWidth
 
           val finish = (windowWidth - offset) - (windowWidth div 2)
-          val _ = print ("finish = " ^ Int.toString finish ^ "\n")
           val finish = Real32.fromInt finish / halfWidth
 
           val lines = helpGenGraphLinesHorizontal (start, finish, [])
@@ -288,7 +286,7 @@ struct
           val wStart = difference div 2
           val wFinish = wStart + windowHeight
         in
-          make (windowWidth, windowHeight, 0, wFinish, 0, windowHeight)
+          make (windowWidth, windowHeight, wStart, wFinish, 0, windowHeight)
         end
       else
         let
