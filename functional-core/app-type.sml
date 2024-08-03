@@ -264,7 +264,7 @@ struct
           val lines = helpGenGraphLinesVertical 
             (0, yClickPoints, lines, halfHeight, start, finish)
         in
-          Vector.fromList []
+          Vector.concat lines
         end
   end
 
@@ -299,7 +299,7 @@ struct
         let
           val difference = windowHeight - windowWidth
           val hStart = difference div 2
-          val hFinish = hStart + windowHeight
+          val hFinish = hStart + windowWidth
         in
           make (windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
         end
@@ -403,7 +403,7 @@ struct
         let
           val difference = windowHeight - windowWidth
           val hStart = difference div 2
-          val hFinish = hStart + windowHeight
+          val hFinish = hStart + windowWidth
         in
           make (app, windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
         end
