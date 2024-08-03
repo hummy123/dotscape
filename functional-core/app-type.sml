@@ -144,19 +144,18 @@ struct
           helpGenGraphLinesSquare (nextPos, limit, acc)
         end
 
-    fun helpGenGraphLinesVertical (pos, limit, acc) =
+    fun helpGenGraphLinesVertical (pos, limit, acc, xMin, xMax) =
       if pos <= limit + 0.01 then
         let
           val vec = Vector.fromList
             [ (* y = _.1 *) 
-              ~1.0, pos - 0.002
-            , ~1.0, pos + 0.002
-            , 1.0, pos + 0.002
+              xMin, pos - 0.002
+            , xMin, pos + 0.002
+            , xMax, pos + 0.002
 
-            , 1.0, pos + 0.002
-            , 1.0, pos - 0.002
-            , ~1.0, pos - 0.002 
-
+            , xMax, pos + 0.002
+            , xMax, pos - 0.002
+            , xMin, pos - 0.002 
             ]
           val acc = vec :: acc
           val pos = pos + 0.05
@@ -165,18 +164,18 @@ struct
             let
               val vec = Vector.fromList 
                 [ (* y = _.05 *)
-                  ~1.0, pos - 0.001
-                , ~1.0, pos + 0.001
-                , 1.0, pos + 0.001
+                  xMin, pos - 0.001
+                , xMin, pos + 0.001
+                , xMax, pos + 0.001
 
-                , 1.0, pos + 0.001
-                , 1.0, pos - 0.001
-                , ~1.0, pos - 0.001
+                , xMax, pos + 0.001
+                , xMax, pos - 0.001
+                , xMin, pos - 0.001
                 ]
               val acc = vec :: acc
               val pos = pos + 0.05
             in
-              helpGenGraphLinesVertical (pos, limit, acc)
+              helpGenGraphLinesVertical (pos, limit, acc, xMin, xMax)
             end
           else
             acc
@@ -184,19 +183,19 @@ struct
       else
         acc
 
-    fun helpGenGraphLinesHorizontal (pos, limit, acc) =
+    fun helpGenGraphLinesHorizontal (pos, limit, acc, yMin, yMax) =
       if pos <= limit + 0.01 then
         let
           val pos2 = pos + 0.05
           val vec = Vector.fromList
             [ (* x = _.1 *) 
-              pos - 0.002, ~1.0
-            , pos + 0.002, ~1.0
-            , pos + 0.002, 1.0
+              pos - 0.002, yMin
+            , pos + 0.002, yMin
+            , pos + 0.002, yMax
 
-            , pos + 0.002, 1.0
-            , pos - 0.002, 1.0
-            , pos - 0.002, ~1.0
+            , pos + 0.002, yMax
+            , pos - 0.002, yMax
+            , pos - 0.002, yMin
             ]
           val acc = vec :: acc
           val pos = pos + 0.05
@@ -206,18 +205,18 @@ struct
               val vec = Vector.fromList 
                 [
                   (* x = _.05 *)
-                  pos2 - 0.001, ~1.0
-                , pos2 + 0.001, ~1.0
-                , pos2 + 0.001, 1.0
+                  pos2 - 0.001, yMin
+                , pos2 + 0.001, yMin
+                , pos2 + 0.001, yMax
 
-                , pos2 + 0.001, 1.0
-                , pos2 - 0.001, 1.0
-                , pos2 - 0.001, ~1.0
+                , pos2 + 0.001, yMax
+                , pos2 - 0.001, yMax
+                , pos2 - 0.001, yMin
                 ]
               val acc = vec :: acc
               val pos = pos + 0.05
             in
-              helpGenGraphLinesHorizontal (pos, limit, acc)
+              helpGenGraphLinesHorizontal (pos, limit, acc, yMin, yMax)
             end
           else
             acc
@@ -240,8 +239,8 @@ struct
           val finish = (windowWidth - offset) - (windowWidth div 2)
           val finish = Real32.fromInt finish / halfWidth
 
-          val lines = helpGenGraphLinesHorizontal (start, finish, [])
-          val lines = helpGenGraphLinesVertical (~1.0, 1.0, lines)
+          val lines = helpGenGraphLinesHorizontal (start, finish, [], ~1.0, 1.0)
+          val lines = helpGenGraphLinesVertical (~1.0, 1.0, lines, start, finish)
         in
           Vector.concat lines
         end
@@ -259,8 +258,8 @@ struct
             else
               1.0 + ndcOffset
 
-          val lines = helpGenGraphLinesHorizontal (~1.0, 1.0, [])
-          val lines = helpGenGraphLinesVertical (start, finish, lines)
+          val lines = helpGenGraphLinesHorizontal (~1.0, 1.0, [], start, finish)
+          val lines = helpGenGraphLinesVertical (start, finish, lines, ~1.0, 1.0)
         in
           Vector.concat lines
         end
