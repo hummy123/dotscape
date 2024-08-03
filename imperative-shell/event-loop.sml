@@ -99,7 +99,6 @@ struct
                end
            | RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles, graphLines} =>
                let
-                 val _ = print ("resize in event loop\n")
                  val _ =
                    AppDraw.uploadTrianglesVector
                      (triangleDrawObject, triangles)
