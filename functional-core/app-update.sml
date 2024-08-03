@@ -374,21 +374,14 @@ struct
 
     fun resizeWindow (model, mouseX, mouseY, width, height) =
       let
-        val msg = String.concat
-          [ "resized window. "
-          , "width = "
-          , Int.toString width
-          , " height = "
-          , Int.toString height
-          , "\n"
-          ]
-        val _ = print msg
         val model = AppType.withWindowResize (model, width, height)
 
         val triangles = getTrianglesVector model
         val graphLines = #graphLines model
-        val drawMsg = RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles = triangles,
-        graphLines = graphLines}
+        val drawMsg = 
+          RESIZE_TRIANGLES_BUTTONS_AND_GRAPH 
+            {triangles = triangles,
+            graphLines = graphLines}
       in
         (model, drawMsg, mouseX, mouseY)
       end

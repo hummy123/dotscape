@@ -260,9 +260,9 @@ struct
           val finish = Real32.fromInt finish / halfHeight
 
           val lines = helpGenGraphLinesHorizontal
-            (0, xClickPoints, [], halfWidth, ~1.0, 1.0)
+            (0, xClickPoints, [], halfWidth, start, finish)
           val lines = helpGenGraphLinesVertical 
-            (0, yClickPoints, lines, halfHeight, start, finish)
+            (0, yClickPoints, lines, halfHeight, ~1.0, 1.0)
         in
           Vector.concat lines
         end
