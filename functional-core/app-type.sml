@@ -22,9 +22,12 @@ sig
     , windowHeight: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
+    , graphLines: Real32.real vector
     }
 
   val getInitial: int * int -> app_type
+
+  val genGraphLines: int * int -> Real32.real vector
 
   val genClickPoints: int * int -> Real32.real vector
 
@@ -75,6 +78,7 @@ struct
     , windowHeight: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
+    , graphLines: Real32.real vector
     }
 
   fun genClickPoints (start, finish) =
@@ -87,6 +91,184 @@ struct
     end
 
   local
+    (* This function only produces the desired result 
+     * when the window is a square and has the aspect ratio 1:1.
+     * This is because the function assumes it can use 
+     * the same position coordinates both horizontally and vertically.
+     * *)
+    fun helpGenGraphLinesSquare (pos: Real32.real, limit, acc) =
+      if pos >= limit then
+        Vector.concat acc
+      else
+        let
+          val pos2 = pos + 0.05
+          val vec = Vector.fromList
+            [ (* x = _.1 *) 
+              pos - 0.002, ~1.0
+            , pos + 0.002, ~1.0
+            , pos + 0.002, 1.0
+
+            , pos + 0.002, 1.0
+            , pos - 0.002, 1.0
+            , pos - 0.002, ~1.0
+              (* y = _.1 *)
+            , ~1.0, pos - 0.002
+            , ~1.0, pos + 0.002
+            , 1.0, pos + 0.002
+
+            , 1.0, pos + 0.002
+            , 1.0, pos - 0.002
+            , ~1.0, pos - 0.002 
+
+              (* x = _.05 *)
+            , pos2 - 0.001, ~1.0
+            , pos2 + 0.001, ~1.0
+            , pos2 + 0.001, 1.0
+
+            , pos2 + 0.001, 1.0
+            , pos2 - 0.001, 1.0
+            , pos2 - 0.001, ~1.0
+
+              (* y = _.05 *)
+            , ~1.0, pos2 - 0.001
+            , ~1.0, pos2 + 0.001
+            , 1.0, pos2 + 0.001
+
+            , 1.0, pos2 + 0.001
+            , 1.0, pos2 - 0.001
+            , ~1.0, pos2 - 0.001
+            ]
+          val acc = vec :: acc
+          val nextPos = pos + 0.1
+        in
+          helpGenGraphLinesSquare (nextPos, limit, acc)
+        end
+
+    fun helpGenGraphLinesVertical (pos, limit, acc) =
+      if pos <= limit + 0.01 then
+        let
+          val vec = Vector.fromList
+            [ (* y = _.1 *) 
+              ~1.0, pos - 0.002
+            , ~1.0, pos + 0.002
+            , 1.0, pos + 0.002
+
+            , 1.0, pos + 0.002
+            , 1.0, pos - 0.002
+            , ~1.0, pos - 0.002 
+
+            ]
+          val acc = vec :: acc
+          val pos = pos + 0.05
+        in
+          if pos <= limit + 0.01 then
+            let
+              val vec = Vector.fromList 
+                [ (* y = _.05 *)
+                  ~1.0, pos - 0.001
+                , ~1.0, pos + 0.001
+                , 1.0, pos + 0.001
+
+                , 1.0, pos + 0.001
+                , 1.0, pos - 0.001
+                , ~1.0, pos - 0.001
+                ]
+              val acc = vec :: acc
+              val pos = pos + 0.05
+            in
+              helpGenGraphLinesVertical (pos, limit, acc)
+            end
+          else
+            acc
+        end
+      else
+        acc
+
+    fun helpGenGraphLinesHorizontal (pos, limit, acc) =
+      if pos <= limit + 0.01 then
+        let
+          val pos2 = pos + 0.05
+          val vec = Vector.fromList
+            [ (* x = _.1 *) 
+              pos - 0.002, ~1.0
+            , pos + 0.002, ~1.0
+            , pos + 0.002, 1.0
+
+            , pos + 0.002, 1.0
+            , pos - 0.002, 1.0
+            , pos - 0.002, ~1.0
+            ]
+          val acc = vec :: acc
+          val pos = pos + 0.05
+        in
+          if pos <= limit + 0.01 then
+            let
+              val vec = Vector.fromList 
+                [
+                  (* x = _.05 *)
+                  pos2 - 0.001, ~1.0
+                , pos2 + 0.001, ~1.0
+                , pos2 + 0.001, 1.0
+
+                , pos2 + 0.001, 1.0
+                , pos2 - 0.001, 1.0
+                , pos2 - 0.001, ~1.0
+                ]
+              val acc = vec :: acc
+              val pos = pos + 0.05
+            in
+              helpGenGraphLinesHorizontal (pos, limit, acc)
+            end
+          else
+            acc
+        end
+      else
+        acc
+  in
+    fun genGraphLines (windowWidth, windowHeight) =
+      if windowWidth = windowHeight then
+        helpGenGraphLinesSquare (~1.0, 1.0, [])
+      else if windowWidth > windowHeight then
+        let
+          val difference = windowWidth - windowHeight
+          val offset = difference div 2
+
+          val halfWidth = Real32.fromInt (windowWidth div 2)
+          val start = offset - (windowWidth div 2)
+          val _ = print ("start = " ^ Int.toString start ^ "\n")
+          val start = Real32.fromInt start / halfWidth
+
+          val finish = (windowWidth - offset) - (windowWidth div 2)
+          val _ = print ("finish = " ^ Int.toString finish ^ "\n")
+          val finish = Real32.fromInt finish / halfWidth
+
+          val lines = helpGenGraphLinesHorizontal (start, finish, [])
+          val lines = helpGenGraphLinesVertical (~1.0, 1.0, lines)
+        in
+          Vector.concat lines
+        end
+      else
+        (* windowWidth < windowHeight *)
+        let
+          val difference = windowHeight - windowWidth
+          val offset = difference div 2
+          val offset = Real32.fromInt (difference - (windowWidth div 2))
+          val ndcOffset = offset / Real32.fromInt windowWidth
+          val start = ndcOffset
+          val finish = 
+            if ndcOffset > 0.0 then
+              1.0 - ndcOffset
+            else
+              1.0 + ndcOffset
+
+          val lines = helpGenGraphLinesHorizontal (~1.0, 1.0, [])
+          val lines = helpGenGraphLinesVertical (start, finish, lines)
+        in
+          Vector.concat lines
+        end
+  end
+
+  local
     fun make (windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) =
       { triangles = []
       , triangleStage = NO_TRIANGLE
@@ -94,6 +276,7 @@ struct
       , windowHeight = windowHeight
       , xClickPoints = genClickPoints (wStart, wFinish)
       , yClickPoints = genClickPoints (hStart, hFinish)
+      , graphLines = genGraphLines (windowWidth, windowHeight)
       }
   in
     fun getInitial (windowWidth, windowHeight) =
@@ -126,6 +309,7 @@ struct
           , yClickPoints
           , windowWidth
           , windowHeight
+          , graphLines
           } = app
       in
         { triangleStage = newTriangleStage
@@ -134,6 +318,7 @@ struct
         , yClickPoints = yClickPoints
         , windowWidth = windowWidth
         , windowHeight = windowHeight
+        , graphLines = graphLines
         }
       end
   end
@@ -148,6 +333,7 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
+        , graphLines
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -159,6 +345,7 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , graphLines = graphLines
       }
     end
 
@@ -176,17 +363,16 @@ struct
         val
           { xClickPoints = _
           , yClickPoints = _
-          , triangles
-          , triangleStage
           , windowWidth = _
           , windowHeight = _
+          , graphLines = _
+          , triangles
+          , triangleStage
           } = app
-
-        val xClickPoints = genClickPoints (wStart, wFinish)
-        val yClickPoints = genClickPoints (hStart, hFinish)
       in
-        { xClickPoints = xClickPoints
-        , yClickPoints = yClickPoints
+        { xClickPoints = genClickPoints (wStart, wFinish)
+        , yClickPoints = genClickPoints (hStart, hFinish)
+        , graphLines = genGraphLines (windowWidth, windowHeight)
         , triangles = triangles
         , triangleStage = triangleStage
         , windowWidth = windowWidth
