@@ -30,6 +30,7 @@ struct
           ( drawMailbox
           , window
           , graphDrawObject
+          , Vector.length Constants.graphLines div 2
           , buttonDrawObject
           , 0
           , triangleDrawObject

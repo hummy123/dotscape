@@ -52,15 +52,23 @@ struct
       graphDrawObject
     end
 
-  fun drawGraphLines (graphDrawObject: draw_object) =
+  fun uploadGraphLines (graphDrawObject: draw_object, vec) =
+    let
+      val {vertexBuffer, ...} = graphDrawObject
+      val _ = Gles3.bindBuffer vertexBuffer
+      val _ = Gles3.bufferData (vec, Vector.length vec, Gles3.STATIC_DRAW ())
+    in
+      ()
+    end
+
+  fun drawGraphLines (graphDrawObject: draw_object, graphDrawLength) =
     let
       val {vertexBuffer, program, ...} = graphDrawObject
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
       val _ = Gles3.enableVertexAttribArray 0
       val _ = Gles3.useProgram program
-      val _ = Gles3.drawArrays
-        (Gles3.TRIANGLES (), 0, Vector.length Constants.graphLines div 2)
+      val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, graphDrawLength)
     in
       ()
     end

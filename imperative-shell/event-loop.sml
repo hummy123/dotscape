@@ -28,6 +28,7 @@ struct
     ( drawMailbox
     , window
     , graphDrawObject
+    , drawGraphLength
     , buttonDrawObject
     , buttonDrawLength
     , triangleDrawObject
@@ -40,7 +41,7 @@ struct
             val _ = Gles3.clearColor (1.0, 1.0, 1.0, 1.0)
             val _ = Gles3.clear ()
 
-            val _ = AppDraw.drawGraphLines graphDrawObject
+            val _ = AppDraw.drawGraphLines (graphDrawObject, drawGraphLength)
             val _ =
               AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
@@ -52,6 +53,7 @@ struct
               ( drawMailbox
               , window
               , graphDrawObject
+              , drawGraphLength
               , buttonDrawObject
               , buttonDrawLength
               , triangleDrawObject
@@ -69,6 +71,7 @@ struct
                    ( drawMailbox
                    , window
                    , graphDrawObject
+                   , drawGraphLength
                    , buttonDrawObject
                    , buttonDrawLength
                    , triangleDrawObject
@@ -87,6 +90,31 @@ struct
                    ( drawMailbox
                    , window
                    , graphDrawObject
+                   , drawGraphLength
+                   , buttonDrawObject
+                   , 0
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   )
+               end
+           | RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles, graphLines} =>
+               let
+                 val _ = print ("resize in event loop\n")
+                 val _ =
+                   AppDraw.uploadTrianglesVector
+                     (triangleDrawObject, triangles)
+                 val triangleDrawLength = Vector.length triangles div 2
+               (* buttons are reset by setting buttonDrawLength to 0 *)
+                 val _ =
+                   AppDraw.uploadGraphLines
+                    (graphDrawObject, graphLines)
+                  val drawGraphLength = Vector.length graphLines div 2
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , drawGraphLength
                    , buttonDrawObject
                    , 0
                    , triangleDrawObject
@@ -98,6 +126,7 @@ struct
                  ( drawMailbox
                  , window
                  , graphDrawObject
+                 , drawGraphLength
                  , buttonDrawObject
                  , buttonDrawLength
                  , triangleDrawObject

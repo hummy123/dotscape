@@ -41,6 +41,8 @@ struct
     \   FragColor = vec4(frag_col.x, frag_col.y, frag_col.z, 1.0f);\n\
     \}"
 
+  (* Todo: fix. Currently an empty vector which is not desired result,
+   * but changing vector dynamically (through resizing) works as desired. *)
   val graphLines: Real32.real vector =
-    AppType.genGraphLines (windowWidth, windowHeight)
+    Vector.fromList []
 end
