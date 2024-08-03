@@ -247,7 +247,22 @@ struct
       else
         (* windowWidth < windowHeight *)
         let
-          (* todo; fix based on windowWidth > windowHeight *)
+          val difference = windowHeight - windowWidth
+          val offset = difference div 2
+
+          val halfWidth = Real32.fromInt (windowWidth div 2)
+          val halfHeight = Real32.fromInt (windowHeight div 2)
+
+          val start = offset - (windowHeight div 2)
+          val start = Real32.fromInt start / halfHeight
+
+          val finish = (windowHeight - offset) - (windowHeight div 2)
+          val finish = Real32.fromInt finish / halfHeight
+
+          val lines = helpGenGraphLinesHorizontal
+            (0, xClickPoints, [], halfWidth, ~1.0, 1.0)
+          val lines = helpGenGraphLinesVertical 
+            (0, yClickPoints, lines, halfHeight, start, finish)
         in
           Vector.fromList []
         end

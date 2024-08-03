@@ -41,11 +41,7 @@ struct
 
       val _ = Gles3.bindBuffer vertexBuffer
       val _ =
-        Gles3.bufferData
-          ( Constants.graphLines
-          , Vector.length Constants.graphLines
-          , Gles3.STATIC_DRAW ()
-          )
+        Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
       val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
       val _ = Gles3.enableVertexAttribArray 0
     in

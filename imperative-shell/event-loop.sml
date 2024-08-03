@@ -14,7 +14,7 @@ struct
         loop (inputMailbox, drawMailbox, mouseX, mouseY, model)
       end
   in
-    fun update (inputMailbox, drawMailbox) =
+    fun update (inputMailbox, drawMailbox, initial) =
       loop
         ( inputMailbox
         , drawMailbox
