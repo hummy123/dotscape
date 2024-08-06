@@ -82,6 +82,14 @@ struct
      ]
 
   local
+    (*
+     * Range to detect from clickable position. 
+     * For example, if we have a clickable position at (x, y) = (500, 500),
+     * with a range of 15, we can detect clicks targeting this position 
+     * from top left at (485, 485) to bottom right at (515, 515).
+     * *)
+    val range = 15.0
+
     fun getVerticalClickPos
       ( yClickPoints
       , idx
@@ -100,7 +108,7 @@ struct
         let
           val curVerticalPos = Vector.sub (yClickPoints, idx)
         in
-          if mouseY < curVerticalPos - 7.0 orelse mouseY > curVerticalPos + 7.0 then
+          if mouseY < curVerticalPos - range orelse mouseY > curVerticalPos + range then
             getVerticalClickPos
               ( yClickPoints
               , idx + 1
@@ -205,7 +213,7 @@ struct
         let
           val curPos = Vector.sub (xClickPoints, idx)
         in
-          if mouseX < curPos - 7.0 orelse mouseX > curPos + 7.0 then
+          if mouseX < curPos - range orelse mouseX > curPos + range then
             getHorizontalClickPos
               ( xClickPoints
               , yClickPoints
