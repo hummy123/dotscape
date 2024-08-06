@@ -26,11 +26,11 @@ Dotscape has only been tested on aarch64-linux (a Raspberry Pi 5) but it may wor
 
 Requirements include:
 
-- The (MLton)[https://github.com/mlton/mlton] compiler for Standard ML
+- The [MLton](https://github.com/mlton/mlton) compiler for Standard ML
 - OpenG ES 3.0
-- The (GLFW)[https://github.com/glfw/glfw] windowing library
+- The [GLFW](https://github.com/glfw/glfw) windowing library
 
-The last two requirements may be a bit malleable because the project follows the (Functional Core, Imperative Shell)[https://hummy123.github.io/2024/06/20/Functional-Core,-Imperative-Shell.html] architecture, maintaining a strict separation between pure and impure code.
+The last two requirements may be a bit malleable because the project follows the [Functional Core, Imperative Shell](https://hummy123.github.io/2024/06/20/Functional-Core,-Imperative-Shell.html) architecture, maintaining a strict separation between pure and impure code.
 
 ### How to build
 
@@ -43,8 +43,8 @@ The last two requirements may be a bit malleable because the project follows the
 
 This isn't an exhaustive list, but these are some features I would like to add to this project at some point from the top of my head.
 
-[-] Display clicked positions
-[-] Redraw components when resized
+[x] Display clicked positions
+[x] Redraw components when resized
 [ ] Support undo (with <Ctrl-z>) and redo (with <Ctrl-y> or <Ctrl-Shift-z>)
 [ ] Export to code (possibly different options like creating a flat array/vector or an index buffer)
 [ ] Linear interpolation - instead of exporting a vector, export a function which takes (xPos, yPos, xLength, yLength) arguments and lengths and returns a vector where the object is fitted in these coordinates.
