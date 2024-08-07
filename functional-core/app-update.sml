@@ -1,7 +1,7 @@
 signature APP_UPDATE =
 sig
-  val update: AppType.app_type * int * int * InputMessage.t
-              -> AppType.app_type * int * int * DrawMessage.t
+  val update: AppType.app_type * Real32.real * Real32.real * InputMessage.t
+              -> AppType.app_type * DrawMessage.t * Real32.real * Real32.real
 end
 
 structure AppUpdate :> APP_UPDATE =
@@ -12,9 +12,18 @@ struct
 
   fun mouseMoveOrRelease (model: app_type, mouseX, mouseY) =
     let
-      val {xClickPoints, yClickPoints, ...} = model
+      val {xClickPoints, yClickPoints, windowWidth, windowHeight, ...} = model
       val (drawVec, _, _) = ClickPoints.getClickPosition
-        (mouseX, mouseY, 1.0, 0.0, 0.0, model)
+        ( mouseX
+        , mouseY
+        , 1.0
+        , 0.0
+        , 0.0
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        )
       val drawVec = TriangleStage.toVector (model, drawVec)
       val drawMsg = DRAW_BUTTON drawVec
     in
@@ -23,9 +32,18 @@ struct
 
   fun mouseLeftClick (model: app_type, mouseX, mouseY) =
     let
-      val {xClickPoints, yClickPoints, ...} = model
+      val {xClickPoints, yClickPoints, windowWidth, windowHeight, ...} = model
       val (buttonVec, hpos, vpos) = ClickPoints.getClickPosition
-        (mouseX, mouseY, 0.0, 0.0, 1.0, model)
+        ( mouseX
+        , mouseY
+        , 0.0
+        , 0.0
+        , 1.0
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        )
     in
       if Vector.length buttonVec > 0 then
         case #triangleStage model of
@@ -35,7 +53,7 @@ struct
               val drawMsg = DRAW_BUTTON drawVec
 
               val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-              val model = AppType.withTriangleStage (model, newTriangleStage)
+              val model = AppWith.triangleStage (model, newTriangleStage)
             in
               (model, drawMsg, mouseX, mouseY)
             end
@@ -47,16 +65,16 @@ struct
 
               val newTriangleStage = SECOND
                 {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-              val model = AppType.withTriangleStage (model, newTriangleStage)
+              val model = AppWith.triangleStage (model, newTriangleStage)
             in
               (model, drawMsg, mouseX, mouseY)
             end
         | SECOND {x1, y1, x2, y2} =>
             let
-              val model = AppType.addTriangleAndResetStage
+              val model = AppWith.newTriangle
                 (model, x1, y1, x2, y2, hpos, vpos)
 
-              val drawVec = getTrianglesVector model
+              val drawVec = Triangles.toVector model
               val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
             in
               (model, drawMsg, mouseX, mouseY)
@@ -67,8 +85,8 @@ struct
 
   fun resizeWindow (model, mouseX, mouseY, width, height) =
     let
-      val model = AppType.withWindowResize (model, width, height)
-      val triangles = getTrianglesVector model
+      val model = AppWith.windowResize (model, width, height)
+      val triangles = Triangles.toVector model
       val graphLines = #graphLines model
       val drawMsg =
         RESIZE_TRIANGLES_BUTTONS_AND_GRAPH

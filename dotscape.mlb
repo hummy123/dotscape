@@ -14,7 +14,7 @@ functional-core/triangle-stage.sml
 ann
   "allowVectorExps true"
 in
-  functional-core/triangle.sml
+  functional-core/triangles.sml
 end
 
 functional-core/app-init.sml
@@ -22,3 +22,4 @@ functional-core/app-with.sml
 
 message-types/input-msg.sml
 message-types/draw-msg.sml
+functional-core/app-update.sml

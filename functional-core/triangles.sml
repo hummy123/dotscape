@@ -1,4 +1,4 @@
-structure Triangle =
+structure Triangles =
 struct
   open AppType
 
