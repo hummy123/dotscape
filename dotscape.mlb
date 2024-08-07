@@ -1,27 +1,13 @@
-$(SML_LIB)/basis/mlton.mlb
 $(SML_LIB)/basis/basis.mlb
-$(SML_LIB)/cml/cml.mlb
-
-ann
-  "allowFFI true"
-in
-  ffi/gles3-import.sml
-  ffi/glfw-import.sml
-  ffi/glfw-input.sml
-end
-
-message-types/input-msg.sml
-message-types/draw-msg.sml
-functional-core/app-type.sml
 
 ann
   "allowVectorExps true"
 in
-  imperative-shell/constants.sml
-  functional-core/app-update.sml
-  imperative-shell/app-draw.sml
+  functional-core/ndc.sml
+  functional-core/click-points.sml
+  functional-core/graph-lines.sml
 end
+functional-core/app-type.sml
+functional-core/app-with.sml
 
-imperative-shell/input-callbacks.sml
-imperative-shell/event-loop.sml
-imperative-shell/shell.sml
+
