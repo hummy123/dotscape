@@ -7,7 +7,18 @@ in
   functional-core/click-points.sml
   functional-core/graph-lines.sml
 end
+
 functional-core/app-type.sml
+functional-core/triangle-stage.sml
+
+ann
+  "allowVectorExps true"
+in
+  functional-core/triangle.sml
+end
+
+functional-core/app-init.sml
 functional-core/app-with.sml
 
-
+message-types/input-msg.sml
+message-types/draw-msg.sml
