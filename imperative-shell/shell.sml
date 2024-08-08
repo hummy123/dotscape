@@ -15,12 +15,18 @@ struct
       val _ = Glfw.makeContextCurrent window
       val _ = Gles3.loadGlad ()
 
-      val initialModel = AppType.getInitial (Constants.windowWidth, Constants.windowHeight)
+      val initialModel =
+        AppInit.fromWindowWidthAndHeight
+          (Constants.windowWidth, Constants.windowHeight)
 
-      val graphLines = #graphLines initialModel
+      val graphLines = 
+        let
+          open AppType
+        in
+          #graphLines initialModel
+        end
       val graphDrawObject = AppDraw.initGraphLines ()
-      val _ =
-        AppDraw.uploadGraphLines (graphDrawObject, graphLines)
+      val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
 
       val buttonDrawObject = AppDraw.initButton ()
       val triangleDrawObject = AppDraw.initTriangles ()
@@ -30,8 +36,8 @@ struct
 
       val _ = CML.spawn (fn () =>
         InputCallbacks.registerCallbacks (window, inputMailbox))
-      val _ = CML.spawn 
-        (fn () => EventLoop.update (inputMailbox, drawMailbox, initialModel))
+      val _ = CML.spawn (fn () =>
+        EventLoop.update (inputMailbox, drawMailbox, initialModel))
       val _ = CML.spawn (fn () =>
         EventLoop.draw
           ( drawMailbox

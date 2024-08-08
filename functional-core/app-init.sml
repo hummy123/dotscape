@@ -1,6 +1,6 @@
-signature APP_INIT = 
+signature APP_INIT =
 sig
-  val fromWidthAndHeight : int * int -> AppType.app_type
+  val fromWindowWidthAndHeight: int * int -> AppType.app_type
 end
 
 structure AppInit :> APP_INIT =
@@ -26,7 +26,7 @@ struct
       }
     end
 
-  fun fromWidthAndHeight (windowWidth, windowHeight) =
+  fun fromWindowWidthAndHeight (windowWidth, windowHeight) =
     if windowWidth = windowHeight then
       helpFromWidthAndHeight
         (windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)

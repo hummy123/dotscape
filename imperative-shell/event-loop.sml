@@ -15,13 +15,7 @@ struct
       end
   in
     fun update (inputMailbox, drawMailbox, initial) =
-      loop
-        ( inputMailbox
-        , drawMailbox
-        , 0.0
-        , 0.0
-        , AppType.getInitial (Constants.windowWidth, Constants.windowHeight)
-        )
+      loop (inputMailbox, drawMailbox, 0.0, 0.0, initial)
   end
 
   fun draw
@@ -100,14 +94,11 @@ struct
            | RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles, graphLines} =>
                let
                  val _ =
-                   AppDraw.uploadTrianglesVector
-                     (triangleDrawObject, triangles)
+                   AppDraw.uploadTrianglesVector (triangleDrawObject, triangles)
                  val triangleDrawLength = Vector.length triangles div 2
-               (* buttons are reset by setting buttonDrawLength to 0 *)
-                 val _ =
-                   AppDraw.uploadGraphLines
-                    (graphDrawObject, graphLines)
-                  val drawGraphLength = Vector.length graphLines div 2
+                 (* buttons are reset by setting buttonDrawLength to 0 *)
+                 val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
+                 val drawGraphLength = Vector.length graphLines div 2
                in
                  draw
                    ( drawMailbox

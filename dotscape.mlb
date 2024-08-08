@@ -1,5 +1,6 @@
 $(SML_LIB)/basis/basis.mlb
 
+(* FUNCTIONAL CORE *)
 ann
   "allowVectorExps true"
 in
@@ -23,3 +24,26 @@ functional-core/app-with.sml
 message-types/input-msg.sml
 message-types/draw-msg.sml
 functional-core/app-update.sml
+
+(* IMPERATIVE SHELL *)
+$(SML_LIB)/basis/mlton.mlb
+$(SML_LIB)/cml/cml.mlb
+
+ann
+  "allowFFI true"
+in
+  ffi/gles3-import.sml
+  ffi/glfw-import.sml
+  ffi/glfw-input.sml
+end
+
+ann
+  "allowVectorExps true"
+in
+  imperative-shell/constants.sml
+  imperative-shell/app-draw.sml
+end
+
+imperative-shell/input-callbacks.sml
+imperative-shell/event-loop.sml
+imperative-shell/shell.sml
