@@ -24,6 +24,7 @@ sig
     , yClickPoints: Real32.real vector
     , graphLines: Real32.real vector
     , undo: (Real32.real * Real32.real) list
+    , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
     , mouseY: Real32.real
     }
@@ -63,6 +64,7 @@ struct
     , yClickPoints: Real32.real vector
     , graphLines: Real32.real vector
     , undo: (Real32.real * Real32.real) list
+    , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
     , mouseY: Real32.real
     }

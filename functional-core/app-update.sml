@@ -1,6 +1,6 @@
 signature APP_UPDATE =
 sig
-  val update: AppType.app_type *  InputMessage.t
+  val update: AppType.app_type * InputMessage.t
               -> AppType.app_type * DrawMessage.t
 end
 
@@ -73,7 +73,7 @@ struct
 
               val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
               val model =
-                AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
+                AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
             in
               (model, drawMsg)
             end
@@ -86,13 +86,13 @@ struct
               val newTriangleStage = SECOND
                 {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
               val model =
-                AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
+                AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
             in
               (model, drawMsg)
             end
         | SECOND {x1, y1, x2, y2} =>
             let
-              val model = AppWith.newTriangle
+              val model = AppWith.addTriangle
                 (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
 
               val drawVec = Triangles.toVector model
@@ -120,31 +120,33 @@ struct
     case #triangleStage model of
       FIRST {x1, y1} =>
         (* Change FIRST to NO_TRIANGLE and clear buttons. *)
-        let val model = AppWith.replaceTriangleStage (model, NO_TRIANGLE)
+        let val model = AppWith.undoTriangleStage (model, NO_TRIANGLE, (x1, y1))
         in (model, CLEAR_BUTTONS)
         end
     | SECOND {x1, y1, x2, y2} =>
         (* Change FIRST to SECOND and redraw buttons. *)
         let
           val newTriangleStage = FIRST {x1 = x1, y1 = y1}
-          val model = AppWith.replaceTriangleStage (model, newTriangleStage)
+          val model =
+            AppWith.undoTriangleStage (model, newTriangleStage, (x2, y2))
 
-          val drawVec =
-            TriangleStage.firstToVector (x1, y1, Vector.fromList [], model)
+          val emptyVec: Real32.real vector = Vector.fromList []
+          val drawVec = TriangleStage.firstToVector (x1, y1, emptyVec, model)
           val drawMsg = DRAW_BUTTON drawVec
         in
           (model, drawMsg)
         end
     | NO_TRIANGLE =>
         (case #triangles model of
-           {x1, y1, x2, y2, ...} :: trianglesTl =>
+           {x1, y1, x2, y2, x3, y3} :: trianglesTl =>
              (* Have to slice off (x3, y3) from triangle head,
               * turn (x1, y1, x2, y2) into a triangleStage,
               * and redraw both triangle and triangleStage. *)
              let
                val triangleStage = SECOND {x1 = x1, y1 = y1, x2 = x2, y2 = y2}
                val model =
-                 AppWith.undoTriangle (model, triangleStage, trianglesTl)
+                 AppWith.undoTriangle
+                   (model, triangleStage, trianglesTl, (x3, y3))
 
                val newTriangleVec = Triangles.toVector model
                val drawVec = TriangleStage.secondToVector
@@ -167,7 +169,6 @@ struct
         end
     | MOUSE_LEFT_RELEASE => mouseMoveOrRelease model
     | MOUSE_LEFT_CLICK => mouseLeftClick model
-    | RESIZE_WINDOW {width, height} =>
-        resizeWindow (model, width, height)
+    | RESIZE_WINDOW {width, height} => resizeWindow (model, width, height)
     | UNDO_ACTION => undoAction model
 end

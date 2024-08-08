@@ -24,6 +24,7 @@ struct
       , yClickPoints = yClickPoints
       , graphLines = graphLines
       , undo = []
+      , redo = []
       , mouseX = 0.0
       , mouseY = 0.0
       }

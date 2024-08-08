@@ -2,17 +2,30 @@ signature APP_WITH =
 sig
   val windowResize: AppType.app_type * int * int -> AppType.app_type
 
-  val newTriangleStage:
+  val mousePosition: AppType.app_type * Real32.real * Real32.real
+                     -> AppType.app_type
+
+  val undoTriangleStage:
     AppType.app_type * AppType.triangle_stage * (Real32.real * Real32.real)
     -> AppType.app_type
-  val replaceTriangleStage: AppType.app_type * AppType.triangle_stage
-                            -> AppType.app_type
 
   val undoTriangle:
-    AppType.app_type * AppType.triangle_stage * AppType.triangle list
+    AppType.app_type
+    * AppType.triangle_stage
+    * AppType.triangle list
+    * (Real32.real * Real32.real)
     -> AppType.app_type
 
-  val newTriangle:
+  (* 
+   * add functions clear the redo stack, 
+   * as they are meant to be called after a click action,
+   * and also add new click position to undo stack.
+   *)
+  val addTriangleStage:
+    AppType.app_type * AppType.triangle_stage * (Real32.real * Real32.real)
+    -> AppType.app_type
+
+  val addTriangle:
     AppType.app_type
     * Real32.real
     * Real32.real
@@ -22,17 +35,15 @@ sig
     * Real32.real
     * (Real32.real * Real32.real)
     -> AppType.app_type
-
-  val mousePosition: AppType.app_type * Real32.real * Real32.real
-                     -> AppType.app_type
 end
 
 structure AppWith :> APP_WITH =
 struct
   open AppType
 
-  fun newTriangleStage
-    (app: app_type, newTriangleStage: triangle_stage, xyTuple) : app_type =
+  (* add to undo, clear redo *)
+  fun addTriangleStage
+    (app: app_type, newTriangleStage: triangle_stage, newUndoHd) : app_type =
     let
       val
         { triangleStage = _
@@ -43,84 +54,28 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , redo = _
         , mouseX
         , mouseY
         } = app
 
-      val newUndo = xyTuple :: undo
+      val newUndo = newUndoHd :: undo
     in
       { triangleStage = newTriangleStage
-      , triangles = triangles
-      , xClickPoints = xClickPoints
-      , yClickPoints = yClickPoints
-      , windowWidth = windowWidth
-      , windowHeight = windowHeight
-      , graphLines = graphLines
       , undo = newUndo
-      , mouseX = mouseX
-      , mouseY = mouseY
-      }
-    end
-
-  fun replaceTriangleStage (app: app_type, newTriangleStage) =
-    let
-      val
-        { triangleStage = _
-        , triangles
-        , xClickPoints
-        , yClickPoints
-        , windowWidth
-        , windowHeight
-        , graphLines
-        , undo
-        , mouseX
-        , mouseY
-        } = app
-    in
-      { triangleStage = newTriangleStage
+      , redo = []
       , triangles = triangles
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , graphLines = graphLines
-      , undo = undo
       , mouseX = mouseX
       , mouseY = mouseY
       }
     end
 
-  fun undoTriangle
-    (app: app_type, newTriangleStage: triangle_stage, trianglesTl) : app_type =
-    let
-      val
-        { triangleStage = _
-        , triangles = _
-        , xClickPoints
-        , yClickPoints
-        , windowWidth
-        , windowHeight
-        , graphLines
-        , undo
-        , mouseX
-        , mouseY
-        } = app
-    in
-      { triangleStage = newTriangleStage
-      , triangles = trianglesTl
-      , xClickPoints = xClickPoints
-      , yClickPoints = yClickPoints
-      , windowWidth = windowWidth
-      , windowHeight = windowHeight
-      , graphLines = graphLines
-      , undo = undo
-      , mouseX = mouseX
-      , mouseY = mouseY
-      }
-    end
-
-  fun newTriangle (app: app_type, x1, y1, x2, y2, x3, y3, newUndoTuple) :
-    app_type =
+  fun addTriangle (app: app_type, x1, y1, x2, y2, x3, y3, newUndoHd) : app_type =
     let
       val
         { triangles
@@ -131,17 +86,96 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , redo = _
         , mouseX
         , mouseY
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
       val newTriangles = newTriangle :: triangles
-      val newUndo = newUndoTuple :: undo
+      val newUndo = newUndoHd :: undo
     in
       { triangleStage = NO_TRIANGLE
       , triangles = newTriangles
       , undo = newUndo
+      , redo = []
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , mouseX = mouseX
+      , mouseY = mouseY
+      }
+    end
+
+  (* add to redo, pop one from undo *)
+  fun undoTriangleStage (app: app_type, newTriangleStage, newRedoHd) =
+    let
+      val
+        { triangleStage = _
+        , triangles
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        } = app
+
+      val newUndo =
+        case undo of
+          hd :: tl => tl
+        | empty => empty
+
+      val newRedo = newRedoHd :: redo
+    in
+      { triangleStage = newTriangleStage
+      , triangles = triangles
+      , undo = newUndo
+      , redo = newRedo
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , mouseX = mouseX
+      , mouseY = mouseY
+      }
+    end
+
+  fun undoTriangle
+    (app: app_type, newTriangleStage: triangle_stage, trianglesTl, newRedoHd) :
+    app_type =
+    let
+      val
+        { triangleStage = _
+        , triangles = _
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        } = app
+
+      val newUndo =
+        case undo of
+          hd :: tl => tl
+        | empty => empty
+
+      val newRedo = newRedoHd :: redo
+    in
+      { triangleStage = newTriangleStage
+      , triangles = trianglesTl
+      , undo = newUndo
+      , redo = newRedo
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -165,9 +199,11 @@ struct
         , triangles
         , triangleStage
         , undo
+        , redo
         , mouseX
         , mouseY
         } = app
+
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
       val graphLines =
@@ -182,6 +218,7 @@ struct
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , undo = undo
+      , redo = redo
       , mouseX = mouseX
       , mouseY = mouseY
       }
@@ -223,8 +260,8 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , redo
         } = app
-
     in
       { mouseX = mouseX
       , mouseY = mouseY
@@ -236,6 +273,7 @@ struct
       , windowHeight = windowHeight
       , graphLines = graphLines
       , undo = undo
+      , redo = redo
       }
     end
 end
