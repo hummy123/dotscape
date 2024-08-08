@@ -1,4 +1,20 @@
-structure AppWith =
+signature APP_WITH =
+sig
+  val windowResize: AppType.app_type * int * int -> AppType.app_type
+  val triangleStage: AppType.app_type * AppType.triangle_stage
+                     -> AppType.app_type
+  val newTriangle:
+    AppType.app_type
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    * Real32.real
+    -> AppType.app_type
+end
+
+structure AppWith :> APP_WITH =
 struct
   open AppType
 
@@ -49,61 +65,55 @@ struct
       }
     end
 
-  local
-    fun make
-      ( app: app_type
-      , windowWidth
-      , windowHeight
-      , wStart
-      , wFinish
-      , hStart
-      , hFinish
-      ) : app_type =
+  fun helpWindowResize
+    (app: app_type, windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) :
+    app_type =
+    let
+      val
+        { xClickPoints = _
+        , yClickPoints = _
+        , windowWidth = _
+        , windowHeight = _
+        , graphLines = _
+        , triangles
+        , triangleStage
+        } = app
+      val xClickPoints = ClickPoints.generate (wStart, wFinish)
+      val yClickPoints = ClickPoints.generate (hStart, hFinish)
+      val graphLines =
+        GraphLines.generate
+          (windowWidth, windowHeight, xClickPoints, yClickPoints)
+    in
+      { xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , graphLines = graphLines
+      , triangles = triangles
+      , triangleStage = triangleStage
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      }
+    end
+
+  fun windowResize (app: app_type, windowWidth, windowHeight) =
+    if windowWidth = windowHeight then
+      helpWindowResize
+        (app, windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)
+    else if windowWidth > windowHeight then
       let
-        val
-          { xClickPoints = _
-          , yClickPoints = _
-          , windowWidth = _
-          , windowHeight = _
-          , graphLines = _
-          , triangles
-          , triangleStage
-          } = app
-        val xClickPoints = ClickPoints.generate (wStart, wFinish)
-        val yClickPoints = ClickPoints.generate (hStart, hFinish)
-        val graphLines =
-          GraphLines.generate
-            (windowWidth, windowHeight, xClickPoints, yClickPoints)
+        val difference = windowWidth - windowHeight
+        val wStart = difference div 2
+        val wFinish = wStart + windowHeight
       in
-        { xClickPoints = xClickPoints
-        , yClickPoints = yClickPoints
-        , graphLines = graphLines
-        , triangles = triangles
-        , triangleStage = triangleStage
-        , windowWidth = windowWidth
-        , windowHeight = windowHeight
-        }
+        helpWindowResize
+          (app, windowWidth, windowHeight, wStart, wFinish, 0, windowHeight)
       end
-  in
-    fun windowResize (app: app_type, windowWidth, windowHeight) =
-      if windowWidth = windowHeight then
-        make (app, windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)
-      else if windowWidth > windowHeight then
-        let
-          val difference = windowWidth - windowHeight
-          val wStart = difference div 2
-          val wFinish = wStart + windowHeight
-        in
-          make
-            (app, windowWidth, windowHeight, wStart, wFinish, 0, windowHeight)
-        end
-      else
-        let
-          val difference = windowHeight - windowWidth
-          val hStart = difference div 2
-          val hFinish = hStart + windowWidth
-        in
-          make (app, windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
-        end
-  end
+    else
+      let
+        val difference = windowHeight - windowWidth
+        val hStart = difference div 2
+        val hFinish = hStart + windowWidth
+      in
+        helpWindowResize
+          (app, windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
+      end
 end
