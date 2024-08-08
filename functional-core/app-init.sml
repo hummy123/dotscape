@@ -23,6 +23,7 @@ struct
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , graphLines = graphLines
+      , undo = []
       }
     end
 

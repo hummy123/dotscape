@@ -19,10 +19,18 @@ struct
     _import "setFramebufferSizeCallback" public reentrant : window -> unit;
 
   (* Constants for mouse input. *)
-  val (MOUSE_PRESSED, _) =
-    _symbol "MOUSE_PRESSED" public : ( unit -> int ) * ( int -> unit );
-  val (MOUSE_RELEASED, _) =
-    _symbol "MOUSE_RELEASED" public : ( unit -> int ) * ( int -> unit );
+  val (PRESS, _) =
+    _symbol "PRESS" public : ( unit -> int ) * ( int -> unit );
+  val (RELEASE, _) =
+    _symbol "RELEASE" public : ( unit -> int ) * ( int -> unit );
   val (LEFT_MOUSE_BUTTON, _) =
     _symbol "LEFT_MOUSE_BUTTON" public : ( unit -> int ) * ( int -> unit );
+
+  (* Key input *)
+  val exportKeyCallback =
+    _export "mltonKeyCallback" public : (int * int * int * int -> unit) -> unit;
+  val setKeyCallback = _import "setKeyCallback" public reentrant : window -> unit;
+
+  val (KEY_Z, _) =
+    _symbol "KEY_Z" public : ( unit -> int ) * ( int -> unit );
 end

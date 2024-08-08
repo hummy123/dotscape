@@ -28,6 +28,7 @@ struct
         , windowWidth
         , windowHeight
         , graphLines
+        , undo
         } = app
     in
       { triangleStage = newTriangleStage
@@ -37,6 +38,7 @@ struct
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , graphLines = graphLines
+      , undo = undo
       }
     end
 
@@ -50,6 +52,7 @@ struct
         , windowWidth
         , windowHeight
         , graphLines
+        , undo
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -62,6 +65,7 @@ struct
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , graphLines = graphLines
+      , undo = undo
       }
     end
 
@@ -77,6 +81,7 @@ struct
         , graphLines = _
         , triangles
         , triangleStage
+        , undo
         } = app
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
@@ -91,6 +96,7 @@ struct
       , triangleStage = triangleStage
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , undo = undo
       }
     end
 

@@ -103,4 +103,10 @@ struct
     | MOUSE_LEFT_CLICK => mouseLeftClick (model, mouseX, mouseY)
     | RESIZE_WINDOW {width, height} =>
         resizeWindow (model, mouseX, mouseY, width, height)
+    | UNDO_ACTION =>
+        let
+          val _ = print "undo action\n"
+        in
+          (model, NO_DRAW, mouseX, mouseY)
+        end
 end
