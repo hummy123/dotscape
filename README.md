@@ -45,7 +45,7 @@ This isn't an exhaustive list, but these are some features I would like to add t
 
 - [x] Display clicked positions
 - [x] Redraw components when resized
-- [ ] Support undo (with `<Ctrl-z>`) and redo (with `<Ctrl-y>` or `<Ctrl-Shift-z>`)
+- [x] Support undo (with `<Ctrl-z>`) and redo (with `<Ctrl-y>` or `<Ctrl-Shift-z>`)
 - [ ] Export to code 
   - Possibly different options like creating a flat array/vector or an index buffer
 - [ ] Linear interpolation 

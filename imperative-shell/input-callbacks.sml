@@ -21,9 +21,24 @@ struct
   fun keyActionCallback mailbox (key, scancode, action, mods) =
     if
       key = Input.KEY_Z () andalso action <> Input.RELEASE ()
+    then
+      if mods = 0x0002 then
+        (* ctrl-z *)
+        Mailbox.send (mailbox, UNDO_ACTION)
+      else if mods = 0x0003 then
+        (* ctrl-shift-z *)
+        Mailbox.send (mailbox, REDO_ACTION)
+      else
+        (* no action recognised *)
+        ()
+    else if
+      key = Input.KEY_Y () andalso action <> Input.RELEASE ()
       andalso mods = 0x0002
-    then Mailbox.send (mailbox, UNDO_ACTION)
-    else ()
+    then
+      (* ctrl-y *)
+      Mailbox.send (mailbox, REDO_ACTION)
+    else
+      ()
 
   fun registerCallbacks (window, inputMailbox) =
     let
