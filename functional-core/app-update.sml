@@ -1,7 +1,7 @@
 signature APP_UPDATE =
 sig
-  val update: AppType.app_type * Real32.real * Real32.real * InputMessage.t
-              -> AppType.app_type * DrawMessage.t * Real32.real * Real32.real
+  val update: AppType.app_type *  InputMessage.t
+              -> AppType.app_type * DrawMessage.t
 end
 
 structure AppUpdate :> APP_UPDATE =
@@ -10,9 +10,18 @@ struct
   open DrawMessage
   open InputMessage
 
-  fun mouseMoveOrRelease (model: app_type, mouseX, mouseY) =
+  fun mouseMoveOrRelease (model: app_type) =
     let
-      val {xClickPoints, yClickPoints, windowWidth, windowHeight, ...} = model
+      val
+        { xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , mouseX
+        , mouseY
+        , ...
+        } = model
+
       val (drawVec, _, _) = ClickPoints.getClickPosition
         ( mouseX
         , mouseY
@@ -27,12 +36,21 @@ struct
       val drawVec = TriangleStage.toVector (model, drawVec)
       val drawMsg = DRAW_BUTTON drawVec
     in
-      (model, drawMsg, mouseX, mouseY)
+      (model, drawMsg)
     end
 
-  fun mouseLeftClick (model: app_type, mouseX, mouseY) =
+  fun mouseLeftClick (model: app_type) =
     let
-      val {xClickPoints, yClickPoints, windowWidth, windowHeight, ...} = model
+      val
+        { xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , mouseX
+        , mouseY
+        , ...
+        } = model
+
       val (buttonVec, hpos, vpos) = ClickPoints.getClickPosition
         ( mouseX
         , mouseY
@@ -57,7 +75,7 @@ struct
               val model =
                 AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
             in
-              (model, drawMsg, mouseX, mouseY)
+              (model, drawMsg)
             end
         | FIRST {x1, y1} =>
             let
@@ -70,7 +88,7 @@ struct
               val model =
                 AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
             in
-              (model, drawMsg, mouseX, mouseY)
+              (model, drawMsg)
             end
         | SECOND {x1, y1, x2, y2} =>
             let
@@ -80,13 +98,13 @@ struct
               val drawVec = Triangles.toVector model
               val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
             in
-              (model, drawMsg, mouseX, mouseY)
+              (model, drawMsg)
             end
       else
-        (model, NO_DRAW, mouseX, mouseY)
+        (model, NO_DRAW)
     end
 
-  fun resizeWindow (model, mouseX, mouseY, width, height) =
+  fun resizeWindow (model, width, height) =
     let
       val model = AppWith.windowResize (model, width, height)
       val triangles = Triangles.toVector model
@@ -95,15 +113,15 @@ struct
         RESIZE_TRIANGLES_BUTTONS_AND_GRAPH
           {triangles = triangles, graphLines = graphLines}
     in
-      (model, drawMsg, mouseX, mouseY)
+      (model, drawMsg)
     end
 
-  fun undoAction (model, mouseX, mouseY) =
+  fun undoAction model =
     case #triangleStage model of
       FIRST {x1, y1} =>
         (* Change FIRST to NO_TRIANGLE and clear buttons. *)
         let val model = AppWith.replaceTriangleStage (model, NO_TRIANGLE)
-        in (model, CLEAR_BUTTONS, mouseX, mouseY)
+        in (model, CLEAR_BUTTONS)
         end
     | SECOND {x1, y1, x2, y2} =>
         (* Change FIRST to SECOND and redraw buttons. *)
@@ -115,7 +133,7 @@ struct
             TriangleStage.firstToVector (x1, y1, Vector.fromList [], model)
           val drawMsg = DRAW_BUTTON drawVec
         in
-          (model, drawMsg, mouseX, mouseY)
+          (model, drawMsg)
         end
     | NO_TRIANGLE =>
         (case #triangles model of
@@ -135,19 +153,21 @@ struct
                  DRAW_TRIANGLES_AND_BUTTONS
                    {triangles = newTriangleVec, buttons = drawVec}
              in
-               (model, drawMsg, mouseX, mouseY)
+               (model, drawMsg)
              end
          | [] =>
              (* Can't undo, because there are no actions to undo. *)
-             (model, NO_DRAW, mouseX, mouseY))
+             (model, NO_DRAW))
 
-  fun update (model: app_type, mouseX, mouseY, inputMsg) =
+  fun update (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
-        mouseMoveOrRelease (model, mouseX, mouseY)
-    | MOUSE_LEFT_RELEASE => mouseMoveOrRelease (model, mouseX, mouseY)
-    | MOUSE_LEFT_CLICK => mouseLeftClick (model, mouseX, mouseY)
+        let val model = AppWith.mousePosition (model, mouseX, mouseY)
+        in mouseMoveOrRelease model
+        end
+    | MOUSE_LEFT_RELEASE => mouseMoveOrRelease model
+    | MOUSE_LEFT_CLICK => mouseLeftClick model
     | RESIZE_WINDOW {width, height} =>
-        resizeWindow (model, mouseX, mouseY, width, height)
-    | UNDO_ACTION => undoAction (model, mouseX, mouseY)
+        resizeWindow (model, width, height)
+    | UNDO_ACTION => undoAction model
 end

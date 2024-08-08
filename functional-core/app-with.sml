@@ -22,6 +22,9 @@ sig
     * Real32.real
     * (Real32.real * Real32.real)
     -> AppType.app_type
+
+  val mousePosition: AppType.app_type * Real32.real * Real32.real
+                     -> AppType.app_type
 end
 
 structure AppWith :> APP_WITH =
@@ -40,7 +43,10 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , mouseX
+        , mouseY
         } = app
+
       val newUndo = xyTuple :: undo
     in
       { triangleStage = newTriangleStage
@@ -51,6 +57,8 @@ struct
       , windowHeight = windowHeight
       , graphLines = graphLines
       , undo = newUndo
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 
@@ -65,6 +73,8 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , mouseX
+        , mouseY
         } = app
     in
       { triangleStage = newTriangleStage
@@ -75,6 +85,8 @@ struct
       , windowHeight = windowHeight
       , graphLines = graphLines
       , undo = undo
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 
@@ -90,6 +102,8 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , mouseX
+        , mouseY
         } = app
     in
       { triangleStage = newTriangleStage
@@ -100,6 +114,8 @@ struct
       , windowHeight = windowHeight
       , graphLines = graphLines
       , undo = undo
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 
@@ -115,6 +131,8 @@ struct
         , windowHeight
         , graphLines
         , undo
+        , mouseX
+        , mouseY
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -123,12 +141,14 @@ struct
     in
       { triangleStage = NO_TRIANGLE
       , triangles = newTriangles
+      , undo = newUndo
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , graphLines = graphLines
-      , undo = newUndo
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 
@@ -145,6 +165,8 @@ struct
         , triangles
         , triangleStage
         , undo
+        , mouseX
+        , mouseY
         } = app
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
@@ -160,6 +182,8 @@ struct
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , undo = undo
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 
@@ -185,4 +209,33 @@ struct
         helpWindowResize
           (app, windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
       end
+
+  fun mousePosition (app: app_type, mouseX, mouseY) =
+    let
+      val
+        { mouseX = _
+        , mouseY = _
+        , triangles
+        , triangleStage
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        } = app
+
+    in
+      { mouseX = mouseX
+      , mouseY = mouseY
+      , triangles = triangles
+      , triangleStage = triangleStage
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , undo = undo
+      }
+    end
 end

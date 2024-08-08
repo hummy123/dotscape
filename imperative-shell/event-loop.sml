@@ -4,18 +4,17 @@ struct
   open DrawMessage
 
   local
-    fun loop (inputMailbox, drawMailbox, mouseX, mouseY, model) =
+    fun loop (inputMailbox, drawMailbox, model) =
       let
         val inputMsg = Mailbox.recv inputMailbox
-        val (model, drawMsg, mouseX, mouseY) =
-          AppUpdate.update (model, mouseX, mouseY, inputMsg)
+        val (model, drawMsg) = AppUpdate.update (model, inputMsg)
         val _ = Mailbox.send (drawMailbox, drawMsg)
       in
-        loop (inputMailbox, drawMailbox, mouseX, mouseY, model)
+        loop (inputMailbox, drawMailbox, model)
       end
   in
     fun update (inputMailbox, drawMailbox, initial) =
-      loop (inputMailbox, drawMailbox, 0.0, 0.0, initial)
+      loop (inputMailbox, drawMailbox, initial)
   end
 
   fun draw

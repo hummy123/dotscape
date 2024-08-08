@@ -8,7 +8,7 @@ struct
   open AppType
 
   fun helpFromWidthAndHeight
-    (windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) =
+    (windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) : app_type =
     let
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
@@ -24,6 +24,8 @@ struct
       , yClickPoints = yClickPoints
       , graphLines = graphLines
       , undo = []
+      , mouseX = 0.0
+      , mouseY = 0.0
       }
     end
 
