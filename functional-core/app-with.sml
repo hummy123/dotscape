@@ -5,11 +5,14 @@ sig
   val mousePosition: AppType.app_type * Real32.real * Real32.real
                      -> AppType.app_type
 
-  val undoTriangleStage:
-    AppType.app_type * AppType.triangle_stage * (Real32.real * Real32.real)
+  val undo:
+    AppType.app_type
+    * AppType.triangle_stage
+    * AppType.triangle list
+    * (Real32.real * Real32.real)
     -> AppType.app_type
 
-  val undoTriangle:
+  val redo:
     AppType.app_type
     * AppType.triangle_stage
     * AppType.triangle list
@@ -109,83 +112,6 @@ struct
       }
     end
 
-  (* add to redo, pop one from undo *)
-  fun undoTriangleStage (app: app_type, newTriangleStage, newRedoHd) =
-    let
-      val
-        { triangleStage = _
-        , triangles
-        , xClickPoints
-        , yClickPoints
-        , windowWidth
-        , windowHeight
-        , graphLines
-        , undo
-        , redo
-        , mouseX
-        , mouseY
-        } = app
-
-      val newUndo =
-        case undo of
-          hd :: tl => tl
-        | empty => empty
-
-      val newRedo = newRedoHd :: redo
-    in
-      { triangleStage = newTriangleStage
-      , triangles = triangles
-      , undo = newUndo
-      , redo = newRedo
-      , xClickPoints = xClickPoints
-      , yClickPoints = yClickPoints
-      , windowWidth = windowWidth
-      , windowHeight = windowHeight
-      , graphLines = graphLines
-      , mouseX = mouseX
-      , mouseY = mouseY
-      }
-    end
-
-  fun undoTriangle
-    (app: app_type, newTriangleStage: triangle_stage, trianglesTl, newRedoHd) :
-    app_type =
-    let
-      val
-        { triangleStage = _
-        , triangles = _
-        , xClickPoints
-        , yClickPoints
-        , windowWidth
-        , windowHeight
-        , graphLines
-        , undo
-        , redo
-        , mouseX
-        , mouseY
-        } = app
-
-      val newUndo =
-        case undo of
-          hd :: tl => tl
-        | empty => empty
-
-      val newRedo = newRedoHd :: redo
-    in
-      { triangleStage = newTriangleStage
-      , triangles = trianglesTl
-      , undo = newUndo
-      , redo = newRedo
-      , xClickPoints = xClickPoints
-      , yClickPoints = yClickPoints
-      , windowWidth = windowWidth
-      , windowHeight = windowHeight
-      , graphLines = graphLines
-      , mouseX = mouseX
-      , mouseY = mouseY
-      }
-    end
-
   fun helpWindowResize
     (app: app_type, windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) :
     app_type =
@@ -274,6 +200,81 @@ struct
       , graphLines = graphLines
       , undo = undo
       , redo = redo
+      }
+    end
+
+  (* add to redo, pop one from undo *)
+  fun undo (app: app_type, newTriangleStage, newTriangles, newRedoHd) =
+    let
+      val
+        { triangleStage = _
+        , triangles = _
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        } = app
+
+      val newUndo =
+        case undo of
+          hd :: tl => tl
+        | empty => empty
+
+      val newRedo = newRedoHd :: redo
+    in
+      { triangleStage = newTriangleStage
+      , triangles = newTriangles
+      , undo = newUndo
+      , redo = newRedo
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , mouseX = mouseX
+      , mouseY = mouseY
+      }
+    end
+
+  (* add to undo, pop one from redo *)
+  fun redo (app: app_type, newTriangleStage, newTriangles, newUndoHd) =
+    let
+      val
+        { triangleStage = _
+        , triangles = _
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        } = app
+
+      val newUndo = newUndoHd :: undo
+      val newRedo =
+        case redo of
+          hd :: tl => tl
+        | empty => empty
+    in
+      { triangleStage = newTriangleStage
+      , triangles = newTriangles
+      , undo = newUndo
+      , redo = newRedo
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , mouseX = mouseX
+      , mouseY = mouseY
       }
     end
 end

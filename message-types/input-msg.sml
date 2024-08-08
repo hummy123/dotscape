@@ -6,6 +6,7 @@ sig
   | MOUSE_LEFT_RELEASE
   | RESIZE_WINDOW of {width: int, height: int}
   | UNDO_ACTION
+  | REDO_ACTION
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -16,4 +17,5 @@ struct
   | MOUSE_LEFT_RELEASE
   | RESIZE_WINDOW of {width: int, height: int}
   | UNDO_ACTION
+  | REDO_ACTION
 end
