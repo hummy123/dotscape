@@ -178,7 +178,7 @@ struct
 
                val emptyVec: Real32.real vector = Vector.fromList []
                val drawVec =
-                 TriangleStage.firstToVector (x1, y1, emptyVec, model)
+                 TriangleStage.firstToVector (x, y, emptyVec, model)
                val drawMsg = DRAW_BUTTON drawVec
              in
                (model, drawMsg)
@@ -204,7 +204,7 @@ struct
                val newTriangleStage = NO_TRIANGLE
                val newTriangle =
                  {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x, y3 = y}
-               val newTriangles = newUndoTuple :: (#triangles model)
+               val newTriangles = newTriangle :: (#triangles model)
                val model =
                  AppWith.redo (model, newTriangleStage, newTriangles, redoHd)
 
