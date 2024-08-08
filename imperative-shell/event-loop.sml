@@ -91,6 +91,44 @@ struct
                    , triangleDrawLength
                    )
                end
+           | DRAW_TRIANGLES_AND_BUTTONS
+               {triangles = triangleVec, buttons = buttonsVec} =>
+               let
+                 val _ =
+                   AppDraw.uploadTrianglesVector
+                     (triangleDrawObject, triangleVec)
+                 val triangleDrawLength = Vector.length triangleVec div 2
+
+                 val _ =
+                   AppDraw.uploadButtonVector (buttonDrawObject, buttonsVec)
+                 val buttonDrawLength = Vector.length buttonsVec div 5
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , drawGraphLength
+                   , buttonDrawObject
+                   , buttonDrawLength
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   )
+               end
+           | CLEAR_BUTTONS =>
+               let
+                 val buttonDrawLength = 0
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , drawGraphLength
+                   , buttonDrawObject
+                   , buttonDrawLength
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   )
+               end
            | RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles, graphLines} =>
                let
                  val _ =

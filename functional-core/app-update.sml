@@ -44,6 +44,7 @@ struct
         , windowWidth
         , windowHeight
         )
+      val newUndoTuple = (hpos, vpos)
     in
       if Vector.length buttonVec > 0 then
         case #triangleStage model of
@@ -53,7 +54,8 @@ struct
               val drawMsg = DRAW_BUTTON drawVec
 
               val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-              val model = AppWith.triangleStage (model, newTriangleStage)
+              val model =
+                AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
             in
               (model, drawMsg, mouseX, mouseY)
             end
@@ -65,14 +67,15 @@ struct
 
               val newTriangleStage = SECOND
                 {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-              val model = AppWith.triangleStage (model, newTriangleStage)
+              val model =
+                AppWith.newTriangleStage (model, newTriangleStage, newUndoTuple)
             in
               (model, drawMsg, mouseX, mouseY)
             end
         | SECOND {x1, y1, x2, y2} =>
             let
               val model = AppWith.newTriangle
-                (model, x1, y1, x2, y2, hpos, vpos)
+                (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
 
               val drawVec = Triangles.toVector model
               val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
@@ -95,6 +98,49 @@ struct
       (model, drawMsg, mouseX, mouseY)
     end
 
+  fun undoAction (model, mouseX, mouseY) =
+    case #triangleStage model of
+      FIRST {x1, y1} =>
+        (* Change FIRST to NO_TRIANGLE and clear buttons. *)
+        let val model = AppWith.replaceTriangleStage (model, NO_TRIANGLE)
+        in (model, CLEAR_BUTTONS, mouseX, mouseY)
+        end
+    | SECOND {x1, y1, x2, y2} =>
+        (* Change FIRST to SECOND and redraw buttons. *)
+        let
+          val newTriangleStage = FIRST {x1 = x1, y1 = y1}
+          val model = AppWith.replaceTriangleStage (model, newTriangleStage)
+
+          val drawVec =
+            TriangleStage.firstToVector (x1, y1, Vector.fromList [], model)
+          val drawMsg = DRAW_BUTTON drawVec
+        in
+          (model, drawMsg, mouseX, mouseY)
+        end
+    | NO_TRIANGLE =>
+        (case #triangles model of
+           {x1, y1, x2, y2, ...} :: trianglesTl =>
+             (* Have to slice off (x3, y3) from triangle head,
+              * turn (x1, y1, x2, y2) into a triangleStage,
+              * and redraw both triangle and triangleStage. *)
+             let
+               val triangleStage = SECOND {x1 = x1, y1 = y1, x2 = x2, y2 = y2}
+               val model =
+                 AppWith.undoTriangle (model, triangleStage, trianglesTl)
+
+               val newTriangleVec = Triangles.toVector model
+               val drawVec = TriangleStage.secondToVector
+                 (x1, y1, x2, y2, newTriangleVec, model)
+               val drawMsg =
+                 DRAW_TRIANGLES_AND_BUTTONS
+                   {triangles = newTriangleVec, buttons = drawVec}
+             in
+               (model, drawMsg, mouseX, mouseY)
+             end
+         | [] =>
+             (* Can't undo, because there are no actions to undo. *)
+             (model, NO_DRAW, mouseX, mouseY))
+
   fun update (model: app_type, mouseX, mouseY, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
@@ -103,10 +149,5 @@ struct
     | MOUSE_LEFT_CLICK => mouseLeftClick (model, mouseX, mouseY)
     | RESIZE_WINDOW {width, height} =>
         resizeWindow (model, mouseX, mouseY, width, height)
-    | UNDO_ACTION =>
-        let
-          val _ = print "undo action\n"
-        in
-          (model, NO_DRAW, mouseX, mouseY)
-        end
+    | UNDO_ACTION => undoAction (model, mouseX, mouseY)
 end

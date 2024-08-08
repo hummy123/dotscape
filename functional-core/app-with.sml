@@ -1,8 +1,17 @@
 signature APP_WITH =
 sig
   val windowResize: AppType.app_type * int * int -> AppType.app_type
-  val triangleStage: AppType.app_type * AppType.triangle_stage
-                     -> AppType.app_type
+
+  val newTriangleStage:
+    AppType.app_type * AppType.triangle_stage * (Real32.real * Real32.real)
+    -> AppType.app_type
+  val replaceTriangleStage: AppType.app_type * AppType.triangle_stage
+                            -> AppType.app_type
+
+  val undoTriangle:
+    AppType.app_type * AppType.triangle_stage * AppType.triangle list
+    -> AppType.app_type
+
   val newTriangle:
     AppType.app_type
     * Real32.real
@@ -11,6 +20,7 @@ sig
     * Real32.real
     * Real32.real
     * Real32.real
+    * (Real32.real * Real32.real)
     -> AppType.app_type
 end
 
@@ -18,7 +28,33 @@ structure AppWith :> APP_WITH =
 struct
   open AppType
 
-  fun triangleStage (app: app_type, newTriangleStage: triangle_stage) : app_type =
+  fun newTriangleStage
+    (app: app_type, newTriangleStage: triangle_stage, xyTuple) : app_type =
+    let
+      val
+        { triangleStage = _
+        , triangles
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        } = app
+      val newUndo = xyTuple :: undo
+    in
+      { triangleStage = newTriangleStage
+      , triangles = triangles
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , undo = newUndo
+      }
+    end
+
+  fun replaceTriangleStage (app: app_type, newTriangleStage) =
     let
       val
         { triangleStage = _
@@ -42,7 +78,33 @@ struct
       }
     end
 
-  fun newTriangle (app: app_type, x1, y1, x2, y2, x3, y3) : app_type =
+  fun undoTriangle
+    (app: app_type, newTriangleStage: triangle_stage, trianglesTl) : app_type =
+    let
+      val
+        { triangleStage = _
+        , triangles = _
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , graphLines
+        , undo
+        } = app
+    in
+      { triangleStage = newTriangleStage
+      , triangles = trianglesTl
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , graphLines = graphLines
+      , undo = undo
+      }
+    end
+
+  fun newTriangle (app: app_type, x1, y1, x2, y2, x3, y3, newUndoTuple) :
+    app_type =
     let
       val
         { triangles
@@ -57,6 +119,7 @@ struct
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
       val newTriangles = newTriangle :: triangles
+      val newUndo = newUndoTuple :: undo
     in
       { triangleStage = NO_TRIANGLE
       , triangles = newTriangles
@@ -65,7 +128,7 @@ struct
       , windowWidth = windowWidth
       , windowHeight = windowHeight
       , graphLines = graphLines
-      , undo = undo
+      , undo = newUndo
       }
     end
 

@@ -23,7 +23,7 @@ sig
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
     , graphLines: Real32.real vector
-    , undo: (int * int) list
+    , undo: (Real32.real * Real32.real) list
     }
 end
 
@@ -60,6 +60,6 @@ struct
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
     , graphLines: Real32.real vector
-    , undo: (int * int) list
+    , undo: (Real32.real * Real32.real) list
     }
 end
