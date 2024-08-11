@@ -151,8 +151,9 @@ struct
                  AppWith.undo (model, triangleStage, trianglesTl, (x3, y3))
 
                val newTriangleVec = Triangles.toVector model
+               val emptyVec : Real32.real vector = Vector.fromList []
                val drawVec = TriangleStage.secondToVector
-                 (x1, y1, x2, y2, newTriangleVec, model)
+                 (x1, y1, x2, y2, emptyVec, model)
                val drawMsg =
                  DRAW_TRIANGLES_AND_BUTTONS
                    {triangles = newTriangleVec, buttons = drawVec}
