@@ -1,7 +1,6 @@
 signature GRAPH_LINES =
 sig
-  val generate: int * int * Real32.real vector * Real32.real vector
-                -> Real32.real vector
+  val generate: AppType.app_type -> Real32.real vector
 end
 
 structure GraphLines :> GRAPH_LINES =
@@ -134,7 +133,7 @@ struct
           (pos + 1, yClickPoints, acc, halfHeight, xMin, xMax)
       end
 
-  fun generate (windowWidth, windowHeight, xClickPoints, yClickPoints) =
+  fun helpGenerate (windowWidth, windowHeight, xClickPoints, yClickPoints) =
     if windowWidth = windowHeight then
       helpGenGraphLinesSquare (~1.0, 1.0, [])
     else if windowWidth > windowHeight then
@@ -180,4 +179,11 @@ struct
       in
         Vector.concat lines
       end
+
+  fun generate (app: AppType.app_type) = 
+    let
+      val {windowWidth, windowHeight, xClickPoints, yClickPoints, ...} = app
+    in
+      helpGenerate (windowWidth, windowHeight, xClickPoints, yClickPoints)
+    end
 end

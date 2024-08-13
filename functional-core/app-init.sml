@@ -12,9 +12,6 @@ struct
     let
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
-      val graphLines =
-        GraphLines.generate
-          (windowWidth, windowHeight, xClickPoints, yClickPoints)
     in
       { triangles = []
       , triangleStage = NO_TRIANGLE
@@ -22,7 +19,6 @@ struct
       , windowHeight = windowHeight
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
-      , graphLines = graphLines
       , undo = []
       , redo = []
       , mouseX = 0.0

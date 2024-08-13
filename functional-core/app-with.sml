@@ -55,7 +55,6 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
-        , graphLines
         , undo
         , redo = _
         , mouseX
@@ -72,7 +71,6 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
-      , graphLines = graphLines
       , mouseX = mouseX
       , mouseY = mouseY
       }
@@ -87,7 +85,6 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
-        , graphLines
         , undo
         , redo = _
         , mouseX
@@ -106,7 +103,6 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
-      , graphLines = graphLines
       , mouseX = mouseX
       , mouseY = mouseY
       }
@@ -121,7 +117,6 @@ struct
         , yClickPoints = _
         , windowWidth = _
         , windowHeight = _
-        , graphLines = _
         , triangles
         , triangleStage
         , undo
@@ -132,13 +127,9 @@ struct
 
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
       val yClickPoints = ClickPoints.generate (hStart, hFinish)
-      val graphLines =
-        GraphLines.generate
-          (windowWidth, windowHeight, xClickPoints, yClickPoints)
     in
       { xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
-      , graphLines = graphLines
       , triangles = triangles
       , triangleStage = triangleStage
       , windowWidth = windowWidth
@@ -184,7 +175,6 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
-        , graphLines
         , undo
         , redo
         } = app
@@ -197,7 +187,6 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
-      , graphLines = graphLines
       , undo = undo
       , redo = redo
       }
@@ -213,7 +202,6 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
-        , graphLines
         , undo
         , redo
         , mouseX
@@ -235,7 +223,6 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
-      , graphLines = graphLines
       , mouseX = mouseX
       , mouseY = mouseY
       }
@@ -251,7 +238,6 @@ struct
         , yClickPoints
         , windowWidth
         , windowHeight
-        , graphLines
         , undo
         , redo
         , mouseX
@@ -272,7 +258,6 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
-      , graphLines = graphLines
       , mouseX = mouseX
       , mouseY = mouseY
       }

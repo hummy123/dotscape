@@ -19,12 +19,7 @@ struct
         AppInit.fromWindowWidthAndHeight
           (Constants.windowWidth, Constants.windowHeight)
 
-      val graphLines = 
-        let
-          open AppType
-        in
-          #graphLines initialModel
-        end
+      val graphLines = GraphLines.generate initialModel
       val graphDrawObject = AppDraw.initGraphLines ()
       val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
 

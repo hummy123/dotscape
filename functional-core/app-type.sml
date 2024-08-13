@@ -22,7 +22,6 @@ sig
     , windowHeight: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
-    , graphLines: Real32.real vector
     , undo: (Real32.real * Real32.real) list
     , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
@@ -62,7 +61,6 @@ struct
     , windowHeight: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
-    , graphLines: Real32.real vector
     , undo: (Real32.real * Real32.real) list
     , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
