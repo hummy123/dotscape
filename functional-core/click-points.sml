@@ -2,15 +2,7 @@ signature CLICK_POINTS =
 sig
   val generate: int * int -> Real32.real vector
   val getClickPosition:
-    Real32.real
-    * Real32.real
-    * Real32.real
-    * Real32.real
-    * Real32.real
-    * Real32.real vector
-    * Real32.real vector
-    * int
-    * int
+    Real32.real * Real32.real * Real32.real * AppType.app_type
     -> Real32.real vector * Real32.real * Real32.real
 end
 
@@ -192,27 +184,29 @@ struct
    * If a square wasn't found at the clicked position, 
    * an empty vector is returned.
    *)
-  fun getClickPosition
-    ( mouseX
-    , mouseY
-    , r
-    , g
-    , b
-    , xClickPoints
-    , yClickPoints
-    , windowWidth
-    , windowHeight
-    ) =
-    getHorizontalClickPos
-      ( xClickPoints
-      , yClickPoints
-      , 0
-      , mouseX
-      , mouseY
-      , r
-      , g
-      , b
-      , windowWidth
-      , windowHeight
-      )
+  fun getClickPosition (r, g, b, app: AppType.app_type) =
+    let
+      val
+        { xClickPoints
+        , yClickPoints
+        , mouseX
+        , mouseY
+        , windowWidth
+        , windowHeight
+        , ...
+        } = app
+    in
+      getHorizontalClickPos
+        ( xClickPoints
+        , yClickPoints
+        , 0
+        , mouseX
+        , mouseY
+        , r
+        , g
+        , b
+        , windowWidth
+        , windowHeight
+        )
+    end
 end
