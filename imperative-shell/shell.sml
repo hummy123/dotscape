@@ -23,7 +23,7 @@ struct
       val graphDrawObject = AppDraw.initGraphLines ()
       val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
 
-      val buttonDrawObject = AppDraw.initButton ()
+      val dotDrawObject = AppDraw.initDot ()
       val triangleDrawObject = AppDraw.initTriangles ()
 
       val inputMailbox = Mailbox.mailbox ()
@@ -39,7 +39,7 @@ struct
           , window
           , graphDrawObject
           , Vector.length graphLines div 2
-          , buttonDrawObject
+          , dotDrawObject
           , 0
           , triangleDrawObject
           , 0

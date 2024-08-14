@@ -62,13 +62,13 @@ struct
       ()
     end
 
-  fun initButton () =
+  fun initDot () =
     let
-      val buttonDrawObject = initDrawObject
+      val dotDrawObject = initDrawObject
         ( Constants.colouredVertexShaderString
         , Constants.colouredFragmentShaderString
         )
-      val {vertexBuffer, program} = buttonDrawObject
+      val {vertexBuffer, program} = dotDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
@@ -78,29 +78,29 @@ struct
       val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
       val _ = Gles3.enableVertexAttribArray 1
     in
-      buttonDrawObject
+      dotDrawObject
     end
 
-  fun uploadButtonVector (buttonDrawObject: draw_object, vec) =
+  fun uploadDotVector (dotDrawObject: draw_object, vec) =
     let
-      val {vertexBuffer, ...} = buttonDrawObject
+      val {vertexBuffer, ...} = dotDrawObject
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.bufferData (vec, Vector.length vec, Gles3.STATIC_DRAW ())
     in
       ()
     end
 
-  fun drawButton (buttonDrawObject: draw_object, buttonDrawLength) =
-    if buttonDrawLength > 0 then
+  fun drawDot (dotDrawObject: draw_object, dotDrawLength) =
+    if dotDrawLength > 0 then
       let
-        val {vertexBuffer, program} = buttonDrawObject
+        val {vertexBuffer, program} = dotDrawObject
         val _ = Gles3.bindBuffer vertexBuffer
         val _ = Gles3.vertexAttribPointer (0, 2, 5, 0)
         val _ = Gles3.enableVertexAttribArray 0
         val _ = Gles3.vertexAttribPointer (1, 3, 5, 8)
         val _ = Gles3.enableVertexAttribArray 1
         val _ = Gles3.useProgram program
-        val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, buttonDrawLength)
+        val _ = Gles3.drawArrays (Gles3.TRIANGLES (), 0, dotDrawLength)
       in
         ()
       end

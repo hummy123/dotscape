@@ -22,8 +22,8 @@ struct
     , window
     , graphDrawObject
     , drawGraphLength
-    , buttonDrawObject
-    , buttonDrawLength
+    , dotDrawObject
+    , dotDrawLength
     , triangleDrawObject
     , triangleDrawLength
     ) =
@@ -37,7 +37,7 @@ struct
             val _ = AppDraw.drawGraphLines (graphDrawObject, drawGraphLength)
             val _ =
               AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
-            val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
+            val _ = AppDraw.drawDot (dotDrawObject, dotDrawLength)
 
             val _ = Glfw.swapBuffers window
             val _ = Glfw.pollEvents ()
@@ -47,102 +47,100 @@ struct
               , window
               , graphDrawObject
               , drawGraphLength
-              , buttonDrawObject
-              , buttonDrawLength
+              , dotDrawObject
+              , dotDrawLength
               , triangleDrawObject
               , triangleDrawLength
               )
           end
       | SOME drawMsg =>
           (case drawMsg of
-             DRAW_BUTTON vec =>
+             DRAW_DOT vec =>
                let
-                 val _ = AppDraw.uploadButtonVector (buttonDrawObject, vec)
-                 val buttonDrawLength = Vector.length vec div 5
+                 val _ = AppDraw.uploadDotVector (dotDrawObject, vec)
+                 val dotDrawLength = Vector.length vec div 5
                in
                  draw
                    ( drawMailbox
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
-                   , buttonDrawLength
+                   , dotDrawObject
+                   , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
                    )
                end
-           | DRAW_TRIANGLES_AND_RESET_BUTTONS triangleVec =>
+           | DRAW_TRIANGLES_AND_RESET_DOTS triangleVec =>
                let
                  val _ =
                    AppDraw.uploadTrianglesVector
                      (triangleDrawObject, triangleVec)
                  val triangleDrawLength = Vector.length triangleVec div 2
-               (* buttons are reset by setting buttonDrawLength to 0 *)
+               (* dots are reset by setting dotDrawLength to 0 *)
                in
                  draw
                    ( drawMailbox
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
+                   , dotDrawObject
                    , 0
                    , triangleDrawObject
                    , triangleDrawLength
                    )
                end
-           | DRAW_TRIANGLES_AND_BUTTONS
-               {triangles = triangleVec, buttons = buttonsVec} =>
+           | DRAW_TRIANGLES_AND_DOTS {triangles = triangleVec, dots = dotsVec} =>
                let
                  val _ =
                    AppDraw.uploadTrianglesVector
                      (triangleDrawObject, triangleVec)
                  val triangleDrawLength = Vector.length triangleVec div 2
 
-                 val _ =
-                   AppDraw.uploadButtonVector (buttonDrawObject, buttonsVec)
-                 val buttonDrawLength = Vector.length buttonsVec div 5
+                 val _ = AppDraw.uploadDotVector (dotDrawObject, dotsVec)
+                 val dotDrawLength = Vector.length dotsVec div 5
                in
                  draw
                    ( drawMailbox
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
-                   , buttonDrawLength
+                   , dotDrawObject
+                   , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
                    )
                end
-           | CLEAR_BUTTONS =>
+           | CLEAR_DOTS =>
                let
-                 val buttonDrawLength = 0
+                 val dotDrawLength = 0
                in
                  draw
                    ( drawMailbox
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
-                   , buttonDrawLength
+                   , dotDrawObject
+                   , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
                    )
                end
-           | RESIZE_TRIANGLES_BUTTONS_AND_GRAPH {triangles, graphLines} =>
+           | RESIZE_TRIANGLES_DOTS_AND_GRAPH {triangles, graphLines} =>
                let
                  val _ =
                    AppDraw.uploadTrianglesVector (triangleDrawObject, triangles)
                  val triangleDrawLength = Vector.length triangles div 2
-                 (* buttons are reset by setting buttonDrawLength to 0 *)
                  val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
                  val drawGraphLength = Vector.length graphLines div 2
+               (* to do: upload dots *)
                in
                  draw
                    ( drawMailbox
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
+                   , dotDrawObject
                    , 0
                    , triangleDrawObject
                    , triangleDrawLength
@@ -158,8 +156,8 @@ struct
                    , window
                    , graphDrawObject
                    , drawGraphLength
-                   , buttonDrawObject
-                   , buttonDrawLength
+                   , dotDrawObject
+                   , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
                    )
@@ -170,8 +168,8 @@ struct
                  , window
                  , graphDrawObject
                  , drawGraphLength
-                 , buttonDrawObject
-                 , buttonDrawLength
+                 , dotDrawObject
+                 , dotDrawLength
                  , triangleDrawObject
                  , triangleDrawLength
                  ))

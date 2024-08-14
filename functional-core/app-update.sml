@@ -14,23 +14,23 @@ struct
     let
       val (drawVec, _, _) = ClickPoints.getClickPosition (1.0, 0.0, 0.0, model)
       val drawVec = TriangleStage.toVector (model, drawVec)
-      val drawMsg = DRAW_BUTTON drawVec
+      val drawMsg = DRAW_DOT drawVec
     in
       (model, drawMsg)
     end
 
   fun mouseLeftClick (model: app_type) =
     let
-      val (buttonVec, hpos, vpos) =
+      val (dotVec, hpos, vpos) =
         ClickPoints.getClickPosition (0.0, 0.0, 1.0, model)
       val newUndoTuple = (hpos, vpos)
     in
-      if Vector.length buttonVec > 0 then
+      if Vector.length dotVec > 0 then
         case #triangleStage model of
           NO_TRIANGLE =>
             let
-              val drawVec = TriangleStage.toVector (model, buttonVec)
-              val drawMsg = DRAW_BUTTON drawVec
+              val drawVec = TriangleStage.toVector (model, dotVec)
+              val drawMsg = DRAW_DOT drawVec
 
               val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
               val model =
@@ -41,8 +41,8 @@ struct
         | FIRST {x1, y1} =>
             let
               val drawVec =
-                TriangleStage.firstToVector (x1, y1, buttonVec, model)
-              val drawMsg = DRAW_BUTTON drawVec
+                TriangleStage.firstToVector (x1, y1, dotVec, model)
+              val drawMsg = DRAW_DOT drawVec
 
               val newTriangleStage = SECOND
                 {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
@@ -57,7 +57,7 @@ struct
                 (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
 
               val drawVec = Triangles.toVector model
-              val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
+              val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
             in
               (model, drawMsg)
             end
@@ -75,7 +75,7 @@ struct
         else Vector.fromList []
 
       val drawMsg =
-        RESIZE_TRIANGLES_BUTTONS_AND_GRAPH
+        RESIZE_TRIANGLES_DOTS_AND_GRAPH
           {triangles = triangles, graphLines = graphLines}
     in
       (model, drawMsg)
@@ -84,15 +84,15 @@ struct
   fun undoAction model =
     case #triangleStage model of
       FIRST {x1, y1} =>
-        (* Change FIRST to NO_TRIANGLE and clear buttons. *)
+        (* Change FIRST to NO_TRIANGLE and clear dots. *)
         let
           val model =
             AppWith.undo (model, NO_TRIANGLE, #triangles model, (x1, y1))
         in
-          (model, CLEAR_BUTTONS)
+          (model, CLEAR_DOTS)
         end
     | SECOND {x1, y1, x2, y2} =>
-        (* Change FIRST to SECOND and redraw buttons. *)
+        (* Change FIRST to SECOND and redraw dots. *)
         let
           val newTriangleStage = FIRST {x1 = x1, y1 = y1}
           val model =
@@ -100,7 +100,7 @@ struct
 
           val emptyVec: Real32.real vector = Vector.fromList []
           val drawVec = TriangleStage.firstToVector (x1, y1, emptyVec, model)
-          val drawMsg = DRAW_BUTTON drawVec
+          val drawMsg = DRAW_DOT drawVec
         in
           (model, drawMsg)
         end
@@ -120,8 +120,8 @@ struct
                val drawVec = TriangleStage.secondToVector
                  (x1, y1, x2, y2, emptyVec, model)
                val drawMsg =
-                 DRAW_TRIANGLES_AND_BUTTONS
-                   {triangles = newTriangleVec, buttons = drawVec}
+                 DRAW_TRIANGLES_AND_DOTS
+                   {triangles = newTriangleVec, dots = drawVec}
              in
                (model, drawMsg)
              end
@@ -135,7 +135,7 @@ struct
         (* There is a click point to redo. *)
         (case #triangleStage model of
            NO_TRIANGLE =>
-             (* add to triangle stage, and redraw buttons *)
+             (* add to triangle stage, and redraw dots *)
              let
                val newTriangleStage = FIRST {x1 = x, y1 = y}
                val model =
@@ -144,12 +144,12 @@ struct
 
                val emptyVec: Real32.real vector = Vector.fromList []
                val drawVec = TriangleStage.firstToVector (x, y, emptyVec, model)
-               val drawMsg = DRAW_BUTTON drawVec
+               val drawMsg = DRAW_DOT drawVec
              in
                (model, drawMsg)
              end
          | FIRST {x1, y1} =>
-             (* add to triangle stage, redraw buttons *)
+             (* add to triangle stage, redraw dots *)
              let
                val newTriangleStage = SECOND {x1 = x1, y1 = y1, x2 = x, y2 = y}
                val model =
@@ -159,7 +159,7 @@ struct
                val emptyVec: Real32.real vector = Vector.fromList []
                val drawVec = TriangleStage.secondToVector
                  (x1, y1, x, y, emptyVec, model)
-               val drawMsg = DRAW_BUTTON drawVec
+               val drawMsg = DRAW_DOT drawVec
              in
                (model, drawMsg)
              end
@@ -174,7 +174,7 @@ struct
                  AppWith.redo (model, newTriangleStage, newTriangles, redoHd)
 
                val drawVec = Triangles.toVector model
-               val drawMsg = DRAW_TRIANGLES_AND_RESET_BUTTONS drawVec
+               val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
              in
                (model, drawMsg)
              end)
