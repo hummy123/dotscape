@@ -40,8 +40,7 @@ struct
             end
         | FIRST {x1, y1} =>
             let
-              val drawVec =
-                TriangleStage.firstToVector (x1, y1, dotVec, model)
+              val drawVec = TriangleStage.firstToVector (x1, y1, dotVec, model)
               val drawMsg = DRAW_DOT drawVec
 
               val newTriangleStage = SECOND
@@ -74,9 +73,11 @@ struct
         if #showGraph model then GraphLines.generate model
         else Vector.fromList []
 
+      val dots = TriangleStage.toVector (model, Vector.fromList [])
+
       val drawMsg =
         RESIZE_TRIANGLES_DOTS_AND_GRAPH
-          {triangles = triangles, graphLines = graphLines}
+          {triangles = triangles, graphLines = graphLines, dots = dots}
     in
       (model, drawMsg)
     end
@@ -179,7 +180,7 @@ struct
                (model, drawMsg)
              end)
     | [] => 
-        (* Nothing to redo. *) 
+        (* Nothing to redo. *)
         (model, NO_DRAW)
 
   fun toggleGraph (model: app_type) =

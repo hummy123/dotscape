@@ -126,14 +126,17 @@ struct
                    , triangleDrawLength
                    )
                end
-           | RESIZE_TRIANGLES_DOTS_AND_GRAPH {triangles, graphLines} =>
+           | RESIZE_TRIANGLES_DOTS_AND_GRAPH {triangles, graphLines, dots} =>
                let
                  val _ =
                    AppDraw.uploadTrianglesVector (triangleDrawObject, triangles)
                  val triangleDrawLength = Vector.length triangles div 2
+
                  val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
                  val drawGraphLength = Vector.length graphLines div 2
-               (* to do: upload dots *)
+
+                 val _ = AppDraw.uploadDotVector (dotDrawObject, dots)
+                 val dotDrawLength = Vector.length dots div 5
                in
                  draw
                    ( drawMailbox
@@ -141,7 +144,7 @@ struct
                    , graphDrawObject
                    , drawGraphLength
                    , dotDrawObject
-                   , 0
+                   , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
                    )

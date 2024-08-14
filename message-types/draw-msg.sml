@@ -7,7 +7,10 @@ sig
   | DRAW_TRIANGLES_AND_RESET_DOTS of Real32.real vector
   | DRAW_GRAPH of Real32.real vector
   | RESIZE_TRIANGLES_DOTS_AND_GRAPH of
-      {triangles: Real32.real vector, graphLines: Real32.real vector}
+      { triangles: Real32.real vector
+      , graphLines: Real32.real vector
+      , dots: Real32.real vector
+      }
   | CLEAR_DOTS
   | NO_DRAW
 end
@@ -21,7 +24,10 @@ struct
   | DRAW_TRIANGLES_AND_RESET_DOTS of Real32.real vector
   | DRAW_GRAPH of Real32.real vector
   | RESIZE_TRIANGLES_DOTS_AND_GRAPH of
-      {triangles: Real32.real vector, graphLines: Real32.real vector}
+      { triangles: Real32.real vector
+      , graphLines: Real32.real vector
+      , dots: Real32.real vector
+      }
   | CLEAR_DOTS
   | NO_DRAW
 end
