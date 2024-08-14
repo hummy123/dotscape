@@ -1,12 +1,6 @@
 structure AppDraw =
 struct
-  type draw_object =
-    { vertexBuffer: Word32.word
-    , vertexShader: Word32.word
-    , fragmentBuffer: Word32.word
-    , fragmentShader: Word32.word
-    , program: Word32.word
-    }
+  type draw_object = {vertexBuffer: Word32.word, program: Word32.word}
 
   fun initDrawObject (vertexShaderString, fragmentShaderString) : draw_object =
     let
@@ -24,24 +18,21 @@ struct
       val _ = Gles3.attachShader (program, vertexShader)
       val _ = Gles3.attachShader (program, fragmentShader)
       val _ = Gles3.linkProgram program
+
+      (* Flag shaders for deletion as we no longer need them 
+       * once the program is linked. *)
     in
-      { vertexBuffer = vertexBuffer
-      , vertexShader = vertexShader
-      , fragmentBuffer = fragmentBuffer
-      , fragmentShader = fragmentShader
-      , program = program
-      }
+      {vertexBuffer = vertexBuffer, program = program}
     end
 
   fun initGraphLines () =
     let
       val graphDrawObject = initDrawObject
         (Constants.graphVertexShaderString, Constants.graphFragmentShaderString)
-      val {vertexBuffer, program, ...} = graphDrawObject
+      val {vertexBuffer, program} = graphDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
-      val _ =
-        Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
+      val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
       val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
       val _ = Gles3.enableVertexAttribArray 0
     in
@@ -59,7 +50,7 @@ struct
 
   fun drawGraphLines (graphDrawObject: draw_object, graphDrawLength) =
     let
-      val {vertexBuffer, program, ...} = graphDrawObject
+      val {vertexBuffer, program} = graphDrawObject
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
       val _ = Gles3.enableVertexAttribArray 0
@@ -75,7 +66,7 @@ struct
         ( Constants.colouredVertexShaderString
         , Constants.colouredFragmentShaderString
         )
-      val {vertexBuffer, program, ...} = buttonDrawObject
+      val {vertexBuffer, program} = buttonDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
@@ -100,7 +91,7 @@ struct
   fun drawButton (buttonDrawObject: draw_object, buttonDrawLength) =
     if buttonDrawLength > 0 then
       let
-        val {vertexBuffer, program, ...} = buttonDrawObject
+        val {vertexBuffer, program} = buttonDrawObject
         val _ = Gles3.bindBuffer vertexBuffer
         val _ = Gles3.vertexAttribPointer (0, 2, 5, 0)
         val _ = Gles3.enableVertexAttribArray 0
@@ -118,7 +109,7 @@ struct
     let
       val triangleDrawObject = initDrawObject
         (Constants.graphVertexShaderString, Constants.graphFragmentShaderString)
-      val {vertexBuffer, program, ...} = triangleDrawObject
+      val {vertexBuffer, program} = triangleDrawObject
 
       val _ = Gles3.bindBuffer vertexBuffer
       val _ = Gles3.bufferData (#[], 0, Gles3.STATIC_DRAW ())
@@ -140,7 +131,7 @@ struct
   fun drawTriangles (triangleDrawObject: draw_object, triangleDrawLength) =
     if triangleDrawLength > 0 then
       let
-        val {vertexBuffer, program, ...} = triangleDrawObject
+        val {vertexBuffer, program} = triangleDrawObject
         val _ = Gles3.bindBuffer vertexBuffer
         val _ = Gles3.vertexAttribPointer (0, 2, 2, 0)
         val _ = Gles3.enableVertexAttribArray 0
