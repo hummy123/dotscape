@@ -39,8 +39,8 @@ struct
               AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawButton (buttonDrawObject, buttonDrawLength)
 
-            val _ = Glfw.pollEvents ()
             val _ = Glfw.swapBuffers window
+            val _ = Glfw.pollEvents ()
           in
             draw
               ( drawMailbox
