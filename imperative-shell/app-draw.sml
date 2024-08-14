@@ -21,6 +21,8 @@ struct
 
       (* Flag shaders for deletion as we no longer need them 
        * once the program is linked. *)
+      val _ = Gles3.deleteShader vertexShader
+      val _ = Gles3.deleteShader fragmentShader
     in
       {vertexBuffer = vertexBuffer, program = program}
     end
