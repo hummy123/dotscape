@@ -148,6 +148,22 @@ struct
                    , triangleDrawLength
                    )
                end
+           | DRAW_GRAPH graphLines =>
+               let
+                 val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
+                 val drawGraphLength = Vector.length graphLines div 2
+               in
+                 draw
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , drawGraphLength
+                   , buttonDrawObject
+                   , buttonDrawLength
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   )
+               end
            | NO_DRAW =>
                draw
                  ( drawMailbox
