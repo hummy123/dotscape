@@ -7,6 +7,7 @@ sig
   | RESIZE_WINDOW of {width: int, height: int}
   | UNDO_ACTION
   | REDO_ACTION
+  | KEY_G
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -18,4 +19,5 @@ struct
   | RESIZE_WINDOW of {width: int, height: int}
   | UNDO_ACTION
   | REDO_ACTION
+  | KEY_G
 end

@@ -31,8 +31,10 @@ struct
     _export "mltonKeyCallback" public : (int * int * int * int -> unit) -> unit;
   val setKeyCallback = _import "setKeyCallback" public reentrant : window -> unit;
 
-  val (KEY_Z, _) =
-    _symbol "KEY_Z" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_G, _) =
+    _symbol "KEY_G" public : ( unit -> int ) * ( int -> unit );
   val (KEY_Y, _) =
     _symbol "KEY_Y" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_Z, _) =
+    _symbol "KEY_Z" public : ( unit -> int ) * ( int -> unit );
 end

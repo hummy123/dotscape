@@ -26,6 +26,7 @@ sig
     , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
     , mouseY: Real32.real
+    , showGraph: bool
     }
 end
 
@@ -65,5 +66,6 @@ struct
     , redo: (Real32.real * Real32.real) list
     , mouseX: Real32.real
     , mouseY: Real32.real
+    , showGraph: bool
     }
 end

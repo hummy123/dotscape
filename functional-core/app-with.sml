@@ -1,5 +1,7 @@
 signature APP_WITH =
 sig
+  val graphVisibility: AppType.app_type * bool -> AppType.app_type
+
   val windowResize: AppType.app_type * int * int -> AppType.app_type
 
   val mousePosition: AppType.app_type * Real32.real * Real32.real
@@ -59,6 +61,7 @@ struct
         , redo = _
         , mouseX
         , mouseY
+        , showGraph
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -73,6 +76,7 @@ struct
       , windowHeight = windowHeight
       , mouseX = mouseX
       , mouseY = mouseY
+      , showGraph = showGraph
       }
     end
 
@@ -89,6 +93,7 @@ struct
         , redo = _
         , mouseX
         , mouseY
+        , showGraph
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -105,6 +110,7 @@ struct
       , windowHeight = windowHeight
       , mouseX = mouseX
       , mouseY = mouseY
+      , showGraph = showGraph
       }
     end
 
@@ -123,6 +129,7 @@ struct
         , redo
         , mouseX
         , mouseY
+        , showGraph
         } = app
 
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
@@ -138,6 +145,7 @@ struct
       , redo = redo
       , mouseX = mouseX
       , mouseY = mouseY
+      , showGraph = showGraph
       }
     end
 
@@ -177,6 +185,7 @@ struct
         , windowHeight
         , undo
         , redo
+        , showGraph
         } = app
     in
       { mouseX = mouseX
@@ -189,6 +198,7 @@ struct
       , windowHeight = windowHeight
       , undo = undo
       , redo = redo
+      , showGraph = showGraph
       }
     end
 
@@ -206,6 +216,7 @@ struct
         , redo
         , mouseX
         , mouseY
+        , showGraph
         } = app
 
       val newUndo =
@@ -225,6 +236,7 @@ struct
       , windowHeight = windowHeight
       , mouseX = mouseX
       , mouseY = mouseY
+      , showGraph = showGraph
       }
     end
 
@@ -242,6 +254,7 @@ struct
         , redo
         , mouseX
         , mouseY
+        , showGraph
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -254,6 +267,37 @@ struct
       , triangles = newTriangles
       , undo = newUndo
       , redo = newRedo
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , mouseX = mouseX
+      , mouseY = mouseY
+      , showGraph = showGraph
+      }
+    end
+
+  fun graphVisibility (app: app_type, shouldShowGraph) =
+    let
+      val
+        { triangleStage
+        , triangles
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        , showGraph = _
+        } = app
+    in
+      { showGraph = shouldShowGraph
+      , triangleStage = triangleStage
+      , triangles = triangles
+      , undo = undo
+      , redo = redo
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth

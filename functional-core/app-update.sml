@@ -174,7 +174,26 @@ struct
              in
                (model, drawMsg)
              end)
-    | [] => (* Nothing to redo. *) (model, NO_DRAW)
+    | [] => 
+        (* Nothing to redo. *) 
+        (model, NO_DRAW)
+
+  fun toggleGraph (model: app_type) =
+    if #showGraph model then
+      let
+        val model = AppWith.graphVisibility (model, false)
+        val drawMsg = DRAW_GRAPH (Vector.fromList [])
+      in
+        (model, drawMsg)
+      end
+    else
+      let
+        val model = AppWith.graphVisibility (model, true)
+        val graphLines = GraphLines.generate model
+        val drawMsg = DRAW_GRAPH graphLines
+      in
+        (model, drawMsg)
+      end
 
   fun update (model: app_type, inputMsg) =
     case inputMsg of
@@ -187,4 +206,5 @@ struct
     | RESIZE_WINDOW {width, height} => resizeWindow (model, width, height)
     | UNDO_ACTION => undoAction model
     | REDO_ACTION => redoAction model
+    | KEY_G => toggleGraph model
 end

@@ -23,6 +23,7 @@ struct
       , redo = []
       , mouseX = 0.0
       , mouseY = 0.0
+      , showGraph = true
       }
     end
 

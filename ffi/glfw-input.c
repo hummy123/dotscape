@@ -4,8 +4,10 @@
 int PRESS = GLFW_PRESS;
 int RELEASE = GLFW_RELEASE;
 int LEFT_MOUSE_BUTTON = GLFW_MOUSE_BUTTON_1;
-int KEY_Z = GLFW_KEY_Z;
+
+int KEY_G = GLFW_KEY_G;
 int KEY_Y = GLFW_KEY_Y;
+int KEY_Z = GLFW_KEY_Z;
 
 // Calls function exported from SML 
 void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos) {

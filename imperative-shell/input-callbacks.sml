@@ -37,6 +37,10 @@ struct
     then
       (* ctrl-y *)
       Mailbox.send (mailbox, REDO_ACTION)
+    else if
+      key = Input.KEY_G () andalso action <> Input.RELEASE () andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, KEY_G)
     else
       ()
 
