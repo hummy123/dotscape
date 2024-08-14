@@ -69,7 +69,11 @@ struct
     let
       val model = AppWith.windowResize (model, width, height)
       val triangles = Triangles.toVector model
-      val graphLines = GraphLines.generate model
+
+      val graphLines =
+        if #showGraph model then GraphLines.generate model
+        else Vector.fromList []
+
       val drawMsg =
         RESIZE_TRIANGLES_BUTTONS_AND_GRAPH
           {triangles = triangles, graphLines = graphLines}
