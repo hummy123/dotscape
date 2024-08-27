@@ -1,6 +1,6 @@
-#include "export.h"
-#include <GLFW/glfw3.h>
 #include <stdbool.h>
+#define GLFW_INCLUDE_NONE
+#include <GLFW/glfw3.h>
 
 // GLFW constants used below
 int CONTEXT_VERSION_MAJOR = GLFW_CONTEXT_VERSION_MAJOR;
