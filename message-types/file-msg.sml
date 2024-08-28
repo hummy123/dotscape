@@ -1,4 +1,4 @@
-signature IO_MESSAGE =
+signature FILE_MESSAGE =
 sig
   datatype t =
     SAVE_TRIANGLES of AppType.triangle list
@@ -6,7 +6,7 @@ sig
   | IMPORT_FILE
 end
 
-structure IoMessage :> IO_MESSAGE =
+structure FileMessage :> FILE_MESSAGE =
 struct
   datatype t =
     SAVE_TRIANGLES of AppType.triangle list

@@ -1,14 +1,16 @@
 signature APP_UPDATE =
 sig
   val update: AppType.app_type * InputMessage.t
-              -> AppType.app_type * DrawMessage.t
+              -> AppType.app_type * UpdateMessage.t
 end
 
 structure AppUpdate :> APP_UPDATE =
 struct
   open AppType
+
   open DrawMessage
   open InputMessage
+  open UpdateMessage
 
   fun mouseMoveOrRelease (model: app_type) =
     let
@@ -16,7 +18,7 @@ struct
       val drawVec = TriangleStage.toVector (model, drawVec)
       val drawMsg = DRAW_DOT drawVec
     in
-      (model, drawMsg)
+      (model, DRAW drawMsg)
     end
 
   fun mouseLeftClick (model: app_type) =
@@ -36,7 +38,7 @@ struct
               val model =
                 AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
             in
-              (model, drawMsg)
+              (model, DRAW drawMsg)
             end
         | FIRST {x1, y1} =>
             let
@@ -48,7 +50,7 @@ struct
               val model =
                 AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
             in
-              (model, drawMsg)
+              (model, DRAW drawMsg)
             end
         | SECOND {x1, y1, x2, y2} =>
             let
@@ -58,10 +60,10 @@ struct
               val drawVec = Triangles.toVector model
               val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
             in
-              (model, drawMsg)
+              (model, DRAW drawMsg)
             end
       else
-        (model, NO_DRAW)
+        (model, NO_MAILBOX)
     end
 
   fun resizeWindow (model, width, height) =
@@ -79,7 +81,7 @@ struct
         RESIZE_TRIANGLES_DOTS_AND_GRAPH
           {triangles = triangles, graphLines = graphLines, dots = dots}
     in
-      (model, drawMsg)
+      (model, DRAW drawMsg)
     end
 
   fun undoAction model =
@@ -90,7 +92,7 @@ struct
           val model =
             AppWith.undo (model, NO_TRIANGLE, #triangles model, (x1, y1))
         in
-          (model, CLEAR_DOTS)
+          (model, DRAW CLEAR_DOTS)
         end
     | SECOND {x1, y1, x2, y2} =>
         (* Change FIRST to SECOND and redraw dots. *)
@@ -103,7 +105,7 @@ struct
           val drawVec = TriangleStage.firstToVector (x1, y1, emptyVec, model)
           val drawMsg = DRAW_DOT drawVec
         in
-          (model, drawMsg)
+          (model, DRAW drawMsg)
         end
     | NO_TRIANGLE =>
         (case #triangles model of
@@ -124,11 +126,11 @@ struct
                  DRAW_TRIANGLES_AND_DOTS
                    {triangles = newTriangleVec, dots = drawVec}
              in
-               (model, drawMsg)
+               (model, DRAW drawMsg)
              end
          | [] =>
              (* Can't undo, because there are no actions to undo. *)
-             (model, NO_DRAW))
+             (model, NO_MAILBOX))
 
   fun redoAction model =
     case #redo model of
@@ -147,7 +149,7 @@ struct
                val drawVec = TriangleStage.firstToVector (x, y, emptyVec, model)
                val drawMsg = DRAW_DOT drawVec
              in
-               (model, drawMsg)
+               (model, DRAW drawMsg)
              end
          | FIRST {x1, y1} =>
              (* add to triangle stage, redraw dots *)
@@ -162,7 +164,7 @@ struct
                  (x1, y1, x, y, emptyVec, model)
                val drawMsg = DRAW_DOT drawVec
              in
-               (model, drawMsg)
+               (model, DRAW drawMsg)
              end
          | SECOND {x1, y1, x2, y2} =>
              (* clear triangle stage, add to trinagle list and redraw triangles *)
@@ -177,11 +179,9 @@ struct
                val drawVec = Triangles.toVector model
                val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
              in
-               (model, drawMsg)
+               (model, DRAW drawMsg)
              end)
-    | [] => 
-        (* Nothing to redo. *)
-        (model, NO_DRAW)
+    | [] => (* Nothing to redo. *) (model, NO_MAILBOX)
 
   fun toggleGraph (model: app_type) =
     if #showGraph model then
@@ -189,7 +189,7 @@ struct
         val model = AppWith.graphVisibility (model, false)
         val drawMsg = DRAW_GRAPH (Vector.fromList [])
       in
-        (model, drawMsg)
+        (model, DRAW drawMsg)
       end
     else
       let
@@ -197,7 +197,7 @@ struct
         val graphLines = GraphLines.generate model
         val drawMsg = DRAW_GRAPH graphLines
       in
-        (model, drawMsg)
+        (model, DRAW drawMsg)
       end
 
   fun update (model: app_type, inputMsg) =

@@ -150,18 +150,7 @@ struct
                    , triangleDrawObject
                    , triangleDrawLength
                    )
-               end
-           | NO_DRAW =>
-               run
-                 ( drawMailbox
-                 , window
-                 , graphDrawObject
-                 , drawGraphLength
-                 , dotDrawObject
-                 , dotDrawLength
-                 , triangleDrawObject
-                 , triangleDrawLength
-                 ))
+               end)
     else
       Glfw.terminate ()
 end

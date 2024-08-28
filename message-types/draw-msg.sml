@@ -12,7 +12,6 @@ sig
       , dots: Real32.real vector
       }
   | CLEAR_DOTS
-  | NO_DRAW
 end
 
 structure DrawMessage :> DRAW_MESSAGE =
@@ -29,5 +28,4 @@ struct
       , dots: Real32.real vector
       }
   | CLEAR_DOTS
-  | NO_DRAW
 end
