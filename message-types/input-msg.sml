@@ -8,6 +8,7 @@ sig
   | UNDO_ACTION
   | REDO_ACTION
   | KEY_G
+  | KEY_CTRL_S
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -20,4 +21,5 @@ struct
   | UNDO_ACTION
   | REDO_ACTION
   | KEY_G
+  | KEY_CTRL_S
 end

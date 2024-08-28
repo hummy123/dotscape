@@ -32,15 +32,20 @@ struct
         (* no action recognised *)
         ()
     else if
+      (* ctrl-y *)
       key = Input.KEY_Y () andalso action <> Input.RELEASE ()
       andalso mods = 0x0002
     then
-      (* ctrl-y *)
       Mailbox.send (mailbox, REDO_ACTION)
     else if
       key = Input.KEY_G () andalso action <> Input.RELEASE () andalso mods = 0x0
     then
       Mailbox.send (mailbox, KEY_G)
+    else if
+      (* ctrl-s *)
+      key = Input.KEY_S () andalso action = Input.PRESS () andalso mods = 0x002
+    then
+      Mailbox.send (mailbox, KEY_CTRL_S)
     else
       ()
 

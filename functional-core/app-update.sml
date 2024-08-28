@@ -9,6 +9,7 @@ struct
   open AppType
 
   open DrawMessage
+  open FileMessage
   open InputMessage
   open UpdateMessage
 
@@ -200,6 +201,14 @@ struct
         (model, DRAW drawMsg)
       end
 
+  fun getSaveTrianglesMsg model =
+    let
+      val {triangles, ...} = model
+      val fileMsg = SAVE_TRIANGLES triangles
+    in
+      (model, FILE fileMsg)
+    end
+
   fun update (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
@@ -212,4 +221,5 @@ struct
     | UNDO_ACTION => undoAction model
     | REDO_ACTION => redoAction model
     | KEY_G => toggleGraph model
+    | KEY_CTRL_S => getSaveTrianglesMsg model
 end
