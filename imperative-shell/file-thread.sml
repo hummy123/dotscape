@@ -12,8 +12,8 @@ struct
       val _ =
         case Mailbox.recv fileMailbox of
           SAVE_TRIANGLES triangles => ()
+        | LOAD_TRIANGLES triangles => ()
         | EXPORT_TRIANGLES triangles => ()
-        | IMPORT_TRIANGLES => ()
     in
       run fileMailbox
     end
