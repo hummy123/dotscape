@@ -32,9 +32,9 @@ struct
       val _ = CML.spawn (fn () =>
         InputCallbacks.registerCallbacks (window, inputMailbox))
       val _ = CML.spawn (fn () =>
-        EventLoop.update (inputMailbox, drawMailbox, initialModel))
+        UpdateThread.run (inputMailbox, drawMailbox, initialModel))
       val _ = CML.spawn (fn () =>
-        EventLoop.draw
+        DrawThread.run
           ( drawMailbox
           , window
           , graphDrawObject

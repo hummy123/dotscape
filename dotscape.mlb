@@ -42,5 +42,8 @@ in
 end
 
 imperative-shell/input-callbacks.sml
-imperative-shell/event-loop.sml
+
+imperative-shell/update-thread.sml
+imperative-shell/draw-thread.sml
+
 imperative-shell/shell.sml

@@ -1,23 +1,9 @@
-structure EventLoop =
+structure DrawThread =
 struct
   open CML
   open DrawMessage
 
-  local
-    fun loop (inputMailbox, drawMailbox, model) =
-      let
-        val inputMsg = Mailbox.recv inputMailbox
-        val (model, drawMsg) = AppUpdate.update (model, inputMsg)
-        val _ = Mailbox.send (drawMailbox, drawMsg)
-      in
-        loop (inputMailbox, drawMailbox, model)
-      end
-  in
-    fun update (inputMailbox, drawMailbox, initial) =
-      loop (inputMailbox, drawMailbox, initial)
-  end
-
-  fun draw
+  fun run
     ( drawMailbox
     , window
     , graphDrawObject
@@ -42,7 +28,7 @@ struct
             val _ = Glfw.swapBuffers window
             val _ = Glfw.pollEvents ()
           in
-            draw
+            run
               ( drawMailbox
               , window
               , graphDrawObject
@@ -60,7 +46,7 @@ struct
                  val _ = AppDraw.uploadDotVector (dotDrawObject, vec)
                  val dotDrawLength = Vector.length vec div 5
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -79,7 +65,7 @@ struct
                  val triangleDrawLength = Vector.length triangleVec div 2
                (* dots are reset by setting dotDrawLength to 0 *)
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -100,7 +86,7 @@ struct
                  val _ = AppDraw.uploadDotVector (dotDrawObject, dotsVec)
                  val dotDrawLength = Vector.length dotsVec div 5
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -115,7 +101,7 @@ struct
                let
                  val dotDrawLength = 0
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -138,7 +124,7 @@ struct
                  val _ = AppDraw.uploadDotVector (dotDrawObject, dots)
                  val dotDrawLength = Vector.length dots div 5
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -154,7 +140,7 @@ struct
                  val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
                  val drawGraphLength = Vector.length graphLines div 2
                in
-                 draw
+                 run
                    ( drawMailbox
                    , window
                    , graphDrawObject
@@ -166,7 +152,7 @@ struct
                    )
                end
            | NO_DRAW =>
-               draw
+               run
                  ( drawMailbox
                  , window
                  , graphDrawObject
