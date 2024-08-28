@@ -28,11 +28,13 @@ struct
 
       val inputMailbox = Mailbox.mailbox ()
       val drawMailbox = Mailbox.mailbox ()
+      val fileMailbox = Mailbox.mailbox ()
+
+      val _ = InputCallbacks.registerCallbacks (window, inputMailbox)
 
       val _ = CML.spawn (fn () =>
-        InputCallbacks.registerCallbacks (window, inputMailbox))
-      val _ = CML.spawn (fn () =>
-        UpdateThread.run (inputMailbox, drawMailbox, initialModel))
+        UpdateThread.run (inputMailbox, drawMailbox, fileMailbox, initialModel))
+
       val _ = CML.spawn (fn () =>
         DrawThread.run
           ( drawMailbox
@@ -44,6 +46,8 @@ struct
           , triangleDrawObject
           , 0
           ))
+
+      val _ = CML.spawn (fn () => FileThread.run fileMailbox)
     in
       ()
     end

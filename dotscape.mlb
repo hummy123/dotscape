@@ -46,6 +46,7 @@ end
 imperative-shell/input-callbacks.sml
 
 imperative-shell/update-thread.sml
+imperative-shell/file-thread.sml
 imperative-shell/draw-thread.sml
 
 imperative-shell/shell.sml
