@@ -39,8 +39,12 @@ struct
     | [] => ()
 
   fun saveTriangles triangles =
-    let val io = TextIO.openOut filename
-    in helpSaveTriangles (triangles, io)
+    let
+      val io = TextIO.openOut filename
+      val _ = helpSaveTriangles (triangles, io)
+      val _ = TextIO.closeOut io
+    in
+      ()
     end
 
   fun run fileMailbox =
