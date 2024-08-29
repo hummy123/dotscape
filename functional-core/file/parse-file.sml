@@ -29,27 +29,41 @@ struct
         SOME num => COORD num
       | NONE => UNKNOWN str
 
-  fun helpParseLine (line, pos, acc, lastSpacePos) =
+  fun helpParseLine (line, pos, acc, wordStartPos) =
     if pos = String.size line then
       List.rev acc
     else
       let
         val chr = String.sub (line, pos)
       in
-        if chr = #" " orelse chr = #"\n" then
-          let
-            val strToken = String.substring
-              (line, lastSpacePos + 1, pos - (lastSpacePos + 1))
-            val token = tokeniseString strToken
-          in
-            helpParseLine (line, pos + 1, token :: acc, pos)
-          end
+        if Char.isSpace chr then
+          if pos > 0 andalso Char.isSpace (String.sub (line, pos - 1)) then
+            (* if previous character is space, just proceed to next character *)
+            helpParseLine (line, pos + 1, acc, wordStartPos)
+          else
+            let
+              (* current character is space, but previous character is not, 
+               * which means we have some text to substring and tokenise 
+               * before proceeding to next character *)
+              val strToken =
+                String.substring (line, wordStartPos, pos - wordStartPos)
+              val token = tokeniseString strToken
+            in
+              helpParseLine (line, pos + 1, token :: acc, pos)
+            end
+        else if pos > 0 andalso Char.isSpace (String.sub (line, pos - 1)) then
+          (* previous character was space but current character is not,
+           * meaning that we have hit the start of a new word *)
+          helpParseLine (line, pos + 1, acc, pos)
         else
-          helpParseLine (line, pos + 1, acc, lastSpacePos)
+          (* just proceed to next character *)
+          helpParseLine (line, pos + 1, acc, wordStartPos)
       end
 
   fun parseLine line =
-    let val lst = helpParseLine (line, 0, [], ~1)
-    in extractTriangle lst
+    let
+      val lst = helpParseLine (line, 0, [], 0)
+    in
+      extractTriangle lst
     end
 end
