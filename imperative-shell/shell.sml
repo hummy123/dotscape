@@ -47,7 +47,7 @@ struct
           , 0
           ))
 
-      val _ = CML.spawn (fn () => FileThread.run fileMailbox)
+      val _ = CML.spawn (fn () => FileThread.run (fileMailbox, inputMailbox))
     in
       ()
     end

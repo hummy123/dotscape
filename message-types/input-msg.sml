@@ -10,6 +10,8 @@ sig
   | KEY_G
   | KEY_CTRL_S
   | KEY_CTRL_L
+  | USE_TRIANGLES of AppType.triangle list
+  | TRIANGLES_LOAD_ERROR
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -24,4 +26,6 @@ struct
   | KEY_G
   | KEY_CTRL_S
   | KEY_CTRL_L
+  | USE_TRIANGLES of AppType.triangle list
+  | TRIANGLES_LOAD_ERROR
 end

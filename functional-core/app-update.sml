@@ -214,6 +214,17 @@ struct
   fun getLoadTriangleMsg model =
     (model, FILE LOAD_TRIANGLES)
 
+  fun useTriangles (model, triangles) =
+    let
+      val model = AppWith.useTriangles (model, triangles)
+      val drawVec = Triangles.toVector model
+      val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+    in
+      (model, DRAW drawMsg)
+    end
+
+  fun trianglesLoadError model = (model, NO_MAILBOX)
+
   fun update (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
@@ -228,4 +239,6 @@ struct
     | KEY_G => toggleGraph model
     | KEY_CTRL_S => getSaveTrianglesMsg model
     | KEY_CTRL_L => getLoadTriangleMsg model
+    | USE_TRIANGLES triangles => useTriangles (model, triangles)
+    | TRIANGLES_LOAD_ERROR => trianglesLoadError model
 end

@@ -1,12 +1,13 @@
 signature FILE_THREAD =
 sig
-  val run: FileMessage.t Mailbox.mbox -> unit
+  val run: FileMessage.t Mailbox.mbox * InputMessage.t Mailbox.mbox -> unit
 end
 
 structure FileThread :> FILE_THREAD =
 struct
   open AppType
   open FileMessage
+  open InputMessage
 
   val filename = "a.dsc"
 
@@ -72,15 +73,18 @@ struct
         end
     | NONE => let val triangles = List.rev acc in OK triangles end
 
-  fun loadTriangles () =
+  fun loadTriangles inputMailbox =
     let
       val io = TextIO.openIn filename
       val triangles = parse (io, [])
       val _ = TextIO.closeIn io
+
+      val inputMsg = 
+        case triangles of
+          OK triangles => USE_TRIANGLES triangles
+        | PARSE_ERROR => TRIANGLES_LOAD_ERROR
     in
-      case triangles of
-        OK triangles => print "parse success\n"
-      | PARSE_ERROR => print "parse error\n"
+      Mailbox.send (inputMailbox, inputMsg)
     end
 
   fun helpSaveTriangles (triangles, io) =
@@ -114,14 +118,14 @@ struct
       ()
     end
 
-  fun run fileMailbox =
+  fun run (fileMailbox, inputMailbox) =
     let
       val _ =
         case Mailbox.recv fileMailbox of
           SAVE_TRIANGLES triangles => saveTriangles triangles
-        | LOAD_TRIANGLES => loadTriangles ()
+        | LOAD_TRIANGLES => loadTriangles inputMailbox
         | EXPORT_TRIANGLES triangles => ()
     in
-      run fileMailbox
+      run (fileMailbox, inputMailbox)
     end
 end

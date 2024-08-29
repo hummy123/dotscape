@@ -40,6 +40,8 @@ sig
     * Real32.real
     * (Real32.real * Real32.real)
     -> AppType.app_type
+
+  val useTriangles: AppType.app_type * AppType.triangle list -> AppType.app_type
 end
 
 structure AppWith :> APP_WITH =
@@ -298,6 +300,38 @@ struct
       , triangles = triangles
       , undo = undo
       , redo = redo
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , mouseX = mouseX
+      , mouseY = mouseY
+      }
+    end
+
+  fun useTriangles (app: app_type, triangles) =
+    let
+      val
+        { xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        , showGraph
+        , triangles = _
+        , triangleStage = _
+        } = app
+
+      val triangleStage = NO_TRIANGLE
+    in
+      { triangleStage = triangleStage
+      , triangles = triangles
+      , undo = []
+      , redo = []
+      , showGraph = showGraph
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
