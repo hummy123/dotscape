@@ -10,6 +10,71 @@ struct
 
   val filename = "a.dsc"
 
+  datatype triangle_token = X | Y | COORD of Real32.real | UNKNOWN
+
+  fun extractTriangle lst =
+    case lst of
+      [ X , COORD x1
+      , Y , COORD y1
+      , X , COORD x2
+
+      , Y , COORD y2
+      , X , COORD x3
+      , Y , COORD y3
+      ] => SOME {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
+    | _ => NONE
+
+  fun tokeniseString str =
+    if str = "x" then
+      X
+    else if str = "y" then
+      Y
+    else
+      case Real32.fromString str of
+        SOME num => COORD num
+      | NONE => UNKNOWN
+
+  fun helpParseLine (line, pos, acc, lastSpacePos) =
+    if pos = String.size line then
+      List.rev acc
+    else
+      let
+        val chr = String.sub (line, pos)
+      in
+        if chr = #" " then
+          let
+            val strToken =
+              String.substring (line, lastSpacePos, pos - (lastSpacePos + 1))
+            val token = tokeniseString strToken
+          in
+            helpParseLine (line, pos + 1, token :: acc, pos)
+          end
+        else if chr = #"\n" then
+          List.rev acc
+        else
+          helpParseLine (line, pos + 1, acc, lastSpacePos)
+      end
+
+  fun parseLine line =
+    let val lst = helpParseLine (line, 0, [], ~1)
+    in extractTriangle lst
+    end
+
+  datatype parse_resule = OK of AppType.triangle list | PARSE_ERROR
+
+  fun helpParse (io, acc) =
+    case TextIO.inputLine io of
+      SOME line =>
+        (case parseLine line of
+           SOME tri => helpParse (io, tri :: acc)
+         | NONE => PARSE_ERROR)
+    | NONE => let val triangles = List.rev acc in OK triangles end
+
+  fun parse () =
+    let val io = TextIO.openIn filename
+    in helpParse (io, [])
+    end
+
   fun helpSaveTriangles (triangles, io) =
     case triangles of
       {x1, y1, x2, y2, x3, y3} :: tl =>
