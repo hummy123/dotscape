@@ -46,11 +46,11 @@ This isn't an exhaustive list, but these are some features I would like to add t
 - [x] Display clicked positions
 - [x] Redraw components when resized
 - [x] Support undo (with `<Ctrl-z>`) and redo (with `<Ctrl-y>` or `<Ctrl-Shift-z>`)
+- [x] Save drawn project to a custom file format and allow reloading
 - [ ] Export to code 
   - Possibly different options like creating a flat array/vector or an index buffer
 - [ ] Linear interpolation 
   - Instead of exporting a vector, export a function which takes `(xPos, yPos, xLength, yLength)` arguments and lengths and returns a vector where the object is fitted in these coordinates.
-- [ ] Save drawn project to a custom file format and allow reloading
 - [ ] Add right-side panel 
   - With options (like adjusting x/y coordinates in a number input, possibly layers, selecting export options...)
 - [ ] Support setting more z coordinates and (r,g,b,a) colour values.
