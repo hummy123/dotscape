@@ -15,20 +15,14 @@ struct
       {x1, y1, x2, y2, x3, y3} :: tl =>
         let
           val triString = String.concat
-            [ "x1:"
-            , Real32.toString x1
-            , " y1:"
-            , Real32.toString y1
+            [ "x " , Real32.toString x1
+            , " y " , Real32.toString y1
 
-            , " x2:"
-            , Real32.toString x2
-            , " y2:"
-            , Real32.toString y2
+            , " x " , Real32.toString x2
+            , " y " , Real32.toString y2
 
-            , " x3:"
-            , Real32.toString x3
-            , " y3:"
-            , Real32.toString y3
+            , " x " , Real32.toString x3
+            , " y " , Real32.toString y3
             , "\n"
             ]
 
