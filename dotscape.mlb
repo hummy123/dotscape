@@ -1,28 +1,31 @@
 $(SML_LIB)/basis/basis.mlb
 
 (* FUNCTIONAL CORE *)
-functional-core/app-type.sml
+functional-core/app/app-type.sml
 
 ann
   "allowVectorExps true"
 in
-  functional-core/ndc.sml
-  functional-core/click-points.sml
-  functional-core/graph-lines.sml
-  functional-core/triangles.sml
+  functional-core/app/ndc.sml
+  functional-core/app/click-points.sml
+  functional-core/app/graph-lines.sml
+  functional-core/app/triangles.sml
 end
 
-functional-core/triangle-stage.sml
+functional-core/app/triangle-stage.sml
 
-functional-core/app-init.sml
-functional-core/app-with.sml
+functional-core/app/app-init.sml
+functional-core/app/app-with.sml
 
 message-types/input-msg.sml
 message-types/file-msg.sml
 message-types/draw-msg.sml
 message-types/update-msg.sml
 
-functional-core/app-update.sml
+functional-core/app/app-update.sml
+
+(* pure file parsing functions *)
+functional-core/file/parse-file.sml
 
 (* IMPERATIVE SHELL *)
 $(SML_LIB)/basis/mlton.mlb
