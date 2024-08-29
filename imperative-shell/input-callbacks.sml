@@ -46,6 +46,11 @@ struct
       key = Input.KEY_S () andalso action = Input.PRESS () andalso mods = 0x002
     then
       Mailbox.send (mailbox, KEY_CTRL_S)
+    else if
+      (* ctrl-l *)
+      key = Input.KEY_L () andalso action = Input.PRESS () andalso mods = 0x002
+    then
+      Mailbox.send (mailbox, KEY_CTRL_L)
     else
       ()
 

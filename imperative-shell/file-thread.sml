@@ -14,13 +14,13 @@ struct
 
   fun extractTriangle lst =
     case lst of
-      [ X , COORD x1
-      , Y , COORD y1
-      , X , COORD x2
+      [ X, COORD x1
+      , Y, COORD y1
+      , X, COORD x2
 
-      , Y , COORD y2
-      , X , COORD x3
-      , Y , COORD y3
+      , Y, COORD y2
+      , X, COORD x3
+      , Y, COORD y3
       ] => SOME {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
     | _ => NONE
 
@@ -41,16 +41,14 @@ struct
       let
         val chr = String.sub (line, pos)
       in
-        if chr = #" " then
+        if chr = #" " orelse chr = #"\n" then
           let
-            val strToken =
-              String.substring (line, lastSpacePos, pos - (lastSpacePos + 1))
+            val strToken = String.substring
+              (line, lastSpacePos + 1, pos - (lastSpacePos + 1))
             val token = tokeniseString strToken
           in
             helpParseLine (line, pos + 1, token :: acc, pos)
           end
-        else if chr = #"\n" then
-          List.rev acc
         else
           helpParseLine (line, pos + 1, acc, lastSpacePos)
       end
@@ -62,17 +60,27 @@ struct
 
   datatype parse_resule = OK of AppType.triangle list | PARSE_ERROR
 
-  fun helpParse (io, acc) =
+  fun parse (io, acc) =
     case TextIO.inputLine io of
       SOME line =>
-        (case parseLine line of
-           SOME tri => helpParse (io, tri :: acc)
-         | NONE => PARSE_ERROR)
+        let
+          val line = parseLine line
+        in
+          (case line of
+             SOME tri => parse (io, tri :: acc)
+           | NONE => PARSE_ERROR)
+        end
     | NONE => let val triangles = List.rev acc in OK triangles end
 
-  fun parse () =
-    let val io = TextIO.openIn filename
-    in helpParse (io, [])
+  fun loadTriangles () =
+    let
+      val io = TextIO.openIn filename
+      val triangles = parse (io, [])
+      val _ = TextIO.closeIn io
+    in
+      case triangles of
+        OK triangles => print "parse success\n"
+      | PARSE_ERROR => print "parse error\n"
     end
 
   fun helpSaveTriangles (triangles, io) =
@@ -111,7 +119,7 @@ struct
       val _ =
         case Mailbox.recv fileMailbox of
           SAVE_TRIANGLES triangles => saveTriangles triangles
-        | LOAD_TRIANGLES => ()
+        | LOAD_TRIANGLES => loadTriangles ()
         | EXPORT_TRIANGLES triangles => ()
     in
       run fileMailbox

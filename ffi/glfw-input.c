@@ -13,6 +13,7 @@ int KEY_Z = GLFW_KEY_Z;
 int KEY_S = GLFW_KEY_S;
 int KEY_E = GLFW_KEY_E;
 int KEY_I = GLFW_KEY_I;
+int KEY_L = GLFW_KEY_L;
 
 // Calls function exported from SML 
 void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos) {

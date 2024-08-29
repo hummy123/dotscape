@@ -182,7 +182,9 @@ struct
              in
                (model, DRAW drawMsg)
              end)
-    | [] => (* Nothing to redo. *) (model, NO_MAILBOX)
+    | [] => 
+        (* Nothing to redo. *) 
+        (model, NO_MAILBOX)
 
   fun toggleGraph (model: app_type) =
     if #showGraph model then
@@ -209,6 +211,9 @@ struct
       (model, FILE fileMsg)
     end
 
+  fun getLoadTriangleMsg model =
+    (model, FILE LOAD_TRIANGLES)
+
   fun update (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
@@ -222,4 +227,5 @@ struct
     | REDO_ACTION => redoAction model
     | KEY_G => toggleGraph model
     | KEY_CTRL_S => getSaveTrianglesMsg model
+    | KEY_CTRL_L => getLoadTriangleMsg model
 end

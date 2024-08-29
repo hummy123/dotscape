@@ -9,6 +9,7 @@ sig
   | REDO_ACTION
   | KEY_G
   | KEY_CTRL_S
+  | KEY_CTRL_L
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -22,4 +23,5 @@ struct
   | REDO_ACTION
   | KEY_G
   | KEY_CTRL_S
+  | KEY_CTRL_L
 end
