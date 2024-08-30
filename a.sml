@@ -4,9 +4,9 @@ struct
     let
        val startX = Real32.fromInt startX
        val startY = Real32.fromInt startY
+       val endY = windowHeight - startY
        val startY = windowHeight - (startY + drawHeight)
        val endX = startX + drawWidth
-       val endY = startY + drawHeight
        val windowHeight = windowHeight / 2.0
        val windowWidth = windowWidth / 2.0
     in

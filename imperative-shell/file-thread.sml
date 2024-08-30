@@ -69,8 +69,8 @@ struct
            \       val startX = Real32.fromInt startX\n\
            \       val startY = Real32.fromInt startY\n\
            \       val endY = windowHeight - startY\n\
+           \       val startY = windowHeight - (startY + drawHeight)\n\
            \       val endX = startX + drawWidth\n\
-           \       val startY = startY - drawHeight\n\
            \       val windowHeight = windowHeight / 2.0\n\
            \       val windowWidth = windowWidth / 2.0\n\
            \    in\n\
