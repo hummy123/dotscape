@@ -10,6 +10,7 @@ sig
   | KEY_G
   | KEY_CTRL_S
   | KEY_CTRL_L
+  | KEY_CTRL_E
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end
@@ -26,6 +27,7 @@ struct
   | KEY_G
   | KEY_CTRL_S
   | KEY_CTRL_L
+  | KEY_CTRL_E
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end

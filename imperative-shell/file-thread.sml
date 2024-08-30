@@ -143,7 +143,7 @@ struct
         case Mailbox.recv fileMailbox of
           SAVE_TRIANGLES triangles => saveTriangles triangles
         | LOAD_TRIANGLES => loadTriangles inputMailbox
-        | EXPORT_TRIANGLES triangles => ()
+        | EXPORT_TRIANGLES triangles => exportTriangles triangles
     in
       run (fileMailbox, inputMailbox)
     end

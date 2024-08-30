@@ -211,8 +211,15 @@ struct
       (model, FILE fileMsg)
     end
 
-  fun getLoadTriangleMsg model =
-    (model, FILE LOAD_TRIANGLES)
+  fun getLoadTrianglesMsg model = (model, FILE LOAD_TRIANGLES)
+
+  fun getExportTrianglesMsg model =
+    let
+      val {triangles, ...} = model
+      val fileMsg = EXPORT_TRIANGLES (#triangles model)
+    in
+      (model, FILE fileMsg)
+    end
 
   fun useTriangles (model, triangles) =
     let
@@ -238,7 +245,8 @@ struct
     | REDO_ACTION => redoAction model
     | KEY_G => toggleGraph model
     | KEY_CTRL_S => getSaveTrianglesMsg model
-    | KEY_CTRL_L => getLoadTriangleMsg model
+    | KEY_CTRL_L => getLoadTrianglesMsg model
+    | KEY_CTRL_E => getExportTrianglesMsg model
     | USE_TRIANGLES triangles => useTriangles (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
 end
