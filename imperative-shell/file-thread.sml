@@ -14,31 +14,33 @@ struct
   val filename = "a.dsc"
   val exportFilename = "a.sml"
 
-  datatype dir = X | Y
-
-  fun ndcToLerp (num, dir) =
+  fun ndcToLerpX num =
     let
       val num = (num + 1.0) / 2.0
       val num = Real32.toString num
     in
-      case dir of
-        X =>
-          "      ((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num ^ ")) / windowWidth"
-      | Y =>
-          "      ((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num ^ ")) / windowHeight"
+      "      (((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num ^ ")) / windowWidth) - 1.0"
+    end
+
+  fun ndcToLerpY num =
+    let
+      val num = (num + 1.0) / 2.0
+      val num = Real32.toString num
+    in
+      "      (((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num ^ ")) / windowHeight) - 1.0"
     end
 
   fun helpExportTriangles (io, triangles) =
     case triangles of
       {x1, y1, x2, y2, x3, y3} :: tl =>
         let
-          val x1 = ndcToLerp (x1, X)
-          val x2 = ndcToLerp (x2, X)
-          val x3 = ndcToLerp (x3, X)
+          val x1 = ndcToLerpX x1
+          val x2 = ndcToLerpX x2
+          val x3 = ndcToLerpX x3
 
-          val y1 = ndcToLerp (y1, Y)
-          val y2 = ndcToLerp (y2, Y)
-          val y3 = ndcToLerp (y3, Y)
+          val y1 = ndcToLerpY y1
+          val y2 = ndcToLerpY y2
+          val y3 = ndcToLerpY y3
 
           val line = String.concat
             [ x1, ",\n", y1, ",\n"
@@ -66,8 +68,11 @@ struct
            \    let\n\
            \       val startX = Real32.fromInt startX\n\
            \       val startY = Real32.fromInt startY\n\
+           \       val startY = windowHeight - (startY + drawHeight)\n\
            \       val endX = startX + drawWidth\n\
            \       val endY = startY + drawHeight\n\
+           \       val windowHeight = windowHeight / 2.0\n\
+           \       val windowWidth = windowWidth / 2.0\n\
            \    in\n\
            \       #["
       val _ = TextIO.output (io, functionStartString)
