@@ -10,7 +10,75 @@ struct
 
   datatype parse_result = OK of AppType.triangle list | PARSE_ERROR
 
+  val structureName = "LowerCaseA"
   val filename = "a.dsc"
+  val exportFilename = "a.sml"
+
+  datatype dir = X | Y
+
+  fun ndcToLerp (num, dir) =
+    let
+      val num = (num + 1.0) / 2.0
+      val num = Real32.toString num
+    in
+      case dir of
+        X =>
+          "      ((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num ^ ")) / windowWidth"
+      | Y =>
+          "      ((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num ^ ")) / windowHeight"
+    end
+
+  fun helpExportTriangles (io, triangles) =
+    case triangles of
+      {x1, y1, x2, y2, x3, y3} :: tl =>
+        let
+          val x1 = ndcToLerp (x1, X)
+          val x2 = ndcToLerp (x2, X)
+          val x3 = ndcToLerp (x3, X)
+
+          val y1 = ndcToLerp (y1, Y)
+          val y2 = ndcToLerp (y2, Y)
+          val y3 = ndcToLerp (y3, Y)
+
+          val line = String.concat
+            [ x1, ",\n", y1, ",\n"
+            , x2, ",\n", y2, ",\n"
+            , x3, ",\n", y3
+            , case tl of [] => "\n" | _ => ",\n"
+            ]
+
+          val _ = TextIO.output (io, line)
+        in
+          helpExportTriangles (io, tl)
+        end
+    | [] => ()
+
+  fun exportTriangles triangles =
+    let
+      val io = TextIO.openOut exportFilename
+
+      val fileStartString =
+        String.concat ["structure ", structureName, " =\nstruct\n"]
+      val _ = TextIO.output (io, fileStartString)
+
+      val functionStartString =
+        "  fun lerp (startX, startY, drawWidth, drawHeight, windowWidth, windowHeight) : Real32.real vector =\n\
+           \    let\n\
+           \       val startX = Real32.fromInt startX\n\
+           \       val startY = Real32.fromInt startY\n\
+           \       val endX = startX + drawWidth\n\
+           \       val endY = startY + drawHeight\n\
+           \    in\n\
+           \       #["
+      val _ = TextIO.output (io, functionStartString)
+
+      val _ = helpExportTriangles (io, triangles)
+
+      val _ = TextIO.output (io, "    ]\n  end\nend")
+      val _ = TextIO.closeOut io
+    in
+      ()
+    end
 
   fun parse (io, acc) =
     case TextIO.inputLine io of
