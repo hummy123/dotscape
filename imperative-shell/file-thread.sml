@@ -10,7 +10,7 @@ struct
 
   datatype parse_result = OK of AppType.triangle list | PARSE_ERROR
 
-  val structureName = "LowerCaseA"
+  val structureName = "UpperCaseA"
   val filename = "a.dsc"
   val exportFilename = "a.sml"
 
@@ -18,6 +18,14 @@ struct
     let
       val num = (num + 1.0) / 2.0
       val num = Real32.toString num
+      val num = 
+        (* Problem: It seems that Real32.toString may sometimes return a string
+         * that is recognised as an integer, like "1" instead of "1.0".
+         * If that happens, we just add a ".0" to the end 
+         * so it's recognised as a real. *)
+        if String.isSubstring "." num 
+        then num 
+        else num ^ ".0"
     in
       "      (((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num ^ ")) / windowWidth) - 1.0"
     end
@@ -26,6 +34,10 @@ struct
     let
       val num = (num + 1.0) / 2.0
       val num = Real32.toString num
+      val num = 
+        if String.isSubstring "." num 
+        then num 
+        else num ^ ".0"
     in
       "      (((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num ^ ")) / windowHeight) - 1.0"
     end
