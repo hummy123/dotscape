@@ -15,57 +15,69 @@ struct
 
   fun mouseMoveOrRelease (model: app_type) =
     let
-      val (drawVec, _, _) = ClickPoints.getClickPosition (1.0, 0.0, 0.0, model)
-      val drawVec = TriangleStage.toVector (model, drawVec)
+      val drawVec =
+        case ClickPoints.getClickPositionFromMouse model of
+          SOME (xpos, ypos) =>
+            ClickPoints.getDrawVec (xpos, ypos, 1.0, 0.0, 0.0, model)
+        | NONE => Vector.fromList []
       val drawMsg = DRAW_DOT drawVec
     in
       (model, DRAW drawMsg)
     end
 
   fun mouseLeftClick (model: app_type) =
-    let
-      val (dotVec, hpos, vpos) =
-        ClickPoints.getClickPosition (0.0, 0.0, 1.0, model)
-      val newUndoTuple = (hpos, vpos)
-    in
-      if Vector.length dotVec > 0 then
-        case #triangleStage model of
-          NO_TRIANGLE =>
-            let
-              val drawVec = TriangleStage.toVector (model, dotVec)
-              val drawMsg = DRAW_DOT drawVec
+    case ClickPoints.getClickPositionFromMouse model of
+      SOME (xpos, ypos) =>
+        let
+          val dotVec = ClickPoints.getDrawVec (xpos, ypos, 0.0, 0.0, 1.0, model)
+          val {windowWidth, windowHeight, ...} = model
+          val halfWidth = Real32.fromInt (windowWidth div 2)
+          val halfHeight = Real32.fromInt (windowHeight div 2)
+          val hpos =
+            Ndc.centreAlignX (xpos, windowWidth, windowHeight, halfWidth)
+          val vpos =
+            Ndc.centreAlignY (ypos, windowWidth, windowHeight, halfHeight)
+          val newUndoTuple = (hpos, vpos)
+        in
+          (case #triangleStage model of
+             NO_TRIANGLE =>
+               let
+                 val drawVec = TriangleStage.toVector (model, dotVec)
+                 val drawMsg = DRAW_DOT drawVec
 
-              val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-              val model =
-                AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
-            in
-              (model, DRAW drawMsg)
-            end
-        | FIRST {x1, y1} =>
-            let
-              val drawVec = TriangleStage.firstToVector (x1, y1, dotVec, model)
-              val drawMsg = DRAW_DOT drawVec
+                 val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
+                 val model =
+                   AppWith.addTriangleStage
+                     (model, newTriangleStage, newUndoTuple)
+               in
+                 (model, DRAW drawMsg)
+               end
+           | FIRST {x1, y1} =>
+               let
+                 val drawVec =
+                   TriangleStage.firstToVector (x1, y1, dotVec, model)
+                 val drawMsg = DRAW_DOT drawVec
 
-              val newTriangleStage = SECOND
-                {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-              val model =
-                AppWith.addTriangleStage (model, newTriangleStage, newUndoTuple)
-            in
-              (model, DRAW drawMsg)
-            end
-        | SECOND {x1, y1, x2, y2} =>
-            let
-              val model = AppWith.addTriangle
-                (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
+                 val newTriangleStage = SECOND
+                   {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
+                 val model =
+                   AppWith.addTriangleStage
+                     (model, newTriangleStage, newUndoTuple)
+               in
+                 (model, DRAW drawMsg)
+               end
+           | SECOND {x1, y1, x2, y2} =>
+               let
+                 val model = AppWith.addTriangle
+                   (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
 
-              val drawVec = Triangles.toVector model
-              val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
-            in
-              (model, DRAW drawMsg)
-            end
-      else
-        (model, NO_MAILBOX)
-    end
+                 val drawVec = Triangles.toVector model
+                 val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+               in
+                 (model, DRAW drawMsg)
+               end)
+        end
+    | NONE => (model, NO_MAILBOX)
 
   fun resizeWindow (model, width, height) =
     let
@@ -182,9 +194,7 @@ struct
              in
                (model, DRAW drawMsg)
              end)
-    | [] => 
-        (* Nothing to redo. *) 
-        (model, NO_MAILBOX)
+    | [] => (* Nothing to redo. *) (model, NO_MAILBOX)
 
   fun toggleGraph (model: app_type) =
     if #showGraph model then
