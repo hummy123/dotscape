@@ -20,6 +20,8 @@ struct
           SOME (xpos, ypos) =>
             ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
         | NONE => Vector.fromList []
+      val drawVec = TriangleStage.toVector (model, drawVec)
+      
       val drawMsg = DRAW_DOT drawVec
     in
       (model, DRAW drawMsg)
