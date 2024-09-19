@@ -3,7 +3,7 @@ sig
   val generate: int * int -> Real32.real vector
   val getClickPositionFromMouse: AppType.app_type
                                  -> (Real32.real * Real32.real) option
-  val getDrawVec:
+  val getDrawDot:
     Real32.real
     * Real32.real
     * Real32.real
@@ -11,6 +11,10 @@ sig
     * Real32.real
     * AppType.app_type
     -> Real32.real vector
+
+  (* two below functions convert pixel coordinates to normalised device coordinates *)
+  val xposToNdc: Real32.real * int * int * Real32.real -> Real32.real
+  val yposToNdc: Real32.real * int * int * Real32.real -> Real32.real
 end
 
 structure ClickPoints :> CLICK_POINTS =
@@ -53,7 +57,7 @@ struct
          | NONE => NONE)
     | NONE => NONE
 
-  fun getDrawVec (xpos, ypos, r, g, b, app: AppType.app_type) =
+  fun getDrawDot (xpos, ypos, r, g, b, app: AppType.app_type) =
     let
       val {windowWidth, windowHeight, ...} = app
 
@@ -70,5 +74,38 @@ struct
       val top = (vpos + 5.0) / halfHeight
     in
       Ndc.ltrbToVertex (left, top, right, bottom, r, g, b)
+    end
+
+  fun xposToNdc (xpos, windowWidth, windowHeight, halfWidth) =
+
+    let
+      val xpos = xpos - halfWidth
+
+    in
+      if windowWidth > windowHeight then
+        let
+          val difference = windowWidth - windowHeight
+          val offset = Real32.fromInt (difference div 2)
+        in
+          xpos / (halfWidth - offset)
+        end
+      else
+        xpos / halfWidth
+
+    end
+
+  fun yposToNdc (ypos, windowWidth, windowHeight, halfHeight) =
+    let
+      val ypos = ~(ypos - halfHeight)
+    in
+      if windowHeight > windowWidth then
+        let
+          val difference = windowHeight - windowWidth
+          val offset = Real32.fromInt (difference div 2)
+        in
+          ypos / (halfHeight - offset)
+        end
+      else
+        ypos / halfHeight
     end
 end

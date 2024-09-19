@@ -18,7 +18,7 @@ struct
       val drawVec =
         case ClickPoints.getClickPositionFromMouse model of
           SOME (xpos, ypos) =>
-            ClickPoints.getDrawVec (xpos, ypos, 1.0, 0.0, 0.0, model)
+            ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
         | NONE => Vector.fromList []
       val drawMsg = DRAW_DOT drawVec
     in
@@ -29,14 +29,16 @@ struct
     case ClickPoints.getClickPositionFromMouse model of
       SOME (xpos, ypos) =>
         let
-          val dotVec = ClickPoints.getDrawVec (xpos, ypos, 0.0, 0.0, 1.0, model)
+          val dotVec = ClickPoints.getDrawDot (xpos, ypos, 0.0, 0.0, 1.0, model)
+          
           val {windowWidth, windowHeight, ...} = model
           val halfWidth = Real32.fromInt (windowWidth div 2)
           val halfHeight = Real32.fromInt (windowHeight div 2)
           val hpos =
-            Ndc.centreAlignX (xpos, windowWidth, windowHeight, halfWidth)
+            ClickPoints.xposToNdc (xpos, windowWidth, windowHeight, halfWidth)
           val vpos =
-            Ndc.centreAlignY (ypos, windowWidth, windowHeight, halfHeight)
+            ClickPoints.yposToNdc (ypos, windowWidth, windowHeight, halfHeight)
+
           val newUndoTuple = (hpos, vpos)
         in
           (case #triangleStage model of
@@ -70,7 +72,6 @@ struct
                let
                  val model = AppWith.addTriangle
                    (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
-
                  val drawVec = Triangles.toVector model
                  val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
                in
