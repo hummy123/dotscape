@@ -1,6 +1,6 @@
 signature CLICK_POINTS =
 sig
-  val generate: int * int -> Real32.real vector
+  val generate: int * int * int -> Real32.real vector
   val getClickPositionFromMouse: AppType.app_type -> (int * int) option
   val getDrawDot:
     Real32.real
@@ -18,13 +18,14 @@ end
 
 structure ClickPoints :> CLICK_POINTS =
 struct
-  fun generate (start, finish) =
+  fun generate (start, finish, numPoints) =
     let
       val difference = finish - start
-      val increment = Real32.fromInt difference / 40.0
+      val increment = Real32.fromInt difference / Real32.fromInt numPoints
       val start = Real32.fromInt start
     in
-      Vector.tabulate (41, fn idx => (Real32.fromInt idx * increment) + start)
+      Vector.tabulate (numPoints + 1, fn idx =>
+        (Real32.fromInt idx * increment) + start)
     end
 
   (*

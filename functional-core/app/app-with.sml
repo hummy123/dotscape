@@ -65,6 +65,7 @@ struct
       val
         { triangleStage = _
         , triangles
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -84,6 +85,7 @@ struct
       , undo = newUndo
       , redo = []
       , triangles = triangles
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -103,6 +105,7 @@ struct
       val
         { triangles
         , triangleStage = _
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -124,6 +127,7 @@ struct
       , triangles = newTriangles
       , undo = newUndo
       , redo = []
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -141,6 +145,7 @@ struct
       val
         { xClickPoints
         , yClickPoints
+        , numClickPoints
         , windowWidth
         , windowHeight
         , triangles
@@ -156,6 +161,7 @@ struct
     in
       { xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
+      , numClickPoints = numClickPoints
       , triangles = triangles
       , triangleStage = triangleStage
       , windowWidth = windowWidth
@@ -175,6 +181,7 @@ struct
       val
         { xClickPoints
         , yClickPoints
+        , numClickPoints
         , windowWidth
         , windowHeight
         , triangles
@@ -190,6 +197,7 @@ struct
     in
       { xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
+      , numClickPoints = numClickPoints
       , triangles = triangles
       , triangleStage = triangleStage
       , windowWidth = windowWidth
@@ -211,6 +219,7 @@ struct
       val
         { xClickPoints = _
         , yClickPoints = _
+        , numClickPoints
         , windowWidth = _
         , windowHeight = _
         , triangles
@@ -224,11 +233,12 @@ struct
         , arrowY
         } = app
 
-      val xClickPoints = ClickPoints.generate (wStart, wFinish)
-      val yClickPoints = ClickPoints.generate (hStart, hFinish)
+      val xClickPoints = ClickPoints.generate (wStart, wFinish, numClickPoints)
+      val yClickPoints = ClickPoints.generate (hStart, hFinish, numClickPoints)
     in
       { xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
+      , numClickPoints = numClickPoints
       , triangles = triangles
       , triangleStage = triangleStage
       , windowWidth = windowWidth
@@ -273,6 +283,7 @@ struct
         , mouseY = _
         , triangles
         , triangleStage
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -288,6 +299,7 @@ struct
       , mouseY = mouseY
       , triangles = triangles
       , triangleStage = triangleStage
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -306,6 +318,7 @@ struct
       val
         { triangleStage = _
         , triangles = _
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -330,6 +343,7 @@ struct
       , triangles = newTriangles
       , undo = newUndo
       , redo = newRedo
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -348,6 +362,7 @@ struct
       val
         { triangleStage = _
         , triangles = _
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -371,6 +386,7 @@ struct
       , triangles = newTriangles
       , undo = newUndo
       , redo = newRedo
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -388,6 +404,7 @@ struct
       val
         { triangleStage
         , triangles
+        , numClickPoints
         , xClickPoints
         , yClickPoints
         , windowWidth
@@ -406,6 +423,7 @@ struct
       , triangles = triangles
       , undo = undo
       , redo = redo
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
@@ -422,6 +440,7 @@ struct
       val
         { xClickPoints
         , yClickPoints
+        , numClickPoints
         , windowWidth
         , windowHeight
         , undo
@@ -442,6 +461,7 @@ struct
       , undo = []
       , redo = []
       , showGraph = showGraph
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth

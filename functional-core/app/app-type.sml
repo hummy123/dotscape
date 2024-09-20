@@ -15,12 +15,12 @@ sig
     , y3: Real32.real
     }
 
-
   type app_type =
     { triangles: triangle list
     , triangleStage: triangle_stage
     , windowWidth: int
     , windowHeight: int
+    , numClickPoints: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
     , undo: (Real32.real * Real32.real) list
@@ -63,6 +63,7 @@ struct
     , triangleStage: triangle_stage
     , windowWidth: int
     , windowHeight: int
+    , numClickPoints: int
     , xClickPoints: Real32.real vector
     , yClickPoints: Real32.real vector
     , undo: (Real32.real * Real32.real) list

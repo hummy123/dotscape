@@ -1,6 +1,6 @@
 signature APP_INIT =
 sig
-  val fromWindowWidthAndHeight: int * int -> AppType.app_type
+  val fromWindowWidthAndHeight: int * int * int -> AppType.app_type
 end
 
 structure AppInit :> APP_INIT =
@@ -8,15 +8,23 @@ struct
   open AppType
 
   fun helpFromWidthAndHeight
-    (windowWidth, windowHeight, wStart, wFinish, hStart, hFinish) : app_type =
+    ( windowWidth
+    , windowHeight
+    , wStart
+    , wFinish
+    , hStart
+    , hFinish
+    , numClickPoints
+    ) : app_type =
     let
-      val xClickPoints = ClickPoints.generate (wStart, wFinish)
-      val yClickPoints = ClickPoints.generate (hStart, hFinish)
+      val xClickPoints = ClickPoints.generate (wStart, wFinish, numClickPoints)
+      val yClickPoints = ClickPoints.generate (hStart, hFinish, numClickPoints)
     in
       { triangles = []
       , triangleStage = NO_TRIANGLE
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , undo = []
@@ -29,10 +37,17 @@ struct
       }
     end
 
-  fun fromWindowWidthAndHeight (windowWidth, windowHeight) =
+  fun fromWindowWidthAndHeight (windowWidth, windowHeight, numClickPoints) =
     if windowWidth = windowHeight then
       helpFromWidthAndHeight
-        (windowWidth, windowHeight, 0, windowWidth, 0, windowHeight)
+        ( windowWidth
+        , windowHeight
+        , 0
+        , windowWidth
+        , 0
+        , windowHeight
+        , numClickPoints
+        )
     else if windowWidth > windowHeight then
       let
         val difference = windowWidth - windowHeight
@@ -40,7 +55,14 @@ struct
         val wFinish = wStart + windowHeight
       in
         helpFromWidthAndHeight
-          (windowWidth, windowHeight, wStart, wFinish, 0, windowHeight)
+          ( windowWidth
+          , windowHeight
+          , wStart
+          , wFinish
+          , 0
+          , windowHeight
+          , numClickPoints
+          )
       end
     else
       let
@@ -49,6 +71,13 @@ struct
         val hFinish = hStart + windowWidth
       in
         helpFromWidthAndHeight
-          (windowWidth, windowHeight, 0, windowWidth, hStart, hFinish)
+          ( windowWidth
+          , windowHeight
+          , 0
+          , windowWidth
+          , hStart
+          , hFinish
+          , numClickPoints
+          )
       end
 end

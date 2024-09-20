@@ -15,9 +15,11 @@ struct
       val _ = Glfw.makeContextCurrent window
       val _ = Gles3.loadGlad ()
 
-      val initialModel =
-        AppInit.fromWindowWidthAndHeight
-          (Constants.windowWidth, Constants.windowHeight)
+      val initialModel = AppInit.fromWindowWidthAndHeight
+        ( Constants.windowWidth
+        , Constants.windowHeight
+        , Constants.initialNumClickPoints
+        )
 
       val graphLines = GraphLines.generate initialModel
       val graphDrawObject = AppDraw.initGraphLines ()
