@@ -11,6 +11,10 @@ sig
   | KEY_CTRL_S
   | KEY_CTRL_L
   | KEY_CTRL_E
+  | ARROW_UP
+  | ARROW_LEFT
+  | ARROW_RIGHT
+  | ARROW_DOWN
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end
@@ -28,6 +32,10 @@ struct
   | KEY_CTRL_S
   | KEY_CTRL_L
   | KEY_CTRL_E
+  | ARROW_UP
+  | ARROW_LEFT
+  | ARROW_RIGHT
+  | ARROW_DOWN
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end

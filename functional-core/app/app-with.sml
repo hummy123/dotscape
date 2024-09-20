@@ -7,6 +7,9 @@ sig
   val mousePosition: AppType.app_type * Real32.real * Real32.real
                      -> AppType.app_type
 
+  val arrowX: AppType.app_type * int -> AppType.app_type
+  val arrowY: AppType.app_type * int -> AppType.app_type
+
   val undo:
     AppType.app_type
     * AppType.triangle_stage
@@ -125,6 +128,74 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , showGraph = showGraph
+      , mouseX = mouseX
+      , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
+      }
+    end
+
+  fun arrowX (app: app_type, arrowX) =
+    let
+      val
+        { xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , triangles
+        , triangleStage
+        , undo
+        , redo
+        , showGraph
+        , mouseX
+        , mouseY
+        , arrowX = _
+        , arrowY
+        } = app
+    in
+      { xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , triangles = triangles
+      , triangleStage = triangleStage
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , undo = undo
+      , redo = redo
+      , showGraph = showGraph
+      , mouseX = mouseX
+      , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
+      }
+    end
+
+  fun arrowY (app: app_type, arrowY) =
+    let
+      val
+        { xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , triangles
+        , triangleStage
+        , undo
+        , redo
+        , showGraph
+        , mouseX
+        , mouseY
+        , arrowX
+        , arrowY = _
+        } = app
+    in
+      { xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , triangles = triangles
+      , triangleStage = triangleStage
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , undo = undo
+      , redo = redo
       , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY

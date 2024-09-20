@@ -13,17 +13,19 @@ struct
   open InputMessage
   open UpdateMessage
 
+  fun getDotVecFromIndices (model, hIdx, vIdx) =
+    let
+      val xpos = Vector.sub (#xClickPoints model, hIdx)
+      val ypos = Vector.sub (#yClickPoints model, vIdx)
+    in
+      ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
+    end
+
   fun mouseMoveOrRelease (model: app_type) =
     let
       val drawVec =
         case ClickPoints.getClickPositionFromMouse model of
-          SOME (hIdx, vIdx) =>
-            let
-              val xpos = Vector.sub (#xClickPoints model, hIdx)
-              val ypos = Vector.sub (#yClickPoints model, vIdx)
-            in
-              ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
-            end
+          SOME (hIdx, vIdx) => getDotVecFromIndices (model, hIdx, vIdx)
         | NONE => Vector.fromList []
       val drawVec = TriangleStage.toVector (model, drawVec)
 
@@ -32,61 +34,154 @@ struct
       (model, DRAW drawMsg)
     end
 
-  fun mouseLeftClick (model: app_type) =
-    case ClickPoints.getClickPositionFromMouse model of
-      SOME (hIdx, vIdx) =>
+  fun getDrawDotMsgWhenArrowIsAtBoundary model =
+    let
+      val {arrowX, arrowY, ...} = model
+      val dotVec = getDotVecFromIndices (model, arrowX, arrowY)
+      val dotVec = TriangleStage.toVector (model, dotVec)
+      val drawMsg = DRAW_DOT dotVec
+    in
+      (model, DRAW drawMsg)
+    end
+
+  fun moveArrowUp (model: app_type) =
+    let
+      val {arrowX, arrowY, ...} = model
+    in
+      if arrowY > 0 then
         let
-          val {windowWidth, windowHeight, xClickPoints, yClickPoints, ...} =
-            model
+          val newArrowY = arrowY - 1
+          val model = AppWith.arrowY (model, newArrowY)
 
-          val xpos = Vector.sub (xClickPoints, hIdx)
-          val ypos = Vector.sub (yClickPoints, vIdx)
-          val dotVec = ClickPoints.getDrawDot (xpos, ypos, 0.0, 0.0, 1.0, model)
-
-          val halfWidth = Real32.fromInt (windowWidth div 2)
-          val halfHeight = Real32.fromInt (windowHeight div 2)
-          val hpos =
-            ClickPoints.xposToNdc (xpos, windowWidth, windowHeight, halfWidth)
-          val vpos =
-            ClickPoints.yposToNdc (ypos, windowWidth, windowHeight, halfHeight)
-
-          val newUndoTuple = (hpos, vpos)
+          val dotVec = getDotVecFromIndices (model, arrowX, newArrowY)
+          val dotVec = TriangleStage.toVector (model, dotVec)
+          val drawMsg = DRAW_DOT dotVec
         in
-          (case #triangleStage model of
-             NO_TRIANGLE =>
-               let
-                 val drawVec = TriangleStage.toVector (model, dotVec)
-                 val drawMsg = DRAW_DOT drawVec
-
-                 val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-                 val model = AppWith.addTriangleStage
-                   (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
-               in
-                 (model, DRAW drawMsg)
-               end
-           | FIRST {x1, y1} =>
-               let
-                 val drawVec =
-                   TriangleStage.firstToVector (x1, y1, dotVec, model)
-                 val drawMsg = DRAW_DOT drawVec
-
-                 val newTriangleStage = SECOND
-                   {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-                 val model = AppWith.addTriangleStage
-                   (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
-               in
-                 (model, DRAW drawMsg)
-               end
-           | SECOND {x1, y1, x2, y2} =>
-               let
-                 val model = AppWith.addTriangle
-                   (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple, hIdx, vIdx)
-                 val drawVec = Triangles.toVector model
-                 val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
-               in
-                 (model, DRAW drawMsg)
-               end)
+          (model, DRAW drawMsg)
         end
+      else
+        getDrawDotMsgWhenArrowIsAtBoundary model
+    end
+
+  fun moveArrowLeft (model: app_type) =
+    let
+      val {arrowX, arrowY, ...} = model
+    in
+      if arrowX > 0 then
+        let
+          val newArrowX = arrowX - 1
+          val model = AppWith.arrowX (model, newArrowX)
+
+          val dotVec = getDotVecFromIndices (model, newArrowX, arrowY)
+          val dotVec = TriangleStage.toVector (model, dotVec)
+          val drawMsg = DRAW_DOT dotVec
+        in
+          (model, DRAW drawMsg)
+        end
+      else
+        getDrawDotMsgWhenArrowIsAtBoundary model
+    end
+
+  fun moveArrowRight (model: app_type) =
+    let
+      val {arrowX, arrowY, xClickPoints, ...} = model
+    in
+      if arrowX < Vector.length xClickPoints - 1 then
+        let
+          val newArrowX = arrowX + 1
+          val model = AppWith.arrowX (model, newArrowX)
+
+          val dotVec = getDotVecFromIndices (model, newArrowX, arrowY)
+          val dotVec = TriangleStage.toVector (model, dotVec)
+          val drawMsg = DRAW_DOT dotVec
+        in
+          (model, DRAW drawMsg)
+        end
+      else
+        getDrawDotMsgWhenArrowIsAtBoundary model
+    end
+
+  fun moveArrowDown (model: app_type) =
+    let
+      val {arrowX, arrowY, yClickPoints, ...} = model
+    in
+      if arrowY < Vector.length yClickPoints - 1 then
+        let
+          val newArrowY = arrowY + 1
+          val model = AppWith.arrowY (model, newArrowY)
+
+          val dotVec = getDotVecFromIndices (model, arrowX, newArrowY)
+          val dotVec = TriangleStage.toVector (model, dotVec)
+          val drawMsg = DRAW_DOT dotVec
+        in
+          (model, DRAW drawMsg)
+        end
+      else
+        getDrawDotMsgWhenArrowIsAtBoundary model
+    end
+
+  fun addCoordinates (model: app_type, hIdx, vIdx) =
+    let
+      val
+        { windowWidth
+        , windowHeight
+        , xClickPoints
+        , yClickPoints
+        , triangleStage
+        , ...
+        } = model
+
+      val xpos = Vector.sub (xClickPoints, hIdx)
+      val ypos = Vector.sub (yClickPoints, vIdx)
+      val dotVec = ClickPoints.getDrawDot (xpos, ypos, 0.0, 0.0, 1.0, model)
+
+      val halfWidth = Real32.fromInt (windowWidth div 2)
+      val halfHeight = Real32.fromInt (windowHeight div 2)
+      val hpos =
+        ClickPoints.xposToNdc (xpos, windowWidth, windowHeight, halfWidth)
+      val vpos =
+        ClickPoints.yposToNdc (ypos, windowWidth, windowHeight, halfHeight)
+
+      val newUndoTuple = (hpos, vpos)
+    in
+      case triangleStage of
+        NO_TRIANGLE =>
+          let
+            val drawVec = TriangleStage.toVector (model, dotVec)
+            val drawMsg = DRAW_DOT drawVec
+
+            val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
+            val model = AppWith.addTriangleStage
+              (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
+          in
+            (model, DRAW drawMsg)
+          end
+      | FIRST {x1, y1} =>
+          let
+            val drawVec = TriangleStage.firstToVector (x1, y1, dotVec, model)
+            val drawMsg = DRAW_DOT drawVec
+
+            val newTriangleStage = SECOND
+              {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
+            val model = AppWith.addTriangleStage
+              (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
+          in
+            (model, DRAW drawMsg)
+          end
+      | SECOND {x1, y1, x2, y2} =>
+          let
+            val model = AppWith.addTriangle
+              (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple, hIdx, vIdx)
+            val drawVec = Triangles.toVector model
+            val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+          in
+            (model, DRAW drawMsg)
+          end
+    end
+
+  fun mouseLeftClick model =
+    case ClickPoints.getClickPositionFromMouse model of
+      SOME (hIdx, vIdx) => addCoordinates (model, hIdx, vIdx)
     | NONE => (model, NO_MAILBOX)
 
   fun resizeWindow (model, width, height) =
@@ -267,6 +362,10 @@ struct
     | KEY_CTRL_S => getSaveTrianglesMsg model
     | KEY_CTRL_L => getLoadTrianglesMsg model
     | KEY_CTRL_E => getExportTrianglesMsg model
+    | ARROW_UP => moveArrowUp model
+    | ARROW_LEFT => moveArrowLeft model
+    | ARROW_RIGHT => moveArrowRight model
+    | ARROW_DOWN => moveArrowDown model
     | USE_TRIANGLES triangles => useTriangles (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
 end
