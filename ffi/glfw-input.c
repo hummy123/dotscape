@@ -15,6 +15,13 @@ int KEY_E = GLFW_KEY_E;
 int KEY_I = GLFW_KEY_I;
 int KEY_L = GLFW_KEY_L;
 
+int KEY_ENTER = GLFW_KEY_ENTER;
+int KEY_SPACE = GLFW_KEY_SPACE;
+int KEY_UP = GLFW_KEY_UP;
+int KEY_LEFT = GLFW_KEY_LEFT;
+int KEY_RIGHT = GLFW_KEY_RIGHT;
+int KEY_DOWN = GLFW_KEY_DOWN;
+
 // Calls function exported from SML 
 void mouseMoveCallback(GLFWwindow *window, double xpos, double ypos) {
   mltonMouseMoveCallback((float)xpos, (float)ypos);

@@ -46,4 +46,17 @@ struct
     _symbol "KEY_I" public : ( unit -> int ) * ( int -> unit );
   val (KEY_L, _) =
     _symbol "KEY_L" public : ( unit -> int ) * ( int -> unit );
+
+  val (KEY_ENTER, _) =
+    _symbol "KEY_ENTER" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_SPACE, _) =
+    _symbol "KEY_SPACE" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_UP, _) =
+    _symbol "KEY_UP" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_LEFT, _) =
+    _symbol "KEY_LEFT" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_RIGHT, _) =
+    _symbol "KEY_RIGHT" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_DOWN, _) =
+    _symbol "KEY_DOWN" public : ( unit -> int ) * ( int -> unit );
 end

@@ -56,6 +56,36 @@ struct
       key = Input.KEY_E () andalso action = Input.PRESS () andalso mods = 0x002
     then
       Mailbox.send (mailbox, KEY_CTRL_E)
+    else if
+      key = Input.KEY_UP () andalso action <> Input.RELEASE ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, ARROW_UP)
+    else if
+      key = Input.KEY_LEFT () andalso action <> Input.RELEASE ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, ARROW_LEFT)
+    else if
+      key = Input.KEY_RIGHT () andalso action <> Input.RELEASE ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, ARROW_RIGHT)
+    else if
+      key = Input.KEY_DOWN () andalso action <> Input.RELEASE ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, ARROW_DOWN)
+    else if
+      key = Input.KEY_ENTER () andalso action = Input.PRESS ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, KEY_ENTER)
+    else if
+      key = Input.KEY_SPACE () andalso action = Input.PRESS ()
+      andalso mods = 0x0
+    then
+      Mailbox.send (mailbox, KEY_SPACE)
     else
       ()
 
