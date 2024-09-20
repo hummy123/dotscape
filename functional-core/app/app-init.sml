@@ -24,6 +24,8 @@ struct
       , mouseX = 0.0
       , mouseY = 0.0
       , showGraph = true
+      , arrowX = 0
+      , arrowY = 0
       }
     end
 

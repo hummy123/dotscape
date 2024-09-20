@@ -15,6 +15,7 @@ sig
     , y3: Real32.real
     }
 
+
   type app_type =
     { triangles: triangle list
     , triangleStage: triangle_stage
@@ -24,9 +25,11 @@ sig
     , yClickPoints: Real32.real vector
     , undo: (Real32.real * Real32.real) list
     , redo: (Real32.real * Real32.real) list
+    , showGraph: bool
     , mouseX: Real32.real
     , mouseY: Real32.real
-    , showGraph: bool
+    , arrowX: int
+    , arrowY: int
     }
 end
 
@@ -64,8 +67,10 @@ struct
     , yClickPoints: Real32.real vector
     , undo: (Real32.real * Real32.real) list
     , redo: (Real32.real * Real32.real) list
+    , showGraph: bool
     , mouseX: Real32.real
     , mouseY: Real32.real
-    , showGraph: bool
+    , arrowX: int
+    , arrowY: int
     }
 end

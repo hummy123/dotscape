@@ -27,7 +27,11 @@ sig
    * and also add new click position to undo stack.
    *)
   val addTriangleStage:
-    AppType.app_type * AppType.triangle_stage * (Real32.real * Real32.real)
+    AppType.app_type
+    * AppType.triangle_stage
+    * (Real32.real * Real32.real)
+    * int
+    * int
     -> AppType.app_type
 
   val addTriangle:
@@ -39,6 +43,8 @@ sig
     * Real32.real
     * Real32.real
     * (Real32.real * Real32.real)
+    * int
+    * int
     -> AppType.app_type
 
   val useTriangles: AppType.app_type * AppType.triangle list -> AppType.app_type
@@ -50,7 +56,8 @@ struct
 
   (* add to undo, clear redo *)
   fun addTriangleStage
-    (app: app_type, newTriangleStage: triangle_stage, newUndoHd) : app_type =
+    (app: app_type, newTriangleStage: triangle_stage, newUndoHd, arrowX, arrowY) :
+    app_type =
     let
       val
         { triangleStage = _
@@ -61,9 +68,11 @@ struct
         , windowHeight
         , undo
         , redo = _
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX = _
+        , arrowY = _
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -76,13 +85,17 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY
-      , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
-  fun addTriangle (app: app_type, x1, y1, x2, y2, x3, y3, newUndoHd) : app_type =
+  fun addTriangle
+    (app: app_type, x1, y1, x2, y2, x3, y3, newUndoHd, arrowX, arrowY) :
+    app_type =
     let
       val
         { triangles
@@ -93,9 +106,11 @@ struct
         , windowHeight
         , undo
         , redo = _
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX = _
+        , arrowY = _
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -110,9 +125,11 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY
-      , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -129,9 +146,11 @@ struct
         , triangleStage
         , undo
         , redo
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX
+        , arrowY
         } = app
 
       val xClickPoints = ClickPoints.generate (wStart, wFinish)
@@ -145,9 +164,11 @@ struct
       , windowHeight = windowHeight
       , undo = undo
       , redo = redo
+      , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY
-      , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -188,6 +209,8 @@ struct
         , undo
         , redo
         , showGraph
+        , arrowX
+        , arrowY
         } = app
     in
       { mouseX = mouseX
@@ -201,6 +224,8 @@ struct
       , undo = undo
       , redo = redo
       , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -216,9 +241,11 @@ struct
         , windowHeight
         , undo
         , redo
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX
+        , arrowY
         } = app
 
       val newUndo =
@@ -236,9 +263,11 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY
-      , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -254,9 +283,11 @@ struct
         , windowHeight
         , undo
         , redo
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX
+        , arrowY
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -273,9 +304,11 @@ struct
       , yClickPoints = yClickPoints
       , windowWidth = windowWidth
       , windowHeight = windowHeight
+      , showGraph = showGraph
       , mouseX = mouseX
       , mouseY = mouseY
-      , showGraph = showGraph
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -292,6 +325,8 @@ struct
         , redo
         , mouseX
         , mouseY
+        , arrowX
+        , arrowY
         , showGraph = _
         } = app
     in
@@ -306,6 +341,8 @@ struct
       , windowHeight = windowHeight
       , mouseX = mouseX
       , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 
@@ -318,9 +355,11 @@ struct
         , windowHeight
         , undo
         , redo
+        , showGraph
         , mouseX
         , mouseY
-        , showGraph
+        , arrowX
+        , arrowY
         , triangles = _
         , triangleStage = _
         } = app
@@ -338,6 +377,8 @@ struct
       , windowHeight = windowHeight
       , mouseX = mouseX
       , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
       }
     end
 end

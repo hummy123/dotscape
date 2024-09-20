@@ -59,9 +59,8 @@ struct
                  val drawMsg = DRAW_DOT drawVec
 
                  val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
-                 val model =
-                   AppWith.addTriangleStage
-                     (model, newTriangleStage, newUndoTuple)
+                 val model = AppWith.addTriangleStage
+                   (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
                in
                  (model, DRAW drawMsg)
                end
@@ -73,16 +72,15 @@ struct
 
                  val newTriangleStage = SECOND
                    {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
-                 val model =
-                   AppWith.addTriangleStage
-                     (model, newTriangleStage, newUndoTuple)
+                 val model = AppWith.addTriangleStage
+                   (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
                in
                  (model, DRAW drawMsg)
                end
            | SECOND {x1, y1, x2, y2} =>
                let
                  val model = AppWith.addTriangle
-                   (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple)
+                   (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple, hIdx, vIdx)
                  val drawVec = Triangles.toVector model
                  val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
                in
