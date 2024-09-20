@@ -15,6 +15,8 @@ sig
   | ARROW_LEFT
   | ARROW_RIGHT
   | ARROW_DOWN
+  | KEY_ENTER
+  | KEY_SPACE
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end
@@ -36,6 +38,8 @@ struct
   | ARROW_LEFT
   | ARROW_RIGHT
   | ARROW_DOWN
+  | KEY_ENTER
+  | KEY_SPACE
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
 end

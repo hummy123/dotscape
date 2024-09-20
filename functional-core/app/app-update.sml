@@ -184,6 +184,11 @@ struct
       SOME (hIdx, vIdx) => addCoordinates (model, hIdx, vIdx)
     | NONE => (model, NO_MAILBOX)
 
+  fun enterOrSpaceCoordinates model =
+    let val {arrowX, arrowY, ...} = model
+    in addCoordinates (model, arrowX, arrowY)
+    end
+
   fun resizeWindow (model, width, height) =
     let
       val model = AppWith.windowResize (model, width, height)
@@ -366,6 +371,8 @@ struct
     | ARROW_LEFT => moveArrowLeft model
     | ARROW_RIGHT => moveArrowRight model
     | ARROW_DOWN => moveArrowDown model
+    | KEY_ENTER => enterOrSpaceCoordinates model
+    | KEY_SPACE => enterOrSpaceCoordinates model
     | USE_TRIANGLES triangles => useTriangles (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
 end
