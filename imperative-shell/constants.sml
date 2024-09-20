@@ -2,7 +2,7 @@ structure Constants =
 struct
   val windowWidth = 1000
   val windowHeight = 900
-  val initialNumClickPoints = 26
+  val initialNumClickPoints = 11
 
   val graphVertexShaderString =
     "#version 300 es\n\
