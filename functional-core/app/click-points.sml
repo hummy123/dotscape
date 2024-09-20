@@ -1,8 +1,7 @@
 signature CLICK_POINTS =
 sig
   val generate: int * int -> Real32.real vector
-  val getClickPositionFromMouse: AppType.app_type
-                                 -> (Real32.real * Real32.real) option
+  val getClickPositionFromMouse: AppType.app_type -> (int * int) option
   val getDrawDot:
     Real32.real
     * Real32.real
@@ -46,14 +45,14 @@ struct
         if mousePos < curPos - range orelse mousePos > curPos + range then
           getClickPos (clickPoints, mousePos, idx + 1)
         else
-          SOME (Vector.sub (clickPoints, idx))
+          SOME idx
       end
 
   fun getClickPositionFromMouse (app: AppType.app_type) =
     case getClickPos (#xClickPoints app, #mouseX app, 0) of
-      SOME xPos =>
+      SOME hIdx =>
         (case getClickPos (#yClickPoints app, #mouseY app, 0) of
-           SOME yPos => SOME (xPos, yPos)
+           SOME vIdx => SOME (hIdx, vIdx)
          | NONE => NONE)
     | NONE => NONE
 

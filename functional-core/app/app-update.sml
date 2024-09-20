@@ -17,11 +17,16 @@ struct
     let
       val drawVec =
         case ClickPoints.getClickPositionFromMouse model of
-          SOME (xpos, ypos) =>
-            ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
+          SOME (hIdx, vIdx) =>
+            let
+              val xpos = Vector.sub (#xClickPoints model, hIdx)
+              val ypos = Vector.sub (#yClickPoints model, vIdx)
+            in
+              ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
+            end
         | NONE => Vector.fromList []
       val drawVec = TriangleStage.toVector (model, drawVec)
-      
+
       val drawMsg = DRAW_DOT drawVec
     in
       (model, DRAW drawMsg)
@@ -29,11 +34,15 @@ struct
 
   fun mouseLeftClick (model: app_type) =
     case ClickPoints.getClickPositionFromMouse model of
-      SOME (xpos, ypos) =>
+      SOME (hIdx, vIdx) =>
         let
+          val {windowWidth, windowHeight, xClickPoints, yClickPoints, ...} =
+            model
+
+          val xpos = Vector.sub (xClickPoints, hIdx)
+          val ypos = Vector.sub (yClickPoints, vIdx)
           val dotVec = ClickPoints.getDrawDot (xpos, ypos, 0.0, 0.0, 1.0, model)
-          
-          val {windowWidth, windowHeight, ...} = model
+
           val halfWidth = Real32.fromInt (windowWidth div 2)
           val halfHeight = Real32.fromInt (windowHeight div 2)
           val hpos =
