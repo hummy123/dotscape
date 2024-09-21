@@ -2,13 +2,17 @@ signature CLICK_POINTS =
 sig
   val generate: int * int * int -> Real32.real vector
   val getClickPositionFromMouse: AppType.app_type -> (int * int) option
-  val getDrawDot:
+
+  val getDrawDot: Real32.real * Real32.real * int * int -> Real32.real vector
+
+  val getDrawDotRgb:
     Real32.real
     * Real32.real
     * Real32.real
     * Real32.real
     * Real32.real
-    * AppType.app_type
+    * int
+    * int
     -> Real32.real vector
 
   (* two below functions convert pixel coordinates to normalised device coordinates *)
@@ -57,10 +61,8 @@ struct
          | NONE => NONE)
     | NONE => NONE
 
-  fun getDrawDot (xpos, ypos, r, g, b, app: AppType.app_type) =
+  fun getDrawDot (xpos, ypos, windowWidth, windowHeight) =
     let
-      val {windowWidth, windowHeight, ...} = app
-
       (* calculate normalised device coordinates *)
       val halfWidth = Real32.fromInt (windowWidth div 2)
       val halfHeight = Real32.fromInt (windowHeight div 2)
@@ -73,14 +75,29 @@ struct
       val bottom = (vpos - 5.0) / halfHeight
       val top = (vpos + 5.0) / halfHeight
     in
-      Ndc.ltrbToVertex (left, top, right, bottom, r, g, b)
+      Ndc.ltrbToVertex (left, top, right, bottom)
+    end
+
+  fun getDrawDotRgb (xpos, ypos, r, g, b, windowWidth, windowHeight) =
+    let
+      (* calculate normalised device coordinates *)
+      val halfWidth = Real32.fromInt (windowWidth div 2)
+      val halfHeight = Real32.fromInt (windowHeight div 2)
+      val hpos = xpos - halfWidth
+      val vpos = ~(ypos - halfHeight)
+
+      (* coordinates to form small box around clicked area *)
+      val left = (hpos - 5.0) / halfWidth
+      val right = (hpos + 5.0) / halfWidth
+      val bottom = (vpos - 5.0) / halfHeight
+      val top = (vpos + 5.0) / halfHeight
+    in
+      Ndc.ltrbToVertexRgb (left, top, right, bottom, r, g, b)
     end
 
   fun xposToNdc (xpos, windowWidth, windowHeight, halfWidth) =
-
     let
       val xpos = xpos - halfWidth
-
     in
       if windowWidth > windowHeight then
         let
@@ -91,7 +108,6 @@ struct
         end
       else
         xpos / halfWidth
-
     end
 
   fun yposToNdc (ypos, windowWidth, windowHeight, halfHeight) =

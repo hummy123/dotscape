@@ -18,7 +18,8 @@ struct
       val top = (y1px + 5.0) / halfHeight
       val bottom = (y1px - 5.0) / halfHeight
 
-      val firstVec = Ndc.ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+      val firstVec = Ndc.ltrbToVertexRgb
+        (left, top, right, bottom, 0.0, 0.0, 1.0)
     in
       Vector.concat [firstVec, drawVec]
     end
@@ -39,7 +40,8 @@ struct
       val top = (y1px + 5.0) / halfHeight
       val bottom = (y1px - 5.0) / halfHeight
 
-      val firstVec = Ndc.ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+      val firstVec = Ndc.ltrbToVertexRgb
+        (left, top, right, bottom, 0.0, 0.0, 1.0)
 
       val x2px = Ndc.centreAlignX (x2, windowWidth, windowHeight, halfWidth)
       val left = (x2px - 5.0) / halfWidth
@@ -49,7 +51,7 @@ struct
       val top = (y2px + 5.0) / halfHeight
       val bottom = (y2px - 5.0) / halfHeight
 
-      val secVec = Ndc.ltrbToVertex (left, top, right, bottom, 0.0, 0.0, 1.0)
+      val secVec = Ndc.ltrbToVertexRgb (left, top, right, bottom, 0.0, 0.0, 1.0)
     in
       Vector.concat [firstVec, secVec, drawVec]
     end

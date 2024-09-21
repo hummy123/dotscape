@@ -1,8 +1,17 @@
 structure Ndc = 
 struct
   (* ndc = normalised device coordinates *)
+  fun ltrbToVertex (left, top, right, bottom) =
+    #[ left, bottom
+     , right, bottom
+     , left, top
 
-  fun ltrbToVertex (left, top, right, bottom, r, g, b) =
+     , left, top
+     , right, bottom
+     , right, top
+     ]
+
+  fun ltrbToVertexRgb (left, top, right, bottom, r, g, b) =
     #[ left, bottom, r, g, b
      , right, bottom, r, g, b
      , left, top, r, g, b

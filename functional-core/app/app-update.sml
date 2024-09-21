@@ -15,10 +15,12 @@ struct
 
   fun getDotVecFromIndices (model, hIdx, vIdx) =
     let
+      val {windowWidth, windowHeight, ...} = model
       val xpos = Vector.sub (#xClickPoints model, hIdx)
       val ypos = Vector.sub (#yClickPoints model, vIdx)
     in
-      ClickPoints.getDrawDot (xpos, ypos, 1.0, 0.0, 0.0, model)
+      ClickPoints.getDrawDotRgb
+        (xpos, ypos, 1.0, 0.0, 0.0, windowWidth, windowHeight)
     end
 
   fun mouseMoveOrRelease (model: app_type) =
@@ -133,7 +135,8 @@ struct
 
       val xpos = Vector.sub (xClickPoints, hIdx)
       val ypos = Vector.sub (yClickPoints, vIdx)
-      val dotVec = ClickPoints.getDrawDot (xpos, ypos, 0.0, 0.0, 1.0, model)
+      val dotVec = ClickPoints.getDrawDotRgb
+        (xpos, ypos, 0.0, 0.0, 1.0, windowWidth, windowHeight)
 
       val halfWidth = Real32.fromInt (windowWidth div 2)
       val halfHeight = Real32.fromInt (windowHeight div 2)
