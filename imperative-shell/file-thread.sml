@@ -10,9 +10,9 @@ struct
 
   datatype parse_result = OK of AppType.triangle list | PARSE_ERROR
 
-  val structureName = "UpperCaseF"
-  val filename = "fonts/upper-case-f.dsc"
-  val exportFilename = "fonts/upper-case-f.sml"
+  val structureName = "UpperCaseG"
+  val filename = "fonts/upper-case-k.dsc"
+  val exportFilename = "fonts/upper-case-h.sml"
 
   fun ndcToLerpX num =
     let
