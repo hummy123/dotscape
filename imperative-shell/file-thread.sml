@@ -10,9 +10,9 @@ struct
 
   datatype parse_result = OK of AppType.triangle list | PARSE_ERROR
 
-  val structureName = "UpperCaseG"
-  val filename = "fonts/tilde.dsc"
-  val exportFilename = "fonts/upper-case-h.sml"
+  val structureName = "AsciiNine"
+  val filename = "fonts/9.dsc"
+  val exportFilename = "fonts/ascii-nine.sml"
 
   fun ndcToLerpX num =
     let
@@ -55,10 +55,10 @@ struct
           val y3 = ndcToLerpY y3
 
           val line = String.concat
-            [ x1, ",\n", y1, ",\n"
-            , x2, ",\n", y2, ",\n"
+            [ x1, ",\n", y1, ", r, g, b,\n"
+            , x2, ",\n", y2, ", r, g, b,\n"
             , x3, ",\n", y3
-            , case tl of [] => "\n" | _ => ",\n"
+            , case tl of [] => ", r, g, b\n" | _ => ", r, g, b,\n"
             ]
 
           val _ = TextIO.output (io, line)
@@ -76,7 +76,7 @@ struct
       val _ = TextIO.output (io, fileStartString)
 
       val functionStartString =
-        "  fun lerp (startX, startY, drawWidth, drawHeight, windowWidth, windowHeight) : Real32.real vector =\n\
+        "  fun lerp (startX, startY, drawWidth, drawHeight, windowWidth, windowHeight, r, g, b) : Real32.real vector =\n\
            \    let\n\
            \       val startX = Real32.fromInt startX\n\
            \       val startY = Real32.fromInt startY\n\
