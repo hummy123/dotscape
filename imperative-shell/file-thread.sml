@@ -10,9 +10,9 @@ struct
 
   datatype parse_result = OK of AppType.triangle list | PARSE_ERROR
 
-  val structureName = "AsciiNine"
-  val filename = "fonts/9.dsc"
-  val exportFilename = "fonts/ascii-nine.sml"
+  val structureName = "AsciiHash"
+  val filename = "fonts/hash.dsc"
+  val exportFilename = "fonts/ascii-hash.sml"
 
   fun ndcToLerpX num =
     let
