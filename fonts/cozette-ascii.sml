@@ -96,6 +96,7 @@ struct
     SlashBackwards.lerp,
     SquareBracketClosed.lerp,
     Caret.lerp,
+    Backtick.lerp,
     Underscore.lerp,
     LowerCaseA.lerp,
     LowerCaseB.lerp,
