@@ -1,5 +1,7 @@
 signature APP_TYPE =
 sig
+  datatype app_mode = NORMAL_MODE | SAVE_MODE
+
   datatype triangle_stage =
     NO_TRIANGLE
   | FIRST of {x1: Real32.real, y1: Real32.real}
@@ -16,7 +18,8 @@ sig
     }
 
   type app_type =
-    { triangles: triangle list
+    { mode: app_mode
+    , triangles: triangle list
     , triangleStage: triangle_stage
     , windowWidth: int
     , windowHeight: int
@@ -35,6 +38,8 @@ end
 
 structure AppType :> APP_TYPE =
 struct
+  datatype app_mode = NORMAL_MODE | SAVE_MODE
+
   type triangle =
     { x1: Real32.real
     , y1: Real32.real
@@ -59,7 +64,8 @@ struct
       {x1: Real32.real, y1: Real32.real, x2: Real32.real, y2: Real32.real}
 
   type app_type =
-    { triangles: triangle list
+    { mode: app_mode
+    , triangles: triangle list
     , triangleStage: triangle_stage
     , windowWidth: int
     , windowHeight: int

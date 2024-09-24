@@ -64,6 +64,7 @@ struct
     let
       val
         { triangleStage = _
+        , mode
         , triangles
         , numClickPoints
         , xClickPoints
@@ -84,6 +85,7 @@ struct
       { triangleStage = newTriangleStage
       , undo = newUndo
       , redo = []
+      , mode = mode
       , triangles = triangles
       , numClickPoints = numClickPoints
       , xClickPoints = xClickPoints
@@ -103,7 +105,8 @@ struct
     app_type =
     let
       val
-        { triangles
+        { mode
+        , triangles
         , triangleStage = _
         , numClickPoints
         , xClickPoints
@@ -123,7 +126,8 @@ struct
       val newTriangles = newTriangle :: triangles
       val newUndo = newUndoHd :: undo
     in
-      { triangleStage = NO_TRIANGLE
+      { mode = mode
+      , triangleStage = NO_TRIANGLE
       , triangles = newTriangles
       , undo = newUndo
       , redo = []
@@ -143,7 +147,8 @@ struct
   fun arrowX (app: app_type, arrowX) =
     let
       val
-        { xClickPoints
+        { mode
+        , xClickPoints
         , yClickPoints
         , numClickPoints
         , windowWidth
@@ -159,7 +164,8 @@ struct
         , arrowY
         } = app
     in
-      { xClickPoints = xClickPoints
+      { mode = mode
+      , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , numClickPoints = numClickPoints
       , triangles = triangles
@@ -179,7 +185,8 @@ struct
   fun arrowY (app: app_type, arrowY) =
     let
       val
-        { xClickPoints
+        { mode
+        , xClickPoints
         , yClickPoints
         , numClickPoints
         , windowWidth
@@ -195,7 +202,8 @@ struct
         , arrowY = _
         } = app
     in
-      { xClickPoints = xClickPoints
+      { mode = mode
+      , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , numClickPoints = numClickPoints
       , triangles = triangles
@@ -217,7 +225,8 @@ struct
     app_type =
     let
       val
-        { xClickPoints = _
+        { mode
+        , xClickPoints = _
         , yClickPoints = _
         , numClickPoints
         , windowWidth = _
@@ -236,7 +245,8 @@ struct
       val xClickPoints = ClickPoints.generate (wStart, wFinish, numClickPoints)
       val yClickPoints = ClickPoints.generate (hStart, hFinish, numClickPoints)
     in
-      { xClickPoints = xClickPoints
+      { mode = mode
+      , xClickPoints = xClickPoints
       , yClickPoints = yClickPoints
       , numClickPoints = numClickPoints
       , triangles = triangles
@@ -279,7 +289,8 @@ struct
   fun mousePosition (app: app_type, mouseX, mouseY) =
     let
       val
-        { mouseX = _
+        { mode
+        , mouseX = _
         , mouseY = _
         , triangles
         , triangleStage
@@ -295,7 +306,8 @@ struct
         , arrowY
         } = app
     in
-      { mouseX = mouseX
+      { mode = mode
+      , mouseX = mouseX
       , mouseY = mouseY
       , triangles = triangles
       , triangleStage = triangleStage
@@ -316,7 +328,8 @@ struct
   fun undo (app: app_type, newTriangleStage, newTriangles, newRedoHd) =
     let
       val
-        { triangleStage = _
+        { mode
+        , triangleStage = _
         , triangles = _
         , numClickPoints
         , xClickPoints
@@ -339,7 +352,8 @@ struct
 
       val newRedo = newRedoHd :: redo
     in
-      { triangleStage = newTriangleStage
+      { mode = mode
+      , triangleStage = newTriangleStage
       , triangles = newTriangles
       , undo = newUndo
       , redo = newRedo
@@ -360,7 +374,8 @@ struct
   fun redo (app: app_type, newTriangleStage, newTriangles, newUndoHd) =
     let
       val
-        { triangleStage = _
+        { mode
+        , triangleStage = _
         , triangles = _
         , numClickPoints
         , xClickPoints
@@ -382,7 +397,8 @@ struct
           hd :: tl => tl
         | empty => empty
     in
-      { triangleStage = newTriangleStage
+      { mode = mode
+      , triangleStage = newTriangleStage
       , triangles = newTriangles
       , undo = newUndo
       , redo = newRedo
@@ -402,7 +418,8 @@ struct
   fun graphVisibility (app: app_type, shouldShowGraph) =
     let
       val
-        { triangleStage
+        { mode
+        , triangleStage
         , triangles
         , numClickPoints
         , xClickPoints
@@ -418,7 +435,8 @@ struct
         , showGraph = _
         } = app
     in
-      { showGraph = shouldShowGraph
+      { mode = mode
+      , showGraph = shouldShowGraph
       , triangleStage = triangleStage
       , triangles = triangles
       , undo = undo
@@ -438,7 +456,8 @@ struct
   fun useTriangles (app: app_type, triangles) =
     let
       val
-        { xClickPoints
+        { mode
+        , xClickPoints
         , yClickPoints
         , numClickPoints
         , windowWidth
@@ -456,7 +475,8 @@ struct
 
       val triangleStage = NO_TRIANGLE
     in
-      { triangleStage = triangleStage
+      { mode = mode
+      , triangleStage = triangleStage
       , triangles = triangles
       , undo = []
       , redo = []

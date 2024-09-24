@@ -20,7 +20,8 @@ struct
       val xClickPoints = ClickPoints.generate (wStart, wFinish, numClickPoints)
       val yClickPoints = ClickPoints.generate (hStart, hFinish, numClickPoints)
     in
-      { triangles = []
+      { mode = AppType.NORMAL_MODE
+      , triangles = []
       , triangleStage = NO_TRIANGLE
       , windowWidth = windowWidth
       , windowHeight = windowHeight
