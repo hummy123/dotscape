@@ -355,7 +355,7 @@ struct
 
   fun trianglesLoadError model = (model, NO_MAILBOX)
 
-  fun update (model: app_type, inputMsg) =
+  fun updateNormalMode (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
         let val model = AppWith.mousePosition (model, mouseX, mouseY)
@@ -378,4 +378,7 @@ struct
     | KEY_SPACE => enterOrSpaceCoordinates model
     | USE_TRIANGLES triangles => useTriangles (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
+
+  fun update (model: app_type, inputMsg) =
+    case #mode model of NORMAL_MODE => updateNormalMode (model, inputMsg)
 end

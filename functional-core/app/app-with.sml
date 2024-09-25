@@ -78,6 +78,8 @@ struct
         , mouseY
         , arrowX = _
         , arrowY = _
+        , openFilePath
+        , fileBrowser
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -97,6 +99,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -120,6 +124,8 @@ struct
         , mouseY
         , arrowX = _
         , arrowY = _
+        , openFilePath
+        , fileBrowser
         } = app
 
       val newTriangle = {x1 = x1, y1 = y1, x2 = x2, y2 = y2, x3 = x3, y3 = y3}
@@ -141,6 +147,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -162,6 +170,8 @@ struct
         , mouseY
         , arrowX = _
         , arrowY
+        , openFilePath
+        , fileBrowser
         } = app
     in
       { mode = mode
@@ -179,6 +189,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -200,6 +212,8 @@ struct
         , mouseY
         , arrowX
         , arrowY = _
+        , openFilePath
+        , fileBrowser
         } = app
     in
       { mode = mode
@@ -217,6 +231,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -240,6 +256,8 @@ struct
         , mouseY
         , arrowX
         , arrowY
+        , openFilePath
+        , fileBrowser
         } = app
 
       val xClickPoints = ClickPoints.generate (wStart, wFinish, numClickPoints)
@@ -260,6 +278,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -304,6 +324,8 @@ struct
         , showGraph
         , arrowX
         , arrowY
+        , openFilePath
+        , fileBrowser
         } = app
     in
       { mode = mode
@@ -321,6 +343,8 @@ struct
       , showGraph = showGraph
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -343,6 +367,8 @@ struct
         , mouseY
         , arrowX
         , arrowY
+        , openFilePath
+        , fileBrowser
         } = app
 
       val newUndo =
@@ -367,6 +393,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -389,6 +417,8 @@ struct
         , mouseY
         , arrowX
         , arrowY
+        , openFilePath
+        , fileBrowser
         } = app
 
       val newUndo = newUndoHd :: undo
@@ -412,6 +442,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -433,6 +465,8 @@ struct
         , arrowX
         , arrowY
         , showGraph = _
+        , openFilePath
+        , fileBrowser
         } = app
     in
       { mode = mode
@@ -450,6 +484,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 
@@ -471,6 +507,8 @@ struct
         , arrowY
         , triangles = _
         , triangleStage = _
+        , openFilePath
+        , fileBrowser
         } = app
 
       val triangleStage = NO_TRIANGLE
@@ -490,6 +528,8 @@ struct
       , mouseY = mouseY
       , arrowX = arrowX
       , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
       }
     end
 end

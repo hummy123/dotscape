@@ -35,6 +35,8 @@ struct
       , showGraph = true
       , arrowX = 0
       , arrowY = 0
+      , openFilePath = ""
+      , fileBrowser = Vector.fromList []
       }
     end
 

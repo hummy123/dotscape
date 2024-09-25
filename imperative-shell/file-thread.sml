@@ -18,28 +18,26 @@ struct
     let
       val num = (num + 1.0) / 2.0
       val num = Real32.toString num
-      val num = 
+      val num =
         (* Problem: It seems that Real32.toString may sometimes return a string
          * that is recognised as an integer, like "1" instead of "1.0".
          * If that happens, we just add a ".0" to the end 
          * so it's recognised as a real. *)
-        if String.isSubstring "." num 
-        then num 
+        if String.isSubstring "." num then num
         else num ^ ".0"
     in
-      "      (((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num ^ ")) / windowWidth) - 1.0"
+      "      (((startX * (1.0 - " ^ num ^ ")) + (endX * " ^ num
+      ^ ")) / windowWidth) - 1.0"
     end
 
   fun ndcToLerpY num =
     let
       val num = (num + 1.0) / 2.0
       val num = Real32.toString num
-      val num = 
-        if String.isSubstring "." num 
-        then num 
-        else num ^ ".0"
+      val num = if String.isSubstring "." num then num else num ^ ".0"
     in
-      "      (((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num ^ ")) / windowHeight) - 1.0"
+      "      (((startY * (1.0 - " ^ num ^ ")) + (endY * " ^ num
+      ^ ")) / windowHeight) - 1.0"
     end
 
   fun helpExportTriangles (io, triangles) =
@@ -55,10 +53,20 @@ struct
           val y3 = ndcToLerpY y3
 
           val line = String.concat
-            [ x1, ",\n", y1, ", r, g, b,\n"
-            , x2, ",\n", y2, ", r, g, b,\n"
-            , x3, ",\n", y3
-            , case tl of [] => ", r, g, b\n" | _ => ", r, g, b,\n"
+            [ x1
+            , ",\n"
+            , y1
+            , ", r, g, b,\n"
+            , x2
+            , ",\n"
+            , y2
+            , ", r, g, b,\n"
+            , x3
+            , ",\n"
+            , y3
+            , case tl of
+                [] => ", r, g, b\n"
+              | _ => ", r, g, b,\n"
             ]
 
           val _ = TextIO.output (io, line)
@@ -128,14 +136,20 @@ struct
       {x1, y1, x2, y2, x3, y3} :: tl =>
         let
           val triString = String.concat
-            [ "x ", Real32.toString x1
-            , " y ", Real32.toString y1
+            [ "x "
+            , Real32.toString x1
+            , " y "
+            , Real32.toString y1
 
-            , " x ", Real32.toString x2
-            , " y ", Real32.toString y2
+            , " x "
+            , Real32.toString x2
+            , " y "
+            , Real32.toString y2
 
-            , " x ", Real32.toString x3
-            , " y ", Real32.toString y3
+            , " x "
+            , Real32.toString x3
+            , " y "
+            , Real32.toString y3
             , "\n"
             ]
 
@@ -154,6 +168,30 @@ struct
       ()
     end
 
+  fun getDirList (dir, acc) =
+    case OS.FileSys.readDir dir of
+      SOME path =>
+        let
+          val _ = print (path ^ "\n")
+          val acc =
+            if OS.FileSys.isDir path then (AppType.FOLDER path) :: acc
+            else if OS.FileSys.isLink path then acc
+            else (AppType.FILE path) :: acc
+        in
+          getDirList (dir, acc)
+        end
+    | NONE => let val acc = List.rev acc in Vector.fromList acc end
+
+  fun loadFiles (path, inputMailbox) =
+    let
+      val path = if String.size path = 0 then OS.FileSys.getDir () else path
+      val dir = OS.FileSys.openDir path
+      val dirList = getDirList (dir, [])
+      val _ = OS.FileSys.closeDir dir
+    in
+      ()
+    end
+
   fun run (fileMailbox, inputMailbox) =
     let
       val _ =
@@ -161,6 +199,7 @@ struct
           SAVE_TRIANGLES triangles => saveTriangles triangles
         | LOAD_TRIANGLES => loadTriangles inputMailbox
         | EXPORT_TRIANGLES triangles => exportTriangles triangles
+        | LOAD_FILES path => loadFiles (path, inputMailbox)
     in
       run (fileMailbox, inputMailbox)
     end

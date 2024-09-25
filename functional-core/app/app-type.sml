@@ -1,6 +1,8 @@
 signature APP_TYPE =
 sig
-  datatype app_mode = NORMAL_MODE | SAVE_MODE
+  datatype app_mode = NORMAL_MODE | BROWSE_MODE
+
+  datatype file_browser_item = FILE of string | FOLDER of string
 
   datatype triangle_stage =
     NO_TRIANGLE
@@ -33,12 +35,16 @@ sig
     , mouseY: Real32.real
     , arrowX: int
     , arrowY: int
+    , openFilePath: string
+    , fileBrowser: file_browser_item vector
     }
 end
 
 structure AppType :> APP_TYPE =
 struct
-  datatype app_mode = NORMAL_MODE | SAVE_MODE
+  datatype app_mode = NORMAL_MODE | BROWSE_MODE
+
+  datatype file_browser_item = FILE of string | FOLDER of string
 
   type triangle =
     { x1: Real32.real
@@ -79,5 +85,7 @@ struct
     , mouseY: Real32.real
     , arrowX: int
     , arrowY: int
+    , openFilePath: string
+    , fileBrowser: file_browser_item vector
     }
 end
