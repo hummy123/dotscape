@@ -9,6 +9,10 @@ sig
   val mousePosition: AppType.app_type * Real32.real * Real32.real
                      -> AppType.app_type
 
+  val fileBrowserAndPath:
+    AppType.app_type * AppType.file_browser_item vector * string
+    -> AppType.app_type
+
   val arrowX: AppType.app_type * int -> AppType.app_type
   val arrowY: AppType.app_type * int -> AppType.app_type
 
@@ -574,6 +578,48 @@ struct
       , arrowY = arrowY
       , openFilePath = openFilePath
       , fileBrowser = fileBrowser
+      }
+    end
+
+  fun fileBrowserAndPath (app: app_type, fileBrowser, path) =
+    let
+      val
+        { mode
+        , xClickPoints
+        , yClickPoints
+        , numClickPoints
+        , windowWidth
+        , windowHeight
+        , triangles
+        , triangleStage
+        , undo
+        , redo
+        , showGraph
+        , mouseX
+        , mouseY
+        , arrowX
+        , arrowY
+        , openFilePath = _
+        , fileBrowser = _
+        } = app
+    in
+      { mode = mode
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , numClickPoints = numClickPoints
+      , triangles = triangles
+      , triangleStage = triangleStage
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , undo = undo
+      , redo = redo
+      , showGraph = showGraph
+      , mouseX = mouseX
+      , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
+      , fileBrowser = fileBrowser
+      , openFilePath = path
       }
     end
 end

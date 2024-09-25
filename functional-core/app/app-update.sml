@@ -358,10 +358,19 @@ struct
   fun enterBrowseMode model =
     let
       val model = AppWith.mode (model, AppType.BROWSE_MODE)
-      (* should draw modal window as well, but that's not needed right now *)
+      (* todo: should draw modal window as well *)
       val fileMsg = LOAD_FILES (#openFilePath model)
     in
       (model, FILE fileMsg)
+    end
+
+  fun handleFileBrowserAndPath (model, fileBrowser, path) =
+    let 
+      val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
+      (* todo: update and recreate vector indicating text to redraw,
+      * if not in normal mode *)
+    in 
+      (model, NO_MAILBOX)
     end
 
   fun updateNormalMode (model: app_type, inputMsg) =
@@ -388,6 +397,8 @@ struct
     | KEY_SPACE => enterOrSpaceCoordinates model
     | USE_TRIANGLES triangles => useTriangles (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
+    | FILE_BROWSER_AND_PATH {fileBrowser, path} =>
+        handleFileBrowserAndPath (model, fileBrowser, path)
 
   fun update (model: app_type, inputMsg) =
     case #mode model of
