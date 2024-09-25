@@ -355,6 +355,15 @@ struct
 
   fun trianglesLoadError model = (model, NO_MAILBOX)
 
+  fun enterBrowseMode model =
+    let
+      val model = AppWith.mode (model, AppType.BROWSE_MODE)
+      (* should draw modal window as well, but that's not needed right now *)
+      val fileMsg = LOAD_FILES (#openFilePath model)
+    in
+      (model, FILE fileMsg)
+    end
+
   fun updateNormalMode (model: app_type, inputMsg) =
     case inputMsg of
       MOUSE_MOVE {x = mouseX, y = mouseY} =>
@@ -370,6 +379,7 @@ struct
     | KEY_CTRL_S => getSaveTrianglesMsg model
     | KEY_CTRL_L => getLoadTrianglesMsg model
     | KEY_CTRL_E => getExportTrianglesMsg model
+    | KEY_CTRL_O => enterBrowseMode model
     | ARROW_UP => moveArrowUp model
     | ARROW_LEFT => moveArrowLeft model
     | ARROW_RIGHT => moveArrowRight model
@@ -380,5 +390,7 @@ struct
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
 
   fun update (model: app_type, inputMsg) =
-    case #mode model of NORMAL_MODE => updateNormalMode (model, inputMsg)
+    case #mode model of
+      NORMAL_MODE => updateNormalMode (model, inputMsg)
+    | BROWSE_MODE => updateNormalMode (model, inputMsg)
 end

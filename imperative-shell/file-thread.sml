@@ -171,15 +171,12 @@ struct
   fun getDirList (dir, acc) =
     case OS.FileSys.readDir dir of
       SOME path =>
-        let
-          val _ = print (path ^ "\n")
-          val acc =
-            if OS.FileSys.isDir path then (AppType.FOLDER path) :: acc
-            else if OS.FileSys.isLink path then acc
-            else (AppType.FILE path) :: acc
-        in
+        if OS.FileSys.isDir path then
+          getDirList (dir, AppType.FOLDER path :: acc)
+        else if OS.FileSys.isLink path then
           getDirList (dir, acc)
-        end
+        else
+          getDirList (dir, AppType.FILE path :: acc)
     | NONE => let val acc = List.rev acc in Vector.fromList acc end
 
   fun loadFiles (path, inputMailbox) =

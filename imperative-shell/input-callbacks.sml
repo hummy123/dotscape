@@ -86,6 +86,10 @@ struct
       andalso mods = 0x0
     then
       Mailbox.send (mailbox, KEY_SPACE)
+    else if
+      key = Input.KEY_O () andalso action = Input.PRESS () andalso mods = 0x02
+    then
+      Mailbox.send (mailbox, KEY_CTRL_O)
     else
       ()
 

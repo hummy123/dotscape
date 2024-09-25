@@ -2,6 +2,8 @@ signature APP_WITH =
 sig
   val graphVisibility: AppType.app_type * bool -> AppType.app_type
 
+  val mode: AppType.app_type * AppType.app_mode -> AppType.app_type
+
   val windowResize: AppType.app_type * int * int -> AppType.app_type
 
   val mousePosition: AppType.app_type * Real32.real * Real32.real
@@ -471,6 +473,48 @@ struct
     in
       { mode = mode
       , showGraph = shouldShowGraph
+      , triangleStage = triangleStage
+      , triangles = triangles
+      , undo = undo
+      , redo = redo
+      , numClickPoints = numClickPoints
+      , xClickPoints = xClickPoints
+      , yClickPoints = yClickPoints
+      , windowWidth = windowWidth
+      , windowHeight = windowHeight
+      , mouseX = mouseX
+      , mouseY = mouseY
+      , arrowX = arrowX
+      , arrowY = arrowY
+      , openFilePath = openFilePath
+      , fileBrowser = fileBrowser
+      }
+    end
+
+  fun mode (app: app_type, newMode) =
+    let
+      val
+        { mode = _
+        , triangleStage
+        , triangles
+        , numClickPoints
+        , xClickPoints
+        , yClickPoints
+        , windowWidth
+        , windowHeight
+        , undo
+        , redo
+        , mouseX
+        , mouseY
+        , arrowX
+        , arrowY
+        , showGraph
+        , openFilePath
+        , fileBrowser
+        } = app
+    in
+      { mode = newMode
+      , showGraph = showGraph
       , triangleStage = triangleStage
       , triangles = triangles
       , undo = undo

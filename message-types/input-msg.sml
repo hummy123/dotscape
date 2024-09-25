@@ -11,6 +11,7 @@ sig
   | KEY_CTRL_S
   | KEY_CTRL_L
   | KEY_CTRL_E
+  | KEY_CTRL_O
   | ARROW_UP
   | ARROW_LEFT
   | ARROW_RIGHT
@@ -19,6 +20,7 @@ sig
   | KEY_SPACE
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
+  | FILE_BROWSER_AND_PATH of { fileBrowser: AppType.file_browser_item vector, path: string }
 end
 
 structure InputMessage :> INPUT_MESSAGE =
@@ -34,6 +36,7 @@ struct
   | KEY_CTRL_S
   | KEY_CTRL_L
   | KEY_CTRL_E
+  | KEY_CTRL_O
   | ARROW_UP
   | ARROW_LEFT
   | ARROW_RIGHT
@@ -42,4 +45,5 @@ struct
   | KEY_SPACE
   | USE_TRIANGLES of AppType.triangle list
   | TRIANGLES_LOAD_ERROR
+  | FILE_BROWSER_AND_PATH of { fileBrowser: AppType.file_browser_item vector, path: string }
 end

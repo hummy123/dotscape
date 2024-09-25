@@ -46,6 +46,8 @@ struct
     _symbol "KEY_I" public : ( unit -> int ) * ( int -> unit );
   val (KEY_L, _) =
     _symbol "KEY_L" public : ( unit -> int ) * ( int -> unit );
+  val (KEY_O, _) =
+    _symbol "KEY_O" public : ( unit -> int ) * ( int -> unit );
 
   val (KEY_ENTER, _) =
     _symbol "KEY_ENTER" public : ( unit -> int ) * ( int -> unit );
