@@ -386,11 +386,57 @@ struct
       (model, fileMsg)
     end
 
-  fun handleFileBrowserAndPath (model, fileBrowser, path) =
+  fun handleFileBrowserAndPathInNormalMode (model, fileBrowser, path) =
     let val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
-    (* todo: update and recreate vector indicating text to redraw,
-     * if not in normal mode *)
     in (model, [])
+    end
+
+  fun stringToVec (pos, str, acc, startX, startY, windowWidth, windowHeight) =
+    if pos = String.size str then
+      acc
+    else
+      let
+        val chr = String.sub (str, pos)
+        val chrFun = Vector.sub (CozetteAscii.asciiTable, Char.ord chr)
+        val chrVec = chrFun
+          (startX, startY, 25.0, 25.0, windowWidth, windowHeight, 0.0, 0.0, 0.0)
+        val acc = chrVec :: acc
+      in
+        stringToVec
+          (pos + 1, str, acc, startX + 13, startY, windowWidth, windowHeight)
+      end
+
+  fun buildFileBrowserText
+    (pos, fileBrowser, acc, startY, windowWidth, windowHeight) =
+    if pos = Vector.length fileBrowser then
+      Vector.concat acc
+    else
+      let
+        val item = Vector.sub (fileBrowser, pos)
+        val itemText =
+          case item of
+            IS_FILE str => str
+          | IS_FOLDER str => str
+        val acc = stringToVec
+          (0, itemText, acc, 10, startY, windowWidth, windowHeight)
+      in
+        buildFileBrowserText
+          (pos + 1, fileBrowser, acc, startY + 23, windowWidth, windowHeight)
+      end
+
+  fun handleFileBrowserAndPath (model, fileBrowser, path) =
+    let
+      val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
+
+      (* create vector indicating text to redraw *)
+      val {windowWidth, windowHeight, ...} = model
+      val ww = Real32.fromInt windowWidth
+      val wh = Real32.fromInt windowHeight
+      val textVec = buildFileBrowserText (0, fileBrowser, [], 10, ww, wh)
+
+      val drawMsg = DRAW_MODAL_TEXT textVec
+    in
+      (model, [DRAW drawMsg])
     end
 
   fun updateNormalMode (model: app_type, inputMsg) =

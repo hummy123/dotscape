@@ -12,6 +12,7 @@ sig
       , dots: Real32.real vector
       }
   | CLEAR_DOTS
+  | DRAW_MODAL_TEXT of Real32.real vector
 end
 
 structure DrawMessage :> DRAW_MESSAGE =
@@ -28,4 +29,5 @@ struct
       , dots: Real32.real vector
       }
   | CLEAR_DOTS
+  | DRAW_MODAL_TEXT of Real32.real vector
 end

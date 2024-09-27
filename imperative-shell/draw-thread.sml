@@ -26,8 +26,9 @@ struct
             val _ =
               AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawDot (dotDrawObject, dotDrawLength)
-            val _ = AppDraw.drawModalText (modalTextDrawObject, modalTextDrawLength)
-            
+            val _ =
+              AppDraw.drawModalText (modalTextDrawObject, modalTextDrawLength)
+
             val _ = Glfw.swapBuffers window
             val _ = Glfw.pollEvents ()
           in
@@ -154,6 +155,24 @@ struct
                let
                  val _ = AppDraw.uploadGraphLines (graphDrawObject, graphLines)
                  val drawGraphLength = Vector.length graphLines div 2
+               in
+                 run
+                   ( drawMailbox
+                   , window
+                   , graphDrawObject
+                   , drawGraphLength
+                   , dotDrawObject
+                   , dotDrawLength
+                   , triangleDrawObject
+                   , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
+                   )
+               end
+           | DRAW_MODAL_TEXT vec =>
+               let
+                 val _ = AppDraw.uploadModalText (modalTextDrawObject, vec)
+                 val modalTextDrawLength = Vector.length vec div 5
                in
                  run
                    ( drawMailbox

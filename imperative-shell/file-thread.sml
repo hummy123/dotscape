@@ -172,11 +172,11 @@ struct
     case OS.FileSys.readDir dir of
       SOME path =>
         if OS.FileSys.isDir path then
-          getDirList (dir, AppType.FOLDER path :: acc)
+          getDirList (dir, AppType.IS_FOLDER path :: acc)
         else if OS.FileSys.isLink path then
           getDirList (dir, acc)
         else
-          getDirList (dir, AppType.FILE path :: acc)
+          getDirList (dir, AppType.IS_FILE path :: acc)
     | NONE => let val acc = List.rev acc in Vector.fromList acc end
 
   fun loadFiles (path, inputMailbox) =
@@ -185,8 +185,9 @@ struct
       val dir = OS.FileSys.openDir path
       val dirList = getDirList (dir, [])
       val _ = OS.FileSys.closeDir dir
+      val inputMsg = FILE_BROWSER_AND_PATH {fileBrowser = dirList, path = path}
     in
-      ()
+      Mailbox.send (inputMailbox, inputMsg)
     end
 
   fun run (fileMailbox, inputMailbox) =

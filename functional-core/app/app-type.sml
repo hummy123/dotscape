@@ -2,7 +2,7 @@ signature APP_TYPE =
 sig
   datatype app_mode = NORMAL_MODE | BROWSE_MODE
 
-  datatype file_browser_item = FILE of string | FOLDER of string
+  datatype file_browser_item = IS_FILE of string | IS_FOLDER of string
 
   datatype triangle_stage =
     NO_TRIANGLE
@@ -44,7 +44,7 @@ structure AppType :> APP_TYPE =
 struct
   datatype app_mode = NORMAL_MODE | BROWSE_MODE
 
-  datatype file_browser_item = FILE of string | FOLDER of string
+  datatype file_browser_item = IS_FILE of string | IS_FOLDER of string
 
   type triangle =
     { x1: Real32.real
