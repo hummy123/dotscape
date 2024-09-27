@@ -107,6 +107,10 @@ struct
     else
       ()
 
+  val initModalText = initDot
+  val uploadModalText = uploadDotVector
+  val drawModalText = drawDot
+
   fun initTriangles () =
     let
       val triangleDrawObject = initDrawObject

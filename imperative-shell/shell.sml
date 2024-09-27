@@ -27,6 +27,8 @@ struct
 
       val dotDrawObject = AppDraw.initDot ()
       val triangleDrawObject = AppDraw.initTriangles ()
+      
+      val modalTextDrawObject = AppDraw.initModalText ()
 
       val inputMailbox = Mailbox.mailbox ()
       val drawMailbox = Mailbox.mailbox ()
@@ -46,6 +48,8 @@ struct
           , dotDrawObject
           , 0
           , triangleDrawObject
+          , 0
+          , modalTextDrawObject
           , 0
           ))
 

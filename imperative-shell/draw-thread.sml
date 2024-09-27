@@ -12,6 +12,8 @@ struct
     , dotDrawLength
     , triangleDrawObject
     , triangleDrawLength
+    , modalTextDrawObject
+    , modalTextDrawLength
     ) =
     if not (Glfw.windowShouldClose window) then
       case Mailbox.recvPoll drawMailbox of
@@ -24,7 +26,8 @@ struct
             val _ =
               AppDraw.drawTriangles (triangleDrawObject, triangleDrawLength)
             val _ = AppDraw.drawDot (dotDrawObject, dotDrawLength)
-
+            val _ = AppDraw.drawModalText (modalTextDrawObject, modalTextDrawLength)
+            
             val _ = Glfw.swapBuffers window
             val _ = Glfw.pollEvents ()
           in
@@ -37,6 +40,8 @@ struct
               , dotDrawLength
               , triangleDrawObject
               , triangleDrawLength
+              , modalTextDrawObject
+              , modalTextDrawLength
               )
           end
       | SOME drawMsg =>
@@ -55,6 +60,8 @@ struct
                    , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end
            | DRAW_TRIANGLES_AND_RESET_DOTS triangleVec =>
@@ -74,6 +81,8 @@ struct
                    , 0
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end
            | DRAW_TRIANGLES_AND_DOTS {triangles = triangleVec, dots = dotsVec} =>
@@ -95,6 +104,8 @@ struct
                    , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end
            | CLEAR_DOTS =>
@@ -110,6 +121,8 @@ struct
                    , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end
            | RESIZE_TRIANGLES_DOTS_AND_GRAPH {triangles, graphLines, dots} =>
@@ -133,6 +146,8 @@ struct
                    , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end
            | DRAW_GRAPH graphLines =>
@@ -149,6 +164,8 @@ struct
                    , dotDrawLength
                    , triangleDrawObject
                    , triangleDrawLength
+                   , modalTextDrawObject
+                   , modalTextDrawLength
                    )
                end)
     else
