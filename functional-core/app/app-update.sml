@@ -403,7 +403,7 @@ struct
         val acc = chrVec :: acc
       in
         stringToVec
-          (pos + 1, str, acc, startX + 13, startY, windowWidth, windowHeight)
+          (pos + 1, str, acc, startX + 12, startY, windowWidth, windowHeight)
       end
 
   fun buildFileBrowserText
