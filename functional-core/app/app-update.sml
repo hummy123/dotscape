@@ -1,7 +1,7 @@
 signature APP_UPDATE =
 sig
   val update: AppType.app_type * InputMessage.t
-              -> AppType.app_type * UpdateMessage.t
+              -> AppType.app_type * UpdateMessage.t list
 end
 
 structure AppUpdate :> APP_UPDATE =
@@ -32,8 +32,9 @@ struct
       val drawVec = TriangleStage.toVector (model, drawVec)
 
       val drawMsg = DRAW_DOT drawVec
+      val drawMsg = [DRAW drawMsg]
     in
-      (model, DRAW drawMsg)
+      (model, drawMsg)
     end
 
   fun getDrawDotMsgWhenArrowIsAtBoundary model =
@@ -42,8 +43,9 @@ struct
       val dotVec = getDotVecFromIndices (model, arrowX, arrowY)
       val dotVec = TriangleStage.toVector (model, dotVec)
       val drawMsg = DRAW_DOT dotVec
+      val drawMsg = [DRAW drawMsg]
     in
-      (model, DRAW drawMsg)
+      (model, drawMsg)
     end
 
   fun moveArrowUp (model: app_type) =
@@ -58,8 +60,9 @@ struct
           val dotVec = getDotVecFromIndices (model, arrowX, newArrowY)
           val dotVec = TriangleStage.toVector (model, dotVec)
           val drawMsg = DRAW_DOT dotVec
+          val drawMsg = [DRAW drawMsg]
         in
-          (model, DRAW drawMsg)
+          (model, drawMsg)
         end
       else
         getDrawDotMsgWhenArrowIsAtBoundary model
@@ -77,8 +80,9 @@ struct
           val dotVec = getDotVecFromIndices (model, newArrowX, arrowY)
           val dotVec = TriangleStage.toVector (model, dotVec)
           val drawMsg = DRAW_DOT dotVec
+          val drawMsg = [DRAW drawMsg]
         in
-          (model, DRAW drawMsg)
+          (model, drawMsg)
         end
       else
         getDrawDotMsgWhenArrowIsAtBoundary model
@@ -96,8 +100,9 @@ struct
           val dotVec = getDotVecFromIndices (model, newArrowX, arrowY)
           val dotVec = TriangleStage.toVector (model, dotVec)
           val drawMsg = DRAW_DOT dotVec
+          val drawMsg = [DRAW drawMsg]
         in
-          (model, DRAW drawMsg)
+          (model, drawMsg)
         end
       else
         getDrawDotMsgWhenArrowIsAtBoundary model
@@ -115,8 +120,9 @@ struct
           val dotVec = getDotVecFromIndices (model, arrowX, newArrowY)
           val dotVec = TriangleStage.toVector (model, dotVec)
           val drawMsg = DRAW_DOT dotVec
+          val drawMsg = [DRAW drawMsg]
         in
-          (model, DRAW drawMsg)
+          (model, drawMsg)
         end
       else
         getDrawDotMsgWhenArrowIsAtBoundary model
@@ -152,24 +158,26 @@ struct
           let
             val drawVec = TriangleStage.toVector (model, dotVec)
             val drawMsg = DRAW_DOT drawVec
+            val drawMsg = [DRAW drawMsg]
 
             val newTriangleStage = FIRST {x1 = hpos, y1 = vpos}
             val model = AppWith.addTriangleStage
               (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
           in
-            (model, DRAW drawMsg)
+            (model, drawMsg)
           end
       | FIRST {x1, y1} =>
           let
             val drawVec = TriangleStage.firstToVector (x1, y1, dotVec, model)
             val drawMsg = DRAW_DOT drawVec
+            val drawMsg = [DRAW drawMsg]
 
             val newTriangleStage = SECOND
               {x1 = x1, y1 = y1, x2 = hpos, y2 = vpos}
             val model = AppWith.addTriangleStage
               (model, newTriangleStage, newUndoTuple, hIdx, vIdx)
           in
-            (model, DRAW drawMsg)
+            (model, drawMsg)
           end
       | SECOND {x1, y1, x2, y2} =>
           let
@@ -177,15 +185,16 @@ struct
               (model, x1, y1, x2, y2, hpos, vpos, newUndoTuple, hIdx, vIdx)
             val drawVec = Triangles.toVector model
             val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+            val drawMsg = [DRAW drawMsg]
           in
-            (model, DRAW drawMsg)
+            (model, drawMsg)
           end
     end
 
   fun mouseLeftClick model =
     case ClickPoints.getClickPositionFromMouse model of
       SOME (hIdx, vIdx) => addCoordinates (model, hIdx, vIdx)
-    | NONE => (model, NO_MAILBOX)
+    | NONE => (model, [])
 
   fun enterOrSpaceCoordinates model =
     let val {arrowX, arrowY, ...} = model
@@ -206,8 +215,9 @@ struct
       val drawMsg =
         RESIZE_TRIANGLES_DOTS_AND_GRAPH
           {triangles = triangles, graphLines = graphLines, dots = dots}
+      val drawMsg = [DRAW drawMsg]
     in
-      (model, DRAW drawMsg)
+      (model, drawMsg)
     end
 
   fun undoAction model =
@@ -218,7 +228,7 @@ struct
           val model =
             AppWith.undo (model, NO_TRIANGLE, #triangles model, (x1, y1))
         in
-          (model, DRAW CLEAR_DOTS)
+          (model, [DRAW CLEAR_DOTS])
         end
     | SECOND {x1, y1, x2, y2} =>
         (* Change FIRST to SECOND and redraw dots. *)
@@ -230,8 +240,9 @@ struct
           val emptyVec: Real32.real vector = Vector.fromList []
           val drawVec = TriangleStage.firstToVector (x1, y1, emptyVec, model)
           val drawMsg = DRAW_DOT drawVec
+          val drawMsg = [DRAW drawMsg]
         in
-          (model, DRAW drawMsg)
+          (model, drawMsg)
         end
     | NO_TRIANGLE =>
         (case #triangles model of
@@ -251,12 +262,13 @@ struct
                val drawMsg =
                  DRAW_TRIANGLES_AND_DOTS
                    {triangles = newTriangleVec, dots = drawVec}
+               val drawMsg = [DRAW drawMsg]
              in
-               (model, DRAW drawMsg)
+               (model, drawMsg)
              end
          | [] =>
              (* Can't undo, because there are no actions to undo. *)
-             (model, NO_MAILBOX))
+             (model, []))
 
   fun redoAction model =
     case #redo model of
@@ -274,8 +286,9 @@ struct
                val emptyVec: Real32.real vector = Vector.fromList []
                val drawVec = TriangleStage.firstToVector (x, y, emptyVec, model)
                val drawMsg = DRAW_DOT drawVec
+               val drawMsg = [DRAW drawMsg]
              in
-               (model, DRAW drawMsg)
+               (model, drawMsg)
              end
          | FIRST {x1, y1} =>
              (* add to triangle stage, redraw dots *)
@@ -289,8 +302,9 @@ struct
                val drawVec = TriangleStage.secondToVector
                  (x1, y1, x, y, emptyVec, model)
                val drawMsg = DRAW_DOT drawVec
+               val drawMsg = [DRAW drawMsg]
              in
-               (model, DRAW drawMsg)
+               (model, drawMsg)
              end
          | SECOND {x1, y1, x2, y2} =>
              (* clear triangle stage, add to trinagle list and redraw triangles *)
@@ -304,44 +318,50 @@ struct
 
                val drawVec = Triangles.toVector model
                val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+               val drawMsg = [DRAW drawMsg]
              in
-               (model, DRAW drawMsg)
+               (model, drawMsg)
              end)
-    | [] => (* Nothing to redo. *) (model, NO_MAILBOX)
+    | [] => (* Nothing to redo. *) (model, [])
 
   fun toggleGraph (model: app_type) =
     if #showGraph model then
       let
         val model = AppWith.graphVisibility (model, false)
         val drawMsg = DRAW_GRAPH (Vector.fromList [])
+        val drawMsg = [DRAW drawMsg]
       in
-        (model, DRAW drawMsg)
+        (model, drawMsg)
       end
     else
       let
         val model = AppWith.graphVisibility (model, true)
         val graphLines = GraphLines.generate model
         val drawMsg = DRAW_GRAPH graphLines
+        val drawMsg = [DRAW drawMsg]
       in
-        (model, DRAW drawMsg)
+        (model, drawMsg)
       end
 
   fun getSaveTrianglesMsg model =
     let
       val {triangles, ...} = model
       val fileMsg = SAVE_TRIANGLES triangles
+      val fileMsg = [FILE fileMsg]
     in
-      (model, FILE fileMsg)
+      (model, fileMsg)
     end
 
-  fun getLoadTrianglesMsg model = (model, FILE LOAD_TRIANGLES)
+  fun getLoadTrianglesMsg model =
+    (model, [FILE LOAD_TRIANGLES])
 
   fun getExportTrianglesMsg model =
     let
       val {triangles, ...} = model
       val fileMsg = EXPORT_TRIANGLES (#triangles model)
+      val fileMsg = [FILE fileMsg]
     in
-      (model, FILE fileMsg)
+      (model, fileMsg)
     end
 
   fun useTriangles (model, triangles) =
@@ -349,28 +369,28 @@ struct
       val model = AppWith.useTriangles (model, triangles)
       val drawVec = Triangles.toVector model
       val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
+      val drawMsg = [DRAW drawMsg]
     in
-      (model, DRAW drawMsg)
+      (model, drawMsg)
     end
 
-  fun trianglesLoadError model = (model, NO_MAILBOX)
+  fun trianglesLoadError model = (model, [])
 
   fun enterBrowseMode model =
     let
       val model = AppWith.mode (model, AppType.BROWSE_MODE)
       (* todo: should draw modal window as well *)
       val fileMsg = LOAD_FILES (#openFilePath model)
+      val fileMsg = [FILE fileMsg]
     in
-      (model, FILE fileMsg)
+      (model, fileMsg)
     end
 
   fun handleFileBrowserAndPath (model, fileBrowser, path) =
-    let 
-      val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
-      (* todo: update and recreate vector indicating text to redraw,
-      * if not in normal mode *)
-    in 
-      (model, NO_MAILBOX)
+    let val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
+    (* todo: update and recreate vector indicating text to redraw,
+     * if not in normal mode *)
+    in (model, [])
     end
 
   fun updateNormalMode (model: app_type, inputMsg) =
