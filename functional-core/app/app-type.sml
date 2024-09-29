@@ -37,6 +37,7 @@ sig
     , arrowY: int
     , openFilePath: string
     , fileBrowser: file_browser_item vector
+    , fileBrowserIdx: int
     }
 end
 
@@ -87,5 +88,6 @@ struct
     , arrowY: int
     , openFilePath: string
     , fileBrowser: file_browser_item vector
+    , fileBrowserIdx: int
     }
 end

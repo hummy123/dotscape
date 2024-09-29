@@ -37,6 +37,7 @@ struct
       , arrowY = 0
       , openFilePath = ""
       , fileBrowser = Vector.fromList []
+      , fileBrowserIdx = 0
       }
     end
 
