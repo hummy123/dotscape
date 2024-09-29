@@ -391,7 +391,8 @@ struct
     in (model, [])
     end
 
-  fun stringToVec (pos, str, acc, startX, startY, windowWidth, windowHeight) =
+  fun stringToVec
+    (pos, str, acc, startX, startY, windowWidth, windowHeight, r, g, b) =
     if pos = String.size str then
       acc
     else
@@ -399,15 +400,25 @@ struct
         val chr = String.sub (str, pos)
         val chrFun = Vector.sub (CozetteAscii.asciiTable, Char.ord chr)
         val chrVec = chrFun
-          (startX, startY, 25.0, 25.0, windowWidth, windowHeight, 0.0, 0.0, 0.0)
+          (startX, startY, 25.0, 25.0, windowWidth, windowHeight, r, g, b)
         val acc = chrVec :: acc
       in
         stringToVec
-          (pos + 1, str, acc, startX + 12, startY, windowWidth, windowHeight)
+          ( pos + 1
+          , str
+          , acc
+          , startX + 12
+          , startY
+          , windowWidth
+          , windowHeight
+          , r
+          , g
+          , b
+          )
       end
 
   fun buildFileBrowserText
-    (pos, fileBrowser, acc, startY, windowWidth, windowHeight) =
+    (pos, fileBrowser, acc, startY, windowWidth, windowHeight, selectedIdx) =
     if pos = Vector.length fileBrowser then
       Vector.concat acc
     else
@@ -417,11 +428,43 @@ struct
           case item of
             IS_FILE str => str
           | IS_FOLDER str => str
-        val acc = stringToVec
-          (0, itemText, acc, 10, startY, windowWidth, windowHeight)
+        val acc =
+          if pos <> selectedIdx then
+            stringToVec
+              ( 0
+              , itemText
+              , acc
+              , 10
+              , startY
+              , windowWidth
+              , windowHeight
+              , 0.0
+              , 0.0
+              , 0.0
+              )
+          else
+            stringToVec
+              ( 0
+              , itemText
+              , acc
+              , 10
+              , startY
+              , windowWidth
+              , windowHeight
+              , 0.35
+              , 0.35
+              , 0.75
+              )
       in
         buildFileBrowserText
-          (pos + 1, fileBrowser, acc, startY + 23, windowWidth, windowHeight)
+          ( pos + 1
+          , fileBrowser
+          , acc
+          , startY + 23
+          , windowWidth
+          , windowHeight
+          , selectedIdx
+          )
       end
 
   fun handleFileBrowserAndPath (model, fileBrowser, path) =
@@ -429,10 +472,11 @@ struct
       val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
 
       (* create vector indicating text to redraw *)
-      val {windowWidth, windowHeight, ...} = model
+      val {windowWidth, windowHeight, fileBrowserIdx, ...} = model
       val ww = Real32.fromInt windowWidth
       val wh = Real32.fromInt windowHeight
-      val textVec = buildFileBrowserText (0, fileBrowser, [], 10, ww, wh)
+      val textVec = buildFileBrowserText
+        (0, fileBrowser, [], 10, ww, wh, fileBrowserIdx)
 
       val drawMsg = DRAW_MODAL_TEXT textVec
     in
