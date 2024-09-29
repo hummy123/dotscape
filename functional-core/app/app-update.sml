@@ -391,6 +391,33 @@ struct
     in (model, [])
     end
 
+  fun updateNormalMode (model: app_type, inputMsg) =
+    case inputMsg of
+      MOUSE_MOVE {x = mouseX, y = mouseY} =>
+        let val model = AppWith.mousePosition (model, mouseX, mouseY)
+        in mouseMoveOrRelease model
+        end
+    | MOUSE_LEFT_RELEASE => mouseMoveOrRelease model
+    | MOUSE_LEFT_CLICK => mouseLeftClick model
+    | RESIZE_WINDOW {width, height} => resizeWindow (model, width, height)
+    | UNDO_ACTION => undoAction model
+    | REDO_ACTION => redoAction model
+    | KEY_G => toggleGraph model
+    | KEY_CTRL_S => getSaveTrianglesMsg model
+    | KEY_CTRL_L => getLoadTrianglesMsg model
+    | KEY_CTRL_E => getExportTrianglesMsg model
+    | KEY_CTRL_O => enterBrowseMode model
+    | ARROW_UP => moveArrowUp model
+    | ARROW_LEFT => moveArrowLeft model
+    | ARROW_RIGHT => moveArrowRight model
+    | ARROW_DOWN => moveArrowDown model
+    | KEY_ENTER => enterOrSpaceCoordinates model
+    | KEY_SPACE => enterOrSpaceCoordinates model
+    | USE_TRIANGLES triangles => useTriangles (model, triangles)
+    | TRIANGLES_LOAD_ERROR => trianglesLoadError model
+    | FILE_BROWSER_AND_PATH {fileBrowser, path} =>
+        handleFileBrowserAndPathInNormalMode (model, fileBrowser, path)
+
   fun stringToVec
     (pos, str, acc, startX, startY, windowWidth, windowHeight, r, g, b) =
     if pos = String.size str then
@@ -467,12 +494,9 @@ struct
           )
       end
 
-  fun handleFileBrowserAndPath (model, fileBrowser, path) =
+  fun redrawFileBrowser (model: app_type) =
     let
-      val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
-
-      (* create vector indicating text to redraw *)
-      val {windowWidth, windowHeight, fileBrowserIdx, ...} = model
+      val {windowWidth, windowHeight, fileBrowser, fileBrowserIdx, ...} = model
       val ww = Real32.fromInt windowWidth
       val wh = Real32.fromInt windowHeight
       val textVec = buildFileBrowserText
@@ -483,35 +507,54 @@ struct
       (model, [DRAW drawMsg])
     end
 
-  fun updateNormalMode (model: app_type, inputMsg) =
+  fun handleFileBrowserAndPathInBrowseMode (model, fileBrowser, path) =
+    let val model = AppWith.fileBrowserAndPath (model, fileBrowser, path)
+    in redrawFileBrowser model
+    end
+
+  fun browseModeArrowUp (model: app_type) =
+    let
+      val {fileBrowser, fileBrowserIdx, ...} = model
+
+      val fileBrowserIdx =
+        if fileBrowserIdx > 0 then fileBrowserIdx - 1
+        else Int.max (0, Vector.length fileBrowser - 1)
+
+      val model = AppWith.fileBrowserIdx (model, fileBrowserIdx)
+    in
+      redrawFileBrowser model
+    end
+
+  fun browseModeArrowDown (model: app_type) =
+    let
+      val {fileBrowser, fileBrowserIdx, ...} = model
+
+      val fileBrowserIdx =
+        if fileBrowserIdx = Vector.length fileBrowser - 1 then 0
+        else fileBrowserIdx + 1
+
+      val model = AppWith.fileBrowserIdx (model, fileBrowserIdx)
+    in
+      redrawFileBrowser model
+    end
+
+  fun updateBrowseMode (model: app_type, inputMsg) =
     case inputMsg of
-      MOUSE_MOVE {x = mouseX, y = mouseY} =>
-        let val model = AppWith.mousePosition (model, mouseX, mouseY)
-        in mouseMoveOrRelease model
-        end
-    | MOUSE_LEFT_RELEASE => mouseMoveOrRelease model
-    | MOUSE_LEFT_CLICK => mouseLeftClick model
-    | RESIZE_WINDOW {width, height} => resizeWindow (model, width, height)
-    | UNDO_ACTION => undoAction model
-    | REDO_ACTION => redoAction model
-    | KEY_G => toggleGraph model
-    | KEY_CTRL_S => getSaveTrianglesMsg model
-    | KEY_CTRL_L => getLoadTrianglesMsg model
-    | KEY_CTRL_E => getExportTrianglesMsg model
-    | KEY_CTRL_O => enterBrowseMode model
-    | ARROW_UP => moveArrowUp model
-    | ARROW_LEFT => moveArrowLeft model
-    | ARROW_RIGHT => moveArrowRight model
-    | ARROW_DOWN => moveArrowDown model
-    | KEY_ENTER => enterOrSpaceCoordinates model
-    | KEY_SPACE => enterOrSpaceCoordinates model
-    | USE_TRIANGLES triangles => useTriangles (model, triangles)
+      ARROW_UP => browseModeArrowUp model
+    | ARROW_DOWN => browseModeArrowDown model
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
+    (* todo: 
+    | ARROW_LEFT =>
+    | ARROW_RIGHT =>
+    | KEY_ENTER =>
+    | KEY_SPACE => 
+    *)
     | FILE_BROWSER_AND_PATH {fileBrowser, path} =>
-        handleFileBrowserAndPath (model, fileBrowser, path)
+        handleFileBrowserAndPathInBrowseMode (model, fileBrowser, path)
+    | _ => (model, [])
 
   fun update (model: app_type, inputMsg) =
     case #mode model of
       NORMAL_MODE => updateNormalMode (model, inputMsg)
-    | BROWSE_MODE => updateNormalMode (model, inputMsg)
+    | BROWSE_MODE => updateBrowseMode (model, inputMsg)
 end
