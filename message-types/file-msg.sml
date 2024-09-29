@@ -5,6 +5,7 @@ sig
   | LOAD_TRIANGLES
   | EXPORT_TRIANGLES of AppType.triangle list
   | LOAD_FILES of string
+  | SELECT_PATH of string
 end
 
 structure FileMessage :> FILE_MESSAGE =
@@ -14,4 +15,5 @@ struct
   | LOAD_TRIANGLES
   | EXPORT_TRIANGLES of AppType.triangle list
   | LOAD_FILES of string
+  | SELECT_PATH of string
 end

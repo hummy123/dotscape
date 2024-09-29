@@ -58,7 +58,8 @@ sig
     * int
     -> AppType.app_type
 
-  val useTriangles: AppType.app_type * AppType.triangle list -> AppType.app_type
+  val useTrianglesAndSetNormalMode: AppType.app_type * AppType.triangle list
+                                    -> AppType.app_type
 end
 
 structure AppWith :> APP_WITH =
@@ -559,10 +560,10 @@ struct
       }
     end
 
-  fun useTriangles (app: app_type, triangles) =
+  fun useTrianglesAndSetNormalMode (app: app_type, triangles) =
     let
       val
-        { mode
+        { mode = _
         , xClickPoints
         , yClickPoints
         , numClickPoints
@@ -584,7 +585,7 @@ struct
 
       val triangleStage = NO_TRIANGLE
     in
-      { mode = mode
+      { mode = AppType.NORMAL_MODE
       , triangleStage = triangleStage
       , triangles = triangles
       , undo = []

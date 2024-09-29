@@ -364,9 +364,9 @@ struct
       (model, fileMsg)
     end
 
-  fun useTriangles (model, triangles) =
+  fun useTrianglesInNormalMode (model, triangles) =
     let
-      val model = AppWith.useTriangles (model, triangles)
+      val model = AppWith.useTrianglesAndSetNormalMode (model, triangles)
       val drawVec = Triangles.toVector model
       val drawMsg = DRAW_TRIANGLES_AND_RESET_DOTS drawVec
       val drawMsg = [DRAW drawMsg]
@@ -413,7 +413,7 @@ struct
     | ARROW_DOWN => moveArrowDown model
     | KEY_ENTER => enterOrSpaceCoordinates model
     | KEY_SPACE => enterOrSpaceCoordinates model
-    | USE_TRIANGLES triangles => useTriangles (model, triangles)
+    | USE_TRIANGLES triangles => useTrianglesInNormalMode (model, triangles)
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
     | FILE_BROWSER_AND_PATH {fileBrowser, path} =>
         handleFileBrowserAndPathInNormalMode (model, fileBrowser, path)
@@ -538,6 +538,25 @@ struct
       redrawFileBrowser model
     end
 
+  fun selectCurrentFileItem model =
+    let
+      val {fileBrowser, fileBrowserIdx, openFilePath, ...} = model
+    in
+      if Vector.length fileBrowser > 0 then
+        let
+          val path =
+            case Vector.sub (fileBrowser, fileBrowserIdx) of
+              IS_FILE str => str
+            | IS_FOLDER str => str
+          val path = String.concat [openFilePath, "/", path]
+          val fileMsg = SELECT_PATH path
+        in
+          (model, [FILE fileMsg])
+        end
+      else
+        (model, [])
+    end
+
   fun updateBrowseMode (model: app_type, inputMsg) =
     case inputMsg of
       ARROW_UP => browseModeArrowUp model
@@ -545,12 +564,13 @@ struct
     | TRIANGLES_LOAD_ERROR => trianglesLoadError model
     (* todo: 
     | ARROW_LEFT =>
-    | ARROW_RIGHT =>
-    | KEY_ENTER =>
-    | KEY_SPACE => 
     *)
+    | ARROW_RIGHT => selectCurrentFileItem model
+    | KEY_ENTER => selectCurrentFileItem model
+    | KEY_SPACE => selectCurrentFileItem model
     | FILE_BROWSER_AND_PATH {fileBrowser, path} =>
         handleFileBrowserAndPathInBrowseMode (model, fileBrowser, path)
+    | USE_TRIANGLES triangles => useTrianglesInNormalMode (model, triangles)
     | _ => (model, [])
 
   fun update (model: app_type, inputMsg) =
