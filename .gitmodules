@@ -1,0 +1,3 @@
+[submodule "cozette-sml"]
+	path = cozette-sml
+	url = https://github.com/hummy123/cozette-sml

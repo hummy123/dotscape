@@ -10,7 +10,7 @@ in
   functional-core/app/click-points.sml
   functional-core/app/graph-lines.sml
   functional-core/app/triangles.sml
-  fonts/cozette-ascii.mlb
+  cozette-sml/fonts/cozette-ascii.mlb
 end
 
 functional-core/app/triangle-stage.sml
